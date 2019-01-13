@@ -33,7 +33,7 @@
   src: url("https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-semibold-webfont.woff");
 }
 
-/** Bold */ 
+/** Bold */
 @font-face {
   font-family: "San Francisco";
   font-weight: 700;
@@ -113,9 +113,8 @@ code, kbd, pre, samp, #ws, #message {
 }
 
 code {
-  border: 1px solid #EAEAEA;
-  margin: 0 2px;
-  padding: 0 5px;
+  margin: 0;
+  padding: 0;
 }
 pre {
   overflow: auto;
@@ -123,15 +122,13 @@ pre {
 pre {
   display: block;
   padding: 9.5px;
-  margin: 0 0 10px;
+  /*margin: 0 0 10px;*/
   font-size: 13px;
   line-height: 1.42857143;
   color: #333;
   word-break: break-all;
   word-wrap: break-word;
   background-color: #f5f5f5;
-  border: 1px solid #ccc;
-  border-radius: 4px;
 }
 
 pre code {
@@ -227,7 +224,7 @@ article img {
   display: block;
 }
 
-/* -------------------------------- 
+/* --------------------------------
 
 Primary Site style
 
@@ -279,14 +276,14 @@ img, svg {
 }
 
 .footer {
-  height: 150px;
+  height: 100px;
   text-align: center;
 }
 .footer small {
   line-height: 1.5;
 }
 
-/* -------------------------------- 
+/* --------------------------------
 
 download button
 
@@ -330,7 +327,7 @@ download button
   }
 }
 
-/* -------------------------------- 
+/* --------------------------------
 
 Articles
 
@@ -339,7 +336,7 @@ Articles
   position: relative;
   width: 90%;
   max-width: 650px;
-  margin: 0 auto 15em;
+  margin: 0 auto 1em;
 }
 .articles::before {
   /* never visible - this is used in jQuery to check the current MQ */
@@ -354,20 +351,34 @@ Articles
   border-bottom: none;
 }
 .articles h1 {
-  margin: .6em 0 .2em;
+  margin: .6em 0 1.6em;
   color: #141414;
   line-height: 1.2;
   font-size: 2.4rem;
   font-weight: 400;
 }
+.articles h1.title {
+    margin: .6em 0 .6em !important;
+}
+
 .articles p {
-  padding: 1em 0;
   line-height: 1.6;
   font-weight: 400;
 }
 .articles p:last-of-type {
   padding-bottom: 0;
 }
+.articles pre {
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+.articles pre:first-child {
+    margin-top: 0px;
+}
+.articles pre:last-child {
+    margin-bottom: 0px;
+}
+
 @media only screen and (min-width: 1100px) {
   .articles {
     width: 970px;
@@ -388,7 +399,12 @@ Articles
   padding-right: 0;
 }
 
-/* -------------------------------- 
+.articles.full-width {
+    margin: 0 auto;
+    max-width: 720px !important;
+}
+
+/* --------------------------------
 
 Aside
 

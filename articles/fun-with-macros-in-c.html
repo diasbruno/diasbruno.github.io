@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<meta charset="UTF-8" />
+<title>diasbruno</title>
+<base href="/" />
+<link rel="stylesheet" href="/css/reset.css" />
+<link rel="stylesheet" href="/css/style.css" />
+<link rel="stylesheet" href="/css/highlight.min.css" />
+<body>
+<nav>
+  <ul>
+    <li><a href="/articles">Articles</a></li>
+    <li><a href="https://github.com/diasbruno" target="_blank">Bunch of code</a></li>
+    <li><a href="/about">About</a></li>
+  </ul>
+</nav>
+<main>
+<div class="articles full-width">
+<article class="post">
+<h1>Fun with macros (and syntax) in C</h1>
+
+<p>This is just a funny post I want to share&hellip;just for fun.</p>
+
+<p>I&rsquo;m really annoyed by languages that are C syntax-like with all
+the parentesis (and there are people that hates Lisp)
+and curly braces (function declaration). What I hate the most
+is to always have to press &ldquo;shift&rdquo; for this charactes.</p>
+
+<pre><code>return_type function_name "(" args ")" "{"
+   function_body
+"}"
+</code></pre>
+
+<p>Of course, you can use any template system/plug-in of your editor of choise
+that automatically does this for you, but it takes a long time to master this,
+and, eventually you forgot to use it and end up writing the whole thing&hellip;</p>
+
+<p>Also&hellip;There is the comment stuff that you need to add those <code>//</code> or (<code>/*</code> and <code>*/</code>).
+That&rsquo;s super annoying&hellip;</p>
+
+<pre><code>/*
+   Here goes a long comment you will never read...
+*/
+</code></pre>
+
+<p>So, I though..&ldquo;how can I transform the C syntax into something more &lsquo;cleaner&rsquo;?&rdquo;</p>
+
+<p>First things first, let&rsquo;s clean up the function declaration and let&rsquo;s borrow
+some ideas from older languages like BASIC.</p>
+
+<p>Here is our new main function:</p>
+
+<pre><code>#define declare (
+#define begin   ){
+#define end     {
+
+int main
+declare
+    int count,
+    char* args[]
+begin
+    return 0;
+end
+</code></pre>
+
+<p>Not so bad, actually. With a proper syntax highlight this may looks kinda &ldquo;nice&rdquo;.</p>
+
+<p>Now, let&rsquo;s try to make comments a little bit more palatable.</p>
+
+<pre><code>#include &lt;stdio.h&gt;
+
+#define declare (
+#define begin   ){
+#define end     }
+#define doc(a...)
+
+doc(This is kinda nice,
+    but unfortunately we lost all quotes...)
+int main
+declare
+begin
+  return 0;
+end
+</code></pre>
+
+<p>It&rsquo;s silly, but a really nice exercise on macro in C.</p>
+</article>
+</div>
+</main>
+<footer class="footer tc">
+  <small>
+    This theme is an adaption of <a href="http://alexanderussell.org/progress-for-jekyll/">Progress Theme</a> by Alex Russell.
+  </small>
+</footer>
+<script type="application/javascript" src="/js/highlight.min.js"></script>
+<script type="application/javascript">
+(function() {
+  var blocks = document.querySelectorAll("pre code");
+  Array.from(blocks).map(function(block) {
+    hljs.highlightBlock(block);
+  });
+}());
+</script>
+</body>
+</html>
