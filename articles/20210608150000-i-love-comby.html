@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<meta charset="UTF-8">
+<title>diasbruno</title>
+<base href="..">
+<link rel="stylesheet" type="text/css" href="./css/reset.css" />
+<link rel="stylesheet" type="text/css" href="./css/style.css" />
+<link rel="stylesheet" type="text/css" href="./css/highlight.min.css" />
+<body><main>
+<nav>
+  <div><h1><a href="../">diasbruno</a></h1></div>
+  <div class="nav-links"><a href="..">articles</a></div>
+</nav>
+<section class="content"><h1>I love Comby!</h1>
+<div class="content-info"><span class="content-kind">article</span> &#10072; <time class="content-datetime" datetime="2021-06-08T15:00:00+00:00">May 28, 2022</time></div>
+<p>I love <a href="https://github.com/comby-tools/comby">Comby</a>, in their words:</p>
+<blockquote>
+<p>&quot;A tool for structural code search and replace
+that supports ~every language.&quot;</p>
+</blockquote>
+<p>Most of the time when I'm reviewing some pull request,
+I always have the same thoughts:</p>
+<ul>
+<li>&quot;I've seem this before...&quot;</li>
+<li>&quot;I see a pattern here...&quot;</li>
+</ul>
+<p>And then I:</p>
+<ul>
+<li>Go to the project folder.</li>
+<li>Update the repository.</li>
+<li>Go to the PR's branch.</li>
+<li>Figure out a <code>grep</code> that can extract what I want.</li>
+</ul>
+<p>As we all know, step 4 is the one that takes a lot of time.</p>
+<p><code>comby</code> understands a little bit of syntax and deals well
+balancing <code>()</code>, <code>[]</code> and <code>{}</code>,
+which is the most painful thing to do when writing regex.</p>
+<p>Example:</p>
+<p>After some interactions on our software, we had many methods related to permissions written on views
+and components. Eventually, things starts getting duplicated, so it was time to refactor/reorganize.</p>
+<p>Using comby, this was basically (or close) of what I had to type:</p>
+<pre style="background-color:#2b303b;"><code>
+<span style="color:#c0c5ce;">comby &#39;can:[~[A-Za-z0-9_]*](:[h]) {:[i]}&#39; &#39;&#39; -matcher .js
+</span>
+</code></pre>
+<p>Output example:</p>
+<pre style="background-color:#2b303b;"><code>
+<span style="color:#c0c5ce;">------ file.vue
+</span><span style="color:#c0c5ce;">++++++ file.vue
+</span><span style="color:#c0c5ce;">@|-1,5 +1,3 ============================================================
+</span><span style="color:#c0c5ce;"> |  computed: {
+</span><span style="color:#c0c5ce;">!|     canEdit() {
+</span><span style="color:#c0c5ce;">!|       return this.user.permissions.contains(Permissions.X);
+</span><span style="color:#c0c5ce;">!|     }
+</span><span style="color:#c0c5ce;"> |  }
+</span>
+</code></pre>
+<p>This expression highlights every function/method
+that is prefixed with 'can' (<code>:[h]</code> and <code>:[I]</code>
+are just placeholders saying &quot;whatever is in between
+the parenthesis and curly brackets&quot;).</p>
+<p>With the result in hand, I show to the team, we discussed
+when we could tackle this issue, we had some ideas
+and we start the refactor.</p>
+<p>This is one use case of comby, go checkout their page
+and I hope this will be your favorite tool as it's mine now.</p></section>
+<script type="application/javascript" src="./js/highlight.min.js"></script>
+</main></body></html>

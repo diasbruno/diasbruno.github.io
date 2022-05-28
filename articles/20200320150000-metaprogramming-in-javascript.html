@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<meta charset="UTF-8">
+<title>diasbruno</title>
+<base href="..">
+<link rel="stylesheet" type="text/css" href="./css/reset.css" />
+<link rel="stylesheet" type="text/css" href="./css/style.css" />
+<link rel="stylesheet" type="text/css" href="./css/highlight.min.css" />
+<body><main>
+<nav>
+  <div><h1><a href="../">diasbruno</a></h1></div>
+  <div class="nav-links"><a href="..">articles</a></div>
+</nav>
+<section class="content"><h1>Metaprogramming in javascript</h1>
+<div class="content-info"><span class="content-kind">article</span> &#10072; <time class="content-datetime" datetime="2020-03-20T15:00:00+00:00">May 28, 2022</time></div>
+<p>Sometimes it's tedious to write the same pattern
+or function.</p>
+<p>In some cases, we can get away with just a closure,
+but in others, what we really need is to generate
+a function with a couple tweaks or to generate it from
+a template.</p>
+<p>Unfortunately, we can't do much with the language itself.
+It would be nice if we had some way to work directly
+with the AST (abstract syntax tree), or manipulate
+fragments - something like Elixir, or, like the most
+beautiful language, in my opinion, Lisp.
+At least, we can always manipulate strings...</p>
+<p>We also have <code>Reflect</code> and <code>Proxy</code>,
+that are good tools for specific cases,
+but we are not going to talk about them
+in this article (maybe on the next one).</p>
+<p>In this article, we are going to see some tricks
+to generate specialized functions in runtime.</p>
+<p>The examples we'll use are really simple,
+but I hope you can understand and write
+more interesting stuff with it.</p>
+<h2>The Function object</h2>
+<p>We can use the Function object constructor
+to generate new functions.</p>
+<p>Its specification says that the last argument
+passed will be rendered as body of the function, and,
+the first ones will be the names of the arguments.
+If only one argument is passed, the function
+has no arguments.</p>
+<p>Example:</p>
+<pre style="background-color:#2b303b;"><code class="language-js">
+<span style="color:#b48ead;">const </span><span style="color:#bf616a;">fn </span><span style="color:#c0c5ce;">= new </span><span style="color:#ebcb8b;">Function</span><span style="color:#c0c5ce;">(&quot;</span><span style="color:#a3be8c;">a</span><span style="color:#c0c5ce;">&quot;, &quot;</span><span style="color:#a3be8c;">return a</span><span style="color:#c0c5ce;">&quot;);
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#8fa1b3;">fn</span><span style="color:#c0c5ce;">(</span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">);
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#65737e;">// 1
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#bf616a;">fn</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">toString</span><span style="color:#c0c5ce;">();
+</span><span style="color:#65737e;">// &#39;function anonymous(a\n) {\nreturn a\n}&#39;
+</span>
+</code></pre>
+<h2>Generating operations</h2>
+<p>Let's generate functions for this operations: <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>.</p>
+<pre style="background-color:#2b303b;"><code class="language-js">
+<span style="color:#b48ead;">const </span><span style="color:#bf616a;">generateOperation </span><span style="color:#c0c5ce;">=
+</span><span style="color:#c0c5ce;">  op </span><span style="color:#b48ead;">=&gt; </span><span style="color:#c0c5ce;">new </span><span style="color:#ebcb8b;">Function</span><span style="color:#c0c5ce;">(&quot;</span><span style="color:#a3be8c;">a</span><span style="color:#c0c5ce;">&quot;, &quot;</span><span style="color:#a3be8c;">b</span><span style="color:#c0c5ce;">&quot;, `</span><span style="color:#a3be8c;">return a </span><span style="color:#c0c5ce;">${</span><span style="color:#bf616a;">op</span><span style="color:#c0c5ce;">}</span><span style="color:#a3be8c;"> b</span><span style="color:#c0c5ce;">`);
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">add </span><span style="color:#c0c5ce;">= </span><span style="color:#8fa1b3;">generateOperation</span><span style="color:#c0c5ce;">(&quot;</span><span style="color:#a3be8c;">+</span><span style="color:#c0c5ce;">&quot;);
+</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">sub </span><span style="color:#c0c5ce;">= </span><span style="color:#8fa1b3;">generateOperation</span><span style="color:#c0c5ce;">(&quot;</span><span style="color:#a3be8c;">-</span><span style="color:#c0c5ce;">&quot;);
+</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">mul </span><span style="color:#c0c5ce;">= </span><span style="color:#8fa1b3;">generateOperation</span><span style="color:#c0c5ce;">(&quot;</span><span style="color:#a3be8c;">*</span><span style="color:#c0c5ce;">&quot;);
+</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">div </span><span style="color:#c0c5ce;">= </span><span style="color:#8fa1b3;">generateOperation</span><span style="color:#c0c5ce;">(&quot;</span><span style="color:#a3be8c;">/</span><span style="color:#c0c5ce;">&quot;);
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#8fa1b3;">add</span><span style="color:#c0c5ce;">(</span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">, </span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">);
+</span><span style="color:#65737e;">// 2
+</span><span style="color:#8fa1b3;">sub</span><span style="color:#c0c5ce;">(</span><span style="color:#d08770;">2</span><span style="color:#c0c5ce;">, </span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">);
+</span><span style="color:#65737e;">// 1
+</span><span style="color:#8fa1b3;">mul</span><span style="color:#c0c5ce;">(</span><span style="color:#d08770;">2</span><span style="color:#c0c5ce;">, </span><span style="color:#d08770;">2</span><span style="color:#c0c5ce;">);
+</span><span style="color:#65737e;">// 4
+</span><span style="color:#8fa1b3;">div</span><span style="color:#c0c5ce;">(</span><span style="color:#d08770;">2</span><span style="color:#c0c5ce;">, </span><span style="color:#d08770;">2</span><span style="color:#c0c5ce;">);
+</span><span style="color:#65737e;">// 1
+</span>
+</code></pre>
+<p>Too easy...but we already can see
+where we are going next!</p>
+<h2>Generating functions from URI routes</h2>
+<p>Now we have a different task, to generate functions
+from URI routes.</p>
+<p>We are going to convert some route like,
+<code>get:/a/b/{c}/d/{e}</code>, into a function
+<code>function(c, e) { ... }</code>.</p>
+<p>First, we need to find all variables
+in the route. If we don't find any,
+the function will have no arguments.</p>
+<pre style="background-color:#2b303b;"><code class="language-js">
+<span style="color:#65737e;">// don&#39;t trust this function,
+</span><span style="color:#65737e;">// it&#39;s incomplete...
+</span><span style="color:#b48ead;">const </span><span style="color:#8fa1b3;">collectVars </span><span style="color:#c0c5ce;">= route </span><span style="color:#b48ead;">=&gt; </span><span style="color:#c0c5ce;">{
+</span><span style="color:#c0c5ce;">   </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">items </span><span style="color:#c0c5ce;">= [];
+</span><span style="color:#c0c5ce;">   </span><span style="color:#b48ead;">for </span><span style="color:#c0c5ce;">(
+</span><span style="color:#c0c5ce;">     </span><span style="color:#b48ead;">let </span><span style="color:#bf616a;">str </span><span style="color:#c0c5ce;">= </span><span style="color:#bf616a;">route</span><span style="color:#c0c5ce;">, </span><span style="color:#bf616a;">open </span><span style="color:#c0c5ce;">= -</span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">, </span><span style="color:#bf616a;">close </span><span style="color:#c0c5ce;">= </span><span style="color:#d08770;">0</span><span style="color:#c0c5ce;">;
+</span><span style="color:#c0c5ce;">     (
+</span><span style="color:#c0c5ce;">       </span><span style="color:#bf616a;">open </span><span style="color:#c0c5ce;">= </span><span style="color:#bf616a;">str</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">indexOf</span><span style="color:#c0c5ce;">(&#39;</span><span style="color:#a3be8c;">{</span><span style="color:#c0c5ce;">&#39;),
+</span><span style="color:#c0c5ce;">       </span><span style="color:#bf616a;">close </span><span style="color:#c0c5ce;">= </span><span style="color:#bf616a;">str</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">indexOf</span><span style="color:#c0c5ce;">(&#39;</span><span style="color:#a3be8c;">}</span><span style="color:#c0c5ce;">&#39;),
+</span><span style="color:#c0c5ce;">       </span><span style="color:#bf616a;">open </span><span style="color:#c0c5ce;">&gt;= </span><span style="color:#d08770;">0
+</span><span style="color:#c0c5ce;">     );
+</span><span style="color:#c0c5ce;">     </span><span style="color:#bf616a;">str </span><span style="color:#c0c5ce;">= </span><span style="color:#bf616a;">str</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">slice</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">close </span><span style="color:#c0c5ce;">+ </span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">)
+</span><span style="color:#c0c5ce;">     ) {
+</span><span style="color:#c0c5ce;">     </span><span style="color:#b48ead;">if </span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">close </span><span style="color:#c0c5ce;">&lt; </span><span style="color:#d08770;">0</span><span style="color:#c0c5ce;">) </span><span style="color:#b48ead;">throw </span><span style="color:#8fa1b3;">Error</span><span style="color:#c0c5ce;">(&quot;</span><span style="color:#a3be8c;">Bad route</span><span style="color:#c0c5ce;">&quot;);
+</span><span style="color:#c0c5ce;">     </span><span style="color:#bf616a;">items</span><span style="color:#c0c5ce;">.</span><span style="color:#96b5b4;">push</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">str</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">slice</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">open </span><span style="color:#c0c5ce;">+ </span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">, </span><span style="color:#bf616a;">close</span><span style="color:#c0c5ce;">))
+</span><span style="color:#c0c5ce;">   }
+</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">items</span><span style="color:#c0c5ce;">;
+</span><span style="color:#c0c5ce;">}
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#8fa1b3;">collectVars</span><span style="color:#c0c5ce;">(&quot;</span><span style="color:#a3be8c;">/a</span><span style="color:#c0c5ce;">&quot;)
+</span><span style="color:#65737e;">// []
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#8fa1b3;">collectVars</span><span style="color:#c0c5ce;">(&quot;</span><span style="color:#a3be8c;">/a/b/c/{d}/e/{f}/</span><span style="color:#c0c5ce;">&quot;)
+</span><span style="color:#65737e;">// [ &quot;d&quot;, &quot;f&quot; ]
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#8fa1b3;">collectVars</span><span style="color:#c0c5ce;">(&quot;</span><span style="color:#a3be8c;">/a/b/c/{d}/e/{f/</span><span style="color:#c0c5ce;">&quot;)
+</span><span style="color:#65737e;">// Thrown:
+</span><span style="color:#65737e;">// Error: Bad route
+</span><span style="color:#65737e;">//    at collectVars (repl:12:27)
+</span>
+</code></pre>
+<p>Now that we have all variables,
+we can start writing the generator...</p>
+<p>All valid javascript statements are allowed,
+so you can also add a <code>debugger</code> inside of it.</p>
+<pre style="background-color:#2b303b;"><code class="language-js">
+<span style="color:#65737e;">// A simple response processor.
+</span><span style="color:#b48ead;">const </span><span style="color:#8fa1b3;">processResponse </span><span style="color:#c0c5ce;">= </span><span style="color:#b48ead;">async </span><span style="color:#c0c5ce;">(response) </span><span style="color:#b48ead;">=&gt; </span><span style="color:#c0c5ce;">{
+</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">const </span><span style="color:#c0c5ce;">{ </span><span style="color:#bf616a;">status </span><span style="color:#c0c5ce;">} = </span><span style="color:#bf616a;">response</span><span style="color:#c0c5ce;">;
+</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">data </span><span style="color:#c0c5ce;">= </span><span style="color:#bf616a;">await response</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">json</span><span style="color:#c0c5ce;">();
+</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">return </span><span style="color:#c0c5ce;">{
+</span><span style="color:#c0c5ce;">    &#39;</span><span style="color:#a3be8c;">status</span><span style="color:#c0c5ce;">&#39;: (</span><span style="color:#bf616a;">status </span><span style="color:#c0c5ce;">&gt;= </span><span style="color:#d08770;">200 </span><span style="color:#c0c5ce;">&amp;&amp; </span><span style="color:#bf616a;">status </span><span style="color:#c0c5ce;">&lt;= </span><span style="color:#d08770;">299 </span><span style="color:#c0c5ce;">? &#39;</span><span style="color:#a3be8c;">success</span><span style="color:#c0c5ce;">&#39; :
+</span><span style="color:#c0c5ce;">        (</span><span style="color:#bf616a;">status </span><span style="color:#c0c5ce;">&gt;= </span><span style="color:#d08770;">400 </span><span style="color:#c0c5ce;">? &#39;</span><span style="color:#a3be8c;">error</span><span style="color:#c0c5ce;">&#39; : &#39;</span><span style="color:#a3be8c;">redirect</span><span style="color:#c0c5ce;">&#39;)),
+</span><span style="color:#c0c5ce;">    </span><span style="color:#bf616a;">data
+</span><span style="color:#c0c5ce;">  }
+</span><span style="color:#c0c5ce;">}
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#b48ead;">const </span><span style="color:#8fa1b3;">makeApi </span><span style="color:#c0c5ce;">= scheme </span><span style="color:#b48ead;">=&gt; </span><span style="color:#c0c5ce;">{
+</span><span style="color:#c0c5ce;">  </span><span style="color:#65737e;">// get the method and route :P
+</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">const </span><span style="color:#c0c5ce;">[</span><span style="color:#bf616a;">method</span><span style="color:#c0c5ce;">, </span><span style="color:#bf616a;">route</span><span style="color:#c0c5ce;">] = </span><span style="color:#bf616a;">scheme</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">split</span><span style="color:#c0c5ce;">(&#39;</span><span style="color:#a3be8c;">:</span><span style="color:#c0c5ce;">&#39;);
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#c0c5ce;">  </span><span style="color:#65737e;">// convert to a template string style.
+</span><span style="color:#c0c5ce;">  </span><span style="color:#65737e;">// template strings must be wrapped with `\``
+</span><span style="color:#c0c5ce;">  </span><span style="color:#65737e;">// otherwise, you will get compiler errors.
+</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">routeTemplate </span><span style="color:#c0c5ce;">= `</span><span style="color:#96b5b4;">\`</span><span style="color:#c0c5ce;">${</span><span style="color:#bf616a;">route</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">replace</span><span style="color:#c0c5ce;">(/</span><span style="color:#96b5b4;">\{</span><span style="color:#c0c5ce;">/</span><span style="color:#b48ead;">g</span><span style="color:#c0c5ce;">, &#39;</span><span style="color:#a3be8c;">${</span><span style="color:#c0c5ce;">&#39;)}</span><span style="color:#96b5b4;">\`</span><span style="color:#c0c5ce;">`;
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">let </span><span style="color:#bf616a;">vars </span><span style="color:#c0c5ce;">= </span><span style="color:#8fa1b3;">collectVars</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">route</span><span style="color:#c0c5ce;">).</span><span style="color:#8fa1b3;">concat</span><span style="color:#c0c5ce;">(
+</span><span style="color:#c0c5ce;">    </span><span style="color:#bf616a;">method </span><span style="color:#c0c5ce;">!= &#39;</span><span style="color:#a3be8c;">get</span><span style="color:#c0c5ce;">&#39; ? [&quot;</span><span style="color:#a3be8c;">data=null</span><span style="color:#c0c5ce;">&quot;] : []
+</span><span style="color:#c0c5ce;">  ).</span><span style="color:#8fa1b3;">concat</span><span style="color:#c0c5ce;">(
+</span><span style="color:#c0c5ce;">    [&quot;</span><span style="color:#a3be8c;">headers={}</span><span style="color:#c0c5ce;">&quot;]
+</span><span style="color:#c0c5ce;">  );
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">fnBody </span><span style="color:#c0c5ce;">= `
+</span><span style="color:#a3be8c;">return fetch(
+</span><span style="color:#a3be8c;">  </span><span style="color:#c0c5ce;">${</span><span style="color:#bf616a;">routeTemplate</span><span style="color:#c0c5ce;">}</span><span style="color:#a3be8c;">,
+</span><span style="color:#a3be8c;">  {
+</span><span style="color:#a3be8c;">    method: &quot;</span><span style="color:#c0c5ce;">${</span><span style="color:#bf616a;">method</span><span style="color:#c0c5ce;">}</span><span style="color:#a3be8c;">&quot;,
+</span><span style="color:#a3be8c;">    ...headers,
+</span><span style="color:#a3be8c;">    body: data
+</span><span style="color:#a3be8c;">  }
+</span><span style="color:#a3be8c;">).then(processResponse);
+</span><span style="color:#c0c5ce;">`;
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">fn </span><span style="color:#c0c5ce;">= new </span><span style="color:#ebcb8b;">Function</span><span style="color:#c0c5ce;">(...</span><span style="color:#bf616a;">vars</span><span style="color:#c0c5ce;">, </span><span style="color:#bf616a;">fnBody</span><span style="color:#c0c5ce;">);
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#c0c5ce;">  </span><span style="color:#65737e;">// to make it easy to debug...
+</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">if </span><span style="color:#c0c5ce;">(process.env.NODE_ENV != &#39;</span><span style="color:#a3be8c;">production</span><span style="color:#c0c5ce;">&#39;) {
+</span><span style="color:#c0c5ce;">    </span><span style="color:#bf616a;">fn</span><span style="color:#c0c5ce;">.args = </span><span style="color:#bf616a;">vars</span><span style="color:#c0c5ce;">;
+</span><span style="color:#c0c5ce;">  }
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">fn</span><span style="color:#c0c5ce;">;
+</span><span style="color:#c0c5ce;">};
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">getApi </span><span style="color:#c0c5ce;">= </span><span style="color:#8fa1b3;">makeApi</span><span style="color:#c0c5ce;">(&quot;</span><span style="color:#a3be8c;">get:/a/b/c/{d}/e/{f}/</span><span style="color:#c0c5ce;">&quot;);
+</span><span style="color:#bf616a;">getApi</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">toString</span><span style="color:#c0c5ce;">();
+</span><span style="color:#65737e;">// &#39;function anonymous(d,f\n&#39; +
+</span><span style="color:#65737e;">//   &#39;) {\n&#39; +
+</span><span style="color:#65737e;">//   &#39;\n&#39; +
+</span><span style="color:#65737e;">//   &#39;return fetch(\n&#39; +
+</span><span style="color:#65737e;">//   &#39;  `/a/b/c/${d}/e/${f}/`,\n&#39; +
+</span><span style="color:#65737e;">//   &#39;  {\n&#39; +
+</span><span style="color:#65737e;">//   &#39;    method: &quot;get&quot;,\n&#39; +
+</span><span style="color:#65737e;">//   &#39;  }\n&#39; +
+</span><span style="color:#65737e;">//   &#39;).then(processResponse);\n&#39; +
+</span><span style="color:#65737e;">//   &#39;\n&#39; +
+</span><span style="color:#65737e;">//   &#39;}&#39;
+</span>
+</code></pre>
+<h3>Conclusion</h3>
+<p>Now you can start writing something
+more sophisticated than this. You can
+even use any user-defined functions
+as base for your new functions
+(try it with any fn.toString()),
+you can generate code from DSL
+(Domain Specific Language)...</p>
+<p>That are a lot more in this topic, and now,
+it's up to you to use your creativity!</p>
+<p>{% replit @diasbruno/metaprogramming-in-js %}</p></section>
+<script type="application/javascript" src="./js/highlight.min.js"></script>
+</main></body></html>

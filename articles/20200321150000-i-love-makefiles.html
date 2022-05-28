@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<meta charset="UTF-8">
+<title>diasbruno</title>
+<base href="..">
+<link rel="stylesheet" type="text/css" href="./css/reset.css" />
+<link rel="stylesheet" type="text/css" href="./css/style.css" />
+<link rel="stylesheet" type="text/css" href="./css/highlight.min.css" />
+<body><main>
+<nav>
+  <div><h1><a href="../">diasbruno</a></h1></div>
+  <div class="nav-links"><a href="..">articles</a></div>
+</nav>
+<section class="content"><h1>I love makefiles</h1>
+<div class="content-info"><span class="content-kind">article</span> &#10072; <time class="content-datetime" datetime="2020-03-21T15:00:00+00:00">May 28, 2022</time></div>
+<p>Why aren't we using old stuff?
+Is it just because it is...old?</p>
+<p><code>make</code> is great and we should use it more!</p>
+<p>We are not going to talk in details about
+<code>make</code> (there are a lot of good articles
+to read already), but to encorage
+its adoption to help make our lives easier.</p>
+<p>Let me give you a scenario...</p>
+<pre style="background-color:#2b303b;"><code class="language-sh">
+<span style="color:#96b5b4;">cd</span><span style="color:#c0c5ce;"> a_project
+</span><span style="color:#8fa1b3;">make
+</span><span style="color:#8fa1b3;">sudo</span><span style="color:#c0c5ce;"> make install
+</span>
+</code></pre>
+<p>Did we just build and installed on our system
+a <code>python</code> project? Or it was a <code>javascript</code> one?
+Maybe it was a <code>C++</code> project that uses <code>CMake</code>...</p>
+<p>This is <code>make</code>'s specialty...to execute tasks!</p>
+<p>What are the benefits:</p>
+<ul>
+<li>Now, we don't need to remember those long commands (<code>make docker-run</code>)</li>
+<li>Anyone can build, install and run the project</li>
+<li>You can use it to write an entire pipeline to generate
+changelogs, update versions, tagging,
+without knowing which tools it uses under the hood.</li>
+</ul></section>
+<script type="application/javascript" src="./js/highlight.min.js"></script>
+</main></body></html>

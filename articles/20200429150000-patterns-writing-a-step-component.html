@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<meta charset="UTF-8">
+<title>diasbruno</title>
+<base href="..">
+<link rel="stylesheet" type="text/css" href="./css/reset.css" />
+<link rel="stylesheet" type="text/css" href="./css/style.css" />
+<link rel="stylesheet" type="text/css" href="./css/highlight.min.css" />
+<body><main>
+<nav>
+  <div><h1><a href="../">diasbruno</a></h1></div>
+  <div class="nav-links"><a href="..">articles</a></div>
+</nav>
+<section class="content"><h1>Patterns: Writing a step component</h1>
+<div class="content-info"><span class="content-kind">article</span> &#10072; <time class="content-datetime" datetime="2020-04-29T15:00:00+00:00">May 28, 2022</time></div>
+<p>Step components are great, the problem is that
+they can get messy when we have
+a complex pipeline.</p>
+<p>If you can find a package/library/module
+that implements some kind of state machine
+in your programming language, that is fine.</p>
+<p>Here is one idea of how we can archive this
+with our bear hands...</p>
+<h2>The idea</h2>
+<p>Each step knows to which step it should go next, but
+they don't know how to get there. We can
+<code>delegate</code> this responsibility to a <code>controller</code>.</p>
+<h3>Step controller</h3>
+<p>The controller will be responsible
+to instantiate/render the initial step,
+and, will give to the step all the necessary
+functions to move around.</p>
+<p>Here is an interface to illustrate.</p>
+<pre style="background-color:#2b303b;"><code class="language-java">
+<span style="color:#b48ead;">interface </span><span style="color:#ebcb8b;">StepController </span><span style="color:#eff1f5;">{
+</span><span style="color:#eff1f5;">  </span><span style="color:#b48ead;">void </span><span style="color:#8fa1b3;">goToStep</span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">step</span><span style="color:#eff1f5;">);
+</span><span style="color:#eff1f5;">  </span><span style="color:#65737e;">// T represents additional stuff you can pass
+</span><span style="color:#eff1f5;">  </span><span style="color:#65737e;">// if you need extra functionality like submit function... 
+</span><span style="color:#eff1f5;">  </span><span style="color:#b48ead;">void </span><span style="color:#8fa1b3;">forward</span><span style="color:#eff1f5;">(</span><span style="color:#ebcb8b;">T </span><span style="color:#bf616a;">env</span><span style="color:#eff1f5;">);
+</span><span style="color:#eff1f5;">  </span><span style="color:#b48ead;">void </span><span style="color:#8fa1b3;">back</span><span style="color:#eff1f5;">(</span><span style="color:#ebcb8b;">T </span><span style="color:#bf616a;">env</span><span style="color:#eff1f5;">);
+</span><span style="color:#eff1f5;">}
+</span>
+</code></pre>
+<h3>Step component</h3>
+<p>Every <code>step</code> must implement <code>back</code> and <code>next</code>
+and they must return a <code>Step</code>, or, return
+a step in an asynchronous structure that
+your language supports, like <code>async/await</code>, <code>Promise</code>,
+<code>Future&lt;Step&gt;</code>...</p>
+<pre style="background-color:#2b303b;"><code class="language-java">
+<span style="color:#b48ead;">interface </span><span style="color:#ebcb8b;">Step </span><span style="color:#eff1f5;">{
+</span><span style="color:#eff1f5;">  </span><span style="color:#ebcb8b;">Step</span><span style="color:#eff1f5;"> | </span><span style="color:#ebcb8b;">Async</span><span style="color:#eff1f5;">&lt;</span><span style="color:#ebcb8b;">Step</span><span style="color:#eff1f5;">&gt; </span><span style="color:#8fa1b3;">back</span><span style="color:#eff1f5;">();
+</span><span style="color:#eff1f5;">  </span><span style="color:#ebcb8b;">Step</span><span style="color:#eff1f5;"> | </span><span style="color:#ebcb8b;">Async</span><span style="color:#eff1f5;">&lt;</span><span style="color:#ebcb8b;">Step</span><span style="color:#eff1f5;">&gt; </span><span style="color:#8fa1b3;">next</span><span style="color:#eff1f5;">();
+</span><span style="color:#eff1f5;">}
+</span>
+</code></pre>
+<p>{% replit @diasbruno/step-component-java %}</p>
+<h2>With React</h2>
+<p>Managing the state is not a problem,
+you can use either <code>useState</code>, <code>useReducer</code>...</p>
+<p>{% codesandbox step-component-react-8ietx %}</p></section>
+<script type="application/javascript" src="./js/highlight.min.js"></script>
+</main></body></html>

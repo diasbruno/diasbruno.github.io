@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+<meta charset="UTF-8">
+<title>diasbruno</title>
+<base href="..">
+<link rel="stylesheet" type="text/css" href="./css/reset.css" />
+<link rel="stylesheet" type="text/css" href="./css/style.css" />
+<link rel="stylesheet" type="text/css" href="./css/highlight.min.css" />
+<body><main>
+<nav>
+  <div><h1><a href="../">diasbruno</a></h1></div>
+  <div class="nav-links"><a href="..">articles</a></div>
+</nav>
+<section class="content"><h1>Modeling algorithms with types</h1>
+<div class="content-info"><span class="content-kind">article</span> &#10072; <time class="content-datetime" datetime="2021-12-03T15:00:00+00:00">May 28, 2022</time></div>
+<p>[First draft]</p>
+<p>Things get so much easier when you try
+to understand how the types work together
+to accomplish some work.</p>
+<p>In this article, we are going to model
+a system that apply discounts using many
+strategies.</p>
+<p>I'm going to use Haskell and javascript.
+haskell (or ocaml if you like) is great to visualize
+what's going on the type level...</p>
+<p>We can starting by trying to think
+on the simplest way to accomplish the job.</p>
+<p>We can start by using a simple subtraction <code>(-)</code>.</p>
+<pre style="background-color:#2b303b;"><code class="language-hs">
+<span style="color:#8fa1b3;">applyDiscount </span><span style="color:#b48ead;">:: Float -&gt; Float -&gt; Float
+</span><span style="color:#c0c5ce;">applyDiscount price discount = price - discount
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#b48ead;">let</span><span style="color:#c0c5ce;"> price = </span><span style="color:#d08770;">10.0
+</span><span style="color:#c0c5ce;">    discounts = [</span><span style="color:#d08770;">1.0</span><span style="color:#c0c5ce;">, </span><span style="color:#d08770;">4.0</span><span style="color:#c0c5ce;">]
+</span><span style="color:#c0c5ce;">    finalPrice = </span><span style="color:#d08770;">5.0
+</span><span style="color:#b48ead;">in</span><span style="color:#c0c5ce;"> foldl applyDiscount price discounts == finalPrice
+</span>
+</code></pre>
+<pre style="background-color:#2b303b;"><code class="language-js">
+<span style="color:#b48ead;">const </span><span style="color:#8fa1b3;">applyDiscount </span><span style="color:#c0c5ce;">= (price, discount) </span><span style="color:#b48ead;">=&gt; </span><span style="color:#bf616a;">price </span><span style="color:#c0c5ce;">- </span><span style="color:#bf616a;">discount</span><span style="color:#c0c5ce;">;
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">price </span><span style="color:#c0c5ce;">= </span><span style="color:#d08770;">10.0</span><span style="color:#c0c5ce;">;
+</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">discounts </span><span style="color:#c0c5ce;">= [</span><span style="color:#d08770;">1.0</span><span style="color:#c0c5ce;">, </span><span style="color:#d08770;">4.0</span><span style="color:#c0c5ce;">];
+</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">finalPrice </span><span style="color:#c0c5ce;">= </span><span style="color:#d08770;">5.0</span><span style="color:#c0c5ce;">;
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#bf616a;">discounts</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">reduce</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">applyDiscount</span><span style="color:#c0c5ce;">, </span><span style="color:#bf616a;">price</span><span style="color:#c0c5ce;">) == </span><span style="color:#bf616a;">finalPrice</span><span style="color:#c0c5ce;">;
+</span>
+</code></pre>
+<p>Then we can clarify what which <code>Float</code> means
+on the type specifiction...</p>
+<pre style="background-color:#2b303b;"><code class="language-hs">
+<span style="color:#b48ead;">type </span><span style="color:#d08770;">Price </span><span style="color:#c0c5ce;">= </span><span style="color:#d08770;">Float
+</span><span style="color:#b48ead;">type </span><span style="color:#d08770;">Discount </span><span style="color:#c0c5ce;">= </span><span style="color:#d08770;">Float
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#8fa1b3;">applyDiscount </span><span style="color:#b48ead;">:: Price -&gt; Discount -&gt; Price
+</span><span style="color:#c0c5ce;">applyDiscount price discount = price - discount
+</span>
+</code></pre>
+<p>Now we have <code>Price -&gt; Discount -&gt; Price</code> which means
+&quot;given a Price and a Discount, it returns back the price
+after the discount&quot;...and that means, in this case,
+that the Price acts like an accumulator!</p>
+<p>With this information, we can now improve <code>applyDiscount</code>
+to be more generic.</p>
+<pre style="background-color:#2b303b;"><code class="language-hs">
+<span style="color:#b48ead;">class </span><span style="color:#a3be8c;">ApplyDiscount </span><span style="color:#bf616a;">a </span><span style="color:#b48ead;">where
+</span><span style="color:#c0c5ce;">  </span><span style="color:#8fa1b3;">applyDiscount </span><span style="color:#b48ead;">:: </span><span style="color:#bf616a;">a </span><span style="color:#b48ead;">-&gt; Discount -&gt; </span><span style="color:#bf616a;">a
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#bf616a;">applyDiscounts</span><span style="color:#c0c5ce;"> :: </span><span style="color:#b48ead;">ApplyDiscount </span><span style="color:#bf616a;">a </span><span style="color:#b48ead;">=&gt; </span><span style="color:#bf616a;">a </span><span style="color:#b48ead;">-&gt;</span><span style="color:#c0c5ce;"> [</span><span style="color:#b48ead;">Discount</span><span style="color:#c0c5ce;">] </span><span style="color:#b48ead;">-&gt; </span><span style="color:#bf616a;">a
+</span><span style="color:#c0c5ce;">applyDiscounts = foldl applyDiscount
+</span>
+</code></pre>
+<p>In this case, in typescript, it should be the same as...</p>
+<pre style="background-color:#2b303b;"><code class="language-ts">
+<span style="color:#c0c5ce;">interface ApplyDiscount {
+</span><span style="color:#c0c5ce;">  applyDiscount(discount: Discount): ApplyDiscount;
+</span><span style="color:#c0c5ce;">}
+</span>
+</code></pre>
+<p>Now, we just need to create instances for each <code>a</code>!</p>
+<pre style="background-color:#2b303b;"><code class="language-hs">
+<span style="color:#b48ead;">newtype </span><span style="color:#d08770;">ApplyAll </span><span style="color:#c0c5ce;">= </span><span style="color:#d08770;">ApplyAll Price
+</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">deriving</span><span style="color:#c0c5ce;"> (</span><span style="color:#a3be8c;">Show</span><span style="color:#c0c5ce;">, </span><span style="color:#a3be8c;">Eq</span><span style="color:#c0c5ce;">)
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#b48ead;">instance ApplyDiscount </span><span style="color:#bf616a;">a </span><span style="color:#b48ead;">where
+</span><span style="color:#c0c5ce;">  applyDiscount (</span><span style="color:#d08770;">ApplyAll</span><span style="color:#c0c5ce;"> p) d = </span><span style="color:#d08770;">ApplyAll</span><span style="color:#c0c5ce;"> (p - d)
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#b48ead;">let</span><span style="color:#c0c5ce;"> discounts = [</span><span style="color:#d08770;">1.0</span><span style="color:#c0c5ce;">, </span><span style="color:#d08770;">4.0</span><span style="color:#c0c5ce;">]
+</span><span style="color:#c0c5ce;">    strategy = </span><span style="color:#d08770;">ApplyAll 10.0
+</span><span style="color:#c0c5ce;">    finalPrice = </span><span style="color:#d08770;">ApplyAll 5.0
+</span><span style="color:#b48ead;">in</span><span style="color:#c0c5ce;"> foldl applyDiscount strategy discounts == finalPrice
+</span>
+</code></pre>
+<pre style="background-color:#2b303b;"><code class="language-js">
+<span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">ApplyAll </span><span style="color:#eff1f5;">{
+</span><span style="color:#eff1f5;">  </span><span style="color:#8fa1b3;">constructor</span><span style="color:#eff1f5;">(</span><span style="color:#c0c5ce;">x</span><span style="color:#eff1f5;">) { </span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.price </span><span style="color:#c0c5ce;">= </span><span style="color:#bf616a;">x</span><span style="color:#eff1f5;">; }
+</span><span style="color:#eff1f5;">  </span><span style="color:#8fa1b3;">applyDiscount</span><span style="color:#eff1f5;">(</span><span style="color:#c0c5ce;">d</span><span style="color:#eff1f5;">) { </span><span style="color:#b48ead;">return </span><span style="color:#c0c5ce;">new </span><span style="color:#bf616a;">ApplyAll</span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.price </span><span style="color:#c0c5ce;">- </span><span style="color:#bf616a;">d</span><span style="color:#eff1f5;">); }
+</span><span style="color:#eff1f5;">}
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">discounts </span><span style="color:#c0c5ce;">= [</span><span style="color:#d08770;">1.0</span><span style="color:#c0c5ce;">, </span><span style="color:#d08770;">4.0</span><span style="color:#c0c5ce;">];
+</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">strategy </span><span style="color:#c0c5ce;">= new </span><span style="color:#bf616a;">ApplyAll</span><span style="color:#c0c5ce;">(</span><span style="color:#d08770;">10.0</span><span style="color:#c0c5ce;">);
+</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">finalPrice </span><span style="color:#c0c5ce;">= </span><span style="color:#d08770;">5.0</span><span style="color:#c0c5ce;">;
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">applyDiscount </span><span style="color:#c0c5ce;">=
+</span><span style="color:#c0c5ce;">  (strategy, discount) </span><span style="color:#b48ead;">=&gt; </span><span style="color:#bf616a;">strategy</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">applyDiscount</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">discount</span><span style="color:#c0c5ce;">);
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#bf616a;">discounts</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">reduce</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">applyDiscount</span><span style="color:#c0c5ce;">, </span><span style="color:#bf616a;">strategy</span><span style="color:#c0c5ce;">).price == </span><span style="color:#bf616a;">finalPrice</span><span style="color:#c0c5ce;">;
+</span>
+</code></pre>
+<p>Now we have our first strategy! <code>ApplyAll</code>
+just apply all discounts available,
+and this is a great first strategy.</p>
+<p>A new requirement has arived!</p>
+<p>Now, we have too apply all discounts,
+but we are not going to let the final price
+goes negative.</p>
+<pre style="background-color:#2b303b;"><code class="language-hs">
+<span style="color:#b48ead;">newtype </span><span style="color:#d08770;">ApplyAllNoNegative </span><span style="color:#c0c5ce;">= </span><span style="color:#d08770;">ApplyAllNoNegative Price
+</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">deriving</span><span style="color:#c0c5ce;"> (</span><span style="color:#a3be8c;">Show</span><span style="color:#c0c5ce;">, </span><span style="color:#a3be8c;">Eq</span><span style="color:#c0c5ce;">)
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#b48ead;">instance ApplyDiscount </span><span style="color:#bf616a;">a </span><span style="color:#b48ead;">where
+</span><span style="color:#c0c5ce;">  applyDiscount (</span><span style="color:#d08770;">ApplyAllNoNegative</span><span style="color:#c0c5ce;"> p) d =
+</span><span style="color:#c0c5ce;">    </span><span style="color:#d08770;">ApplyAllNoNegative</span><span style="color:#c0c5ce;"> (max </span><span style="color:#d08770;">0</span><span style="color:#c0c5ce;"> (p - d))
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#b48ead;">let</span><span style="color:#c0c5ce;"> discounts = [</span><span style="color:#d08770;">5.0</span><span style="color:#c0c5ce;">, </span><span style="color:#d08770;">5.0</span><span style="color:#c0c5ce;">]
+</span><span style="color:#c0c5ce;">    strategy = </span><span style="color:#d08770;">ApplyAllNoNegative 8.0
+</span><span style="color:#c0c5ce;">    finalPrice = </span><span style="color:#d08770;">ApplyAllNoNegative 0.0
+</span><span style="color:#b48ead;">in</span><span style="color:#c0c5ce;"> foldl applyDiscount strategy discounts == finalPrice
+</span>
+</code></pre>
+<pre style="background-color:#2b303b;"><code class="language-js">
+<span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">ApplyAllNoNegative </span><span style="color:#eff1f5;">{
+</span><span style="color:#eff1f5;">  </span><span style="color:#8fa1b3;">constructor</span><span style="color:#eff1f5;">(</span><span style="color:#c0c5ce;">x</span><span style="color:#eff1f5;">) { </span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.price </span><span style="color:#c0c5ce;">= </span><span style="color:#bf616a;">x</span><span style="color:#eff1f5;">; }
+</span><span style="color:#eff1f5;">  </span><span style="color:#8fa1b3;">applyDiscount</span><span style="color:#eff1f5;">(</span><span style="color:#c0c5ce;">d</span><span style="color:#eff1f5;">) {
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">price </span><span style="color:#c0c5ce;">= </span><span style="color:#ebcb8b;">Math</span><span style="color:#eff1f5;">.</span><span style="color:#8fa1b3;">max</span><span style="color:#eff1f5;">(</span><span style="color:#d08770;">0</span><span style="color:#eff1f5;">, </span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.price </span><span style="color:#c0c5ce;">- </span><span style="color:#bf616a;">d</span><span style="color:#eff1f5;">);
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">return </span><span style="color:#c0c5ce;">new </span><span style="color:#bf616a;">ApplyAllNoNegative</span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">price</span><span style="color:#eff1f5;">);
+</span><span style="color:#eff1f5;">  }
+</span><span style="color:#eff1f5;">}
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">discounts </span><span style="color:#c0c5ce;">= [</span><span style="color:#d08770;">1.0</span><span style="color:#c0c5ce;">, </span><span style="color:#d08770;">4.0</span><span style="color:#c0c5ce;">];
+</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">strategy </span><span style="color:#c0c5ce;">= new </span><span style="color:#bf616a;">ApplyAllNoNegative</span><span style="color:#c0c5ce;">(</span><span style="color:#d08770;">10.0</span><span style="color:#c0c5ce;">);
+</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">finalPrice </span><span style="color:#c0c5ce;">= </span><span style="color:#d08770;">5.0</span><span style="color:#c0c5ce;">;
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#bf616a;">discounts</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">reduce</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">applyDiscount</span><span style="color:#c0c5ce;">, </span><span style="color:#bf616a;">strategy</span><span style="color:#c0c5ce;">).price == </span><span style="color:#bf616a;">finalPrice</span><span style="color:#c0c5ce;">;
+</span>
+</code></pre>
+<p>Too easy!</p>
+<p>Our next task is to:</p>
+<p>&quot;If it goes negative, just collect
+all discounts that we couldn't apply,
+otherwise return the final price.&quot;</p>
+<pre style="background-color:#2b303b;"><code class="language-hs">
+<span style="color:#b48ead;">newtype </span><span style="color:#d08770;">CollectDiscountWhenGoesNegative </span><span style="color:#c0c5ce;">=
+</span><span style="color:#c0c5ce;">  </span><span style="color:#d08770;">Applying Price </span><span style="color:#c0c5ce;">|
+</span><span style="color:#c0c5ce;">  </span><span style="color:#d08770;">NotApplied</span><span style="color:#c0c5ce;"> [</span><span style="color:#d08770;">Discount</span><span style="color:#c0c5ce;">]
+</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">deriving</span><span style="color:#c0c5ce;"> (</span><span style="color:#a3be8c;">Show</span><span style="color:#c0c5ce;">, </span><span style="color:#a3be8c;">Eq</span><span style="color:#c0c5ce;">)
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#b48ead;">instance ApplyDiscount </span><span style="color:#bf616a;">a </span><span style="color:#b48ead;">where
+</span><span style="color:#c0c5ce;">  applyDiscount (</span><span style="color:#d08770;">Applying</span><span style="color:#c0c5ce;"> p) d =
+</span><span style="color:#c0c5ce;">    </span><span style="color:#b48ead;">let</span><span style="color:#c0c5ce;"> x = p - d
+</span><span style="color:#c0c5ce;">    </span><span style="color:#b48ead;">in if</span><span style="color:#c0c5ce;"> x &gt;= </span><span style="color:#d08770;">0 </span><span style="color:#b48ead;">then
+</span><span style="color:#c0c5ce;">         </span><span style="color:#d08770;">Applying</span><span style="color:#c0c5ce;"> x
+</span><span style="color:#c0c5ce;">       </span><span style="color:#b48ead;">else
+</span><span style="color:#c0c5ce;">         </span><span style="color:#d08770;">NotApplied</span><span style="color:#c0c5ce;"> [d]
+</span><span style="color:#c0c5ce;">  applyDiscount (</span><span style="color:#d08770;">NotApplied</span><span style="color:#c0c5ce;"> ls) c =
+</span><span style="color:#c0c5ce;">    </span><span style="color:#d08770;">NotApplied</span><span style="color:#c0c5ce;"> (c : ls)
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#b48ead;">let</span><span style="color:#c0c5ce;"> discounts = [</span><span style="color:#d08770;">5.0</span><span style="color:#c0c5ce;">, </span><span style="color:#d08770;">5.0</span><span style="color:#c0c5ce;">]
+</span><span style="color:#c0c5ce;">    strategy = </span><span style="color:#d08770;">Applying 10.0
+</span><span style="color:#c0c5ce;">    finalPrice = </span><span style="color:#d08770;">Applying 0.0
+</span><span style="color:#b48ead;">in</span><span style="color:#c0c5ce;"> foldl applyDiscount strategy discounts == finalPrice
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#b48ead;">let</span><span style="color:#c0c5ce;"> discounts = [</span><span style="color:#d08770;">5.0</span><span style="color:#c0c5ce;">, </span><span style="color:#d08770;">8.0</span><span style="color:#c0c5ce;">]
+</span><span style="color:#c0c5ce;">    strategy = </span><span style="color:#d08770;">Applying 10.0
+</span><span style="color:#c0c5ce;">    finalPrice = </span><span style="color:#d08770;">NotApplied</span><span style="color:#c0c5ce;"> [</span><span style="color:#d08770;">8.0</span><span style="color:#c0c5ce;">]
+</span><span style="color:#b48ead;">in</span><span style="color:#c0c5ce;"> foldl applyDiscount strategy discounts == finalPrice
+</span>
+</code></pre>
+<pre style="background-color:#2b303b;"><code class="language-js">
+<span style="color:#65737e;">// Don&#39;t do this! It&#39;s just to help visualize what&#39;s going on.
+</span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">CollectDiscountWhenGoesNegative </span><span style="color:#eff1f5;">{}
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">NotApplied </span><span style="color:#b48ead;">extends </span><span style="color:#a3be8c;">CollectDiscountWhenGoesNegative </span><span style="color:#eff1f5;">{
+</span><span style="color:#eff1f5;">  </span><span style="color:#8fa1b3;">constructor</span><span style="color:#eff1f5;">(</span><span style="color:#c0c5ce;">x</span><span style="color:#eff1f5;">) { </span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.list </span><span style="color:#c0c5ce;">= </span><span style="color:#bf616a;">x</span><span style="color:#eff1f5;">; }
+</span><span style="color:#eff1f5;">  </span><span style="color:#8fa1b3;">applyDiscount</span><span style="color:#eff1f5;">(</span><span style="color:#c0c5ce;">d</span><span style="color:#eff1f5;">) { </span><span style="color:#bf616a;">retun </span><span style="color:#c0c5ce;">new </span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.list.</span><span style="color:#8fa1b3;">concat</span><span style="color:#eff1f5;">([</span><span style="color:#bf616a;">d</span><span style="color:#eff1f5;">])); }
+</span><span style="color:#eff1f5;">}
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">Applying </span><span style="color:#b48ead;">extends </span><span style="color:#a3be8c;">CollectDiscountWhenGoesNegative </span><span style="color:#eff1f5;">{
+</span><span style="color:#eff1f5;">  </span><span style="color:#8fa1b3;">constructor</span><span style="color:#eff1f5;">(</span><span style="color:#c0c5ce;">x</span><span style="color:#eff1f5;">) { </span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.price </span><span style="color:#c0c5ce;">= </span><span style="color:#bf616a;">x</span><span style="color:#eff1f5;">; }
+</span><span style="color:#eff1f5;">  </span><span style="color:#8fa1b3;">applyDiscount</span><span style="color:#eff1f5;">(</span><span style="color:#c0c5ce;">d</span><span style="color:#eff1f5;">) {
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">price </span><span style="color:#c0c5ce;">= </span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.price </span><span style="color:#c0c5ce;">- </span><span style="color:#bf616a;">d</span><span style="color:#eff1f5;">;
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">if </span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">price </span><span style="color:#c0c5ce;">&gt;= </span><span style="color:#d08770;">0</span><span style="color:#eff1f5;">) {
+</span><span style="color:#eff1f5;">      </span><span style="color:#b48ead;">return </span><span style="color:#c0c5ce;">new </span><span style="color:#bf616a;">Applying</span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">price</span><span style="color:#eff1f5;">);
+</span><span style="color:#eff1f5;">    } </span><span style="color:#b48ead;">else </span><span style="color:#eff1f5;">{
+</span><span style="color:#eff1f5;">      </span><span style="color:#b48ead;">return </span><span style="color:#c0c5ce;">new </span><span style="color:#bf616a;">NotApplied</span><span style="color:#eff1f5;">([</span><span style="color:#bf616a;">d</span><span style="color:#eff1f5;">]);
+</span><span style="color:#eff1f5;">    }
+</span><span style="color:#eff1f5;">  }
+</span><span style="color:#eff1f5;">}
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">discounts </span><span style="color:#c0c5ce;">= [</span><span style="color:#d08770;">1.0</span><span style="color:#c0c5ce;">, </span><span style="color:#d08770;">4.0</span><span style="color:#c0c5ce;">];
+</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">strategy </span><span style="color:#c0c5ce;">= new </span><span style="color:#bf616a;">Applying</span><span style="color:#c0c5ce;">(</span><span style="color:#d08770;">10.0</span><span style="color:#c0c5ce;">);
+</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">finalPrice </span><span style="color:#c0c5ce;">= </span><span style="color:#d08770;">5.0</span><span style="color:#c0c5ce;">;
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#bf616a;">discounts</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">reduce</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">applyDiscount</span><span style="color:#c0c5ce;">, </span><span style="color:#bf616a;">strategy</span><span style="color:#c0c5ce;">).price == </span><span style="color:#bf616a;">finalPrice</span><span style="color:#c0c5ce;">;
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">discounts </span><span style="color:#c0c5ce;">= [</span><span style="color:#d08770;">1.0</span><span style="color:#c0c5ce;">, </span><span style="color:#d08770;">4.0</span><span style="color:#c0c5ce;">];
+</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">strategy </span><span style="color:#c0c5ce;">= new </span><span style="color:#bf616a;">Applying</span><span style="color:#c0c5ce;">(</span><span style="color:#d08770;">1.0</span><span style="color:#c0c5ce;">);
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#bf616a;">discounts</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">reduce</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">applyDiscount</span><span style="color:#c0c5ce;">, </span><span style="color:#bf616a;">strategy</span><span style="color:#c0c5ce;">).list == [</span><span style="color:#d08770;">4.0</span><span style="color:#c0c5ce;">];
+</span>
+</code></pre>
+<p>It's really easy to work with this. If
+the discount goes negative, we know exactly
+which discounts were not applied to mark on
+the frontend as feedback.</p>
+<p>Our final task is:</p>
+<p>&quot;It must not apply duplicate discounts,
+and it must keep the duplicated to send as feedback
+to the user. Also, it must use the previous strategies
+so we can allow it goes negative or not.&quot;</p>
+<pre style="background-color:#2b303b;"><code class="language-hs">
+<span style="color:#c0c5ce;">
+</span><span style="color:#b48ead;">type </span><span style="color:#d08770;">AlreadyAppliedDiscounts </span><span style="color:#c0c5ce;">= </span><span style="color:#d08770;">S</span><span style="color:#c0c5ce;">.</span><span style="color:#d08770;">Set Discount
+</span><span style="color:#b48ead;">type </span><span style="color:#d08770;">DuplicatedDiscounts </span><span style="color:#c0c5ce;">= [</span><span style="color:#d08770;">Discount</span><span style="color:#c0c5ce;">]
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#b48ead;">data </span><span style="color:#d08770;">DontApplyDuplicate</span><span style="color:#c0c5ce;"> a =
+</span><span style="color:#c0c5ce;"> </span><span style="color:#d08770;">DontApplyDuplicate AlreadyAppliedDiscounts DuplicatedDiscounts</span><span style="color:#c0c5ce;"> a
+</span><span style="color:#c0c5ce;"> </span><span style="color:#b48ead;">deriving</span><span style="color:#c0c5ce;"> (</span><span style="color:#a3be8c;">Show</span><span style="color:#c0c5ce;">, </span><span style="color:#a3be8c;">Eq</span><span style="color:#c0c5ce;">)
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#c0c5ce;">dadup = </span><span style="color:#d08770;">DontApplyDuplicate
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#b48ead;">instance</span><span style="color:#c0c5ce;"> (</span><span style="color:#b48ead;">ApplyDiscount </span><span style="color:#bf616a;">a</span><span style="color:#c0c5ce;">) </span><span style="color:#b48ead;">=&gt; ApplyDiscount</span><span style="color:#c0c5ce;"> (</span><span style="color:#b48ead;">DontApplyDuplicate </span><span style="color:#bf616a;">a</span><span style="color:#c0c5ce;">) </span><span style="color:#b48ead;">where
+</span><span style="color:#c0c5ce;"> applyDiscount (</span><span style="color:#d08770;">DontApplyDuplicate</span><span style="color:#c0c5ce;"> ls xs s) d =
+</span><span style="color:#c0c5ce;">   </span><span style="color:#b48ead;">if </span><span style="color:#d08770;">S</span><span style="color:#c0c5ce;">.member d ls </span><span style="color:#b48ead;">then
+</span><span style="color:#c0c5ce;">     dadup ls (d : xs) s
+</span><span style="color:#c0c5ce;">   </span><span style="color:#b48ead;">else
+</span><span style="color:#c0c5ce;">     dadup (</span><span style="color:#d08770;">S</span><span style="color:#c0c5ce;">.insert d ls) xs $ applyDiscount s d
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#65737e;">-- could be a `Default` instance
+</span><span style="color:#c0c5ce;">new = dadup </span><span style="color:#d08770;">S</span><span style="color:#c0c5ce;">.empty </span><span style="color:#d08770;">[]
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#b48ead;">let</span><span style="color:#c0c5ce;"> discounts = [</span><span style="color:#d08770;">5.0</span><span style="color:#c0c5ce;">, </span><span style="color:#d08770;">5.0</span><span style="color:#c0c5ce;">]
+</span><span style="color:#c0c5ce;">   strategy = new (</span><span style="color:#d08770;">Applying 10.0</span><span style="color:#c0c5ce;">)
+</span><span style="color:#c0c5ce;">   finalPrice = dadup (</span><span style="color:#d08770;">S</span><span style="color:#c0c5ce;">.fromList [</span><span style="color:#d08770;">5.0</span><span style="color:#c0c5ce;">]) [</span><span style="color:#d08770;">5.0</span><span style="color:#c0c5ce;">] (</span><span style="color:#d08770;">Applying 5</span><span style="color:#c0c5ce;">)
+</span><span style="color:#b48ead;">in</span><span style="color:#c0c5ce;"> foldl applyDiscount strategy discounts == finalPrice
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#b48ead;">let</span><span style="color:#c0c5ce;"> discounts = [</span><span style="color:#d08770;">5.0</span><span style="color:#c0c5ce;">, </span><span style="color:#d08770;">8.0</span><span style="color:#c0c5ce;">]
+</span><span style="color:#c0c5ce;">   strategy = </span><span style="color:#d08770;">Applying 10.0
+</span><span style="color:#c0c5ce;">   finalPrice = </span><span style="color:#d08770;">NotApplied</span><span style="color:#c0c5ce;"> [</span><span style="color:#d08770;">8.0</span><span style="color:#c0c5ce;">]
+</span><span style="color:#b48ead;">in</span><span style="color:#c0c5ce;"> foldl applyDiscount strategy discounts == finalPrice
+</span>
+</code></pre>
+<pre style="background-color:#2b303b;"><code class="language-js">
+<span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">DontApplyDuplicate </span><span style="color:#eff1f5;">{
+</span><span style="color:#eff1f5;">  </span><span style="color:#8fa1b3;">constructor</span><span style="color:#eff1f5;">(</span><span style="color:#c0c5ce;">strategy</span><span style="color:#eff1f5;">) {
+</span><span style="color:#eff1f5;">    </span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.usedDiscounts </span><span style="color:#c0c5ce;">= new </span><span style="color:#ebcb8b;">Set</span><span style="color:#eff1f5;">();
+</span><span style="color:#eff1f5;">    </span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.duplicated </span><span style="color:#c0c5ce;">= </span><span style="color:#eff1f5;">[];
+</span><span style="color:#eff1f5;">    </span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.strategy </span><span style="color:#c0c5ce;">= </span><span style="color:#bf616a;">strategy</span><span style="color:#eff1f5;">;
+</span><span style="color:#eff1f5;">  }
+</span><span style="color:#eff1f5;">  </span><span style="color:#8fa1b3;">applyDiscount</span><span style="color:#eff1f5;">(</span><span style="color:#c0c5ce;">d</span><span style="color:#eff1f5;">) {
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">if </span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.usedDiscount.</span><span style="color:#8fa1b3;">has</span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">d</span><span style="color:#eff1f5;">)) {
+</span><span style="color:#eff1f5;">     </span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.duplicated.</span><span style="color:#96b5b4;">push</span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">d</span><span style="color:#eff1f5;">);
+</span><span style="color:#eff1f5;">     </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">;
+</span><span style="color:#eff1f5;">    }
+</span><span style="color:#eff1f5;">    </span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.usedDiscount.</span><span style="color:#96b5b4;">add</span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">d</span><span style="color:#eff1f5;">);
+</span><span style="color:#eff1f5;">    </span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.strategy </span><span style="color:#c0c5ce;">= </span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.strategy.</span><span style="color:#8fa1b3;">applyDiscount</span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">d</span><span style="color:#eff1f5;">)
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">;
+</span><span style="color:#eff1f5;">  }
+</span><span style="color:#eff1f5;">}
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">discounts </span><span style="color:#c0c5ce;">= [</span><span style="color:#d08770;">1.0</span><span style="color:#c0c5ce;">, </span><span style="color:#d08770;">4.0</span><span style="color:#c0c5ce;">];
+</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">strategy </span><span style="color:#c0c5ce;">= new </span><span style="color:#bf616a;">DontApplyDuplicate</span><span style="color:#c0c5ce;">(new </span><span style="color:#bf616a;">Applying</span><span style="color:#c0c5ce;">(</span><span style="color:#d08770;">10.0</span><span style="color:#c0c5ce;">));
+</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">finalPrice </span><span style="color:#c0c5ce;">= </span><span style="color:#d08770;">5.0</span><span style="color:#c0c5ce;">;
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#bf616a;">discounts</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">reduce</span><span style="color:#c0c5ce;">(
+</span><span style="color:#c0c5ce;">  (p, d) </span><span style="color:#b48ead;">=&gt; </span><span style="color:#bf616a;">p</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">applyDiscount</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">d</span><span style="color:#c0c5ce;">),
+</span><span style="color:#c0c5ce;">  </span><span style="color:#bf616a;">strategy
+</span><span style="color:#c0c5ce;">).price == </span><span style="color:#bf616a;">finalPrice</span><span style="color:#c0c5ce;">;
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">discounts </span><span style="color:#c0c5ce;">= [</span><span style="color:#d08770;">1.0</span><span style="color:#c0c5ce;">, </span><span style="color:#d08770;">1.0</span><span style="color:#c0c5ce;">, </span><span style="color:#d08770;">4.0</span><span style="color:#c0c5ce;">, </span><span style="color:#d08770;">6.0</span><span style="color:#c0c5ce;">];
+</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">strategy </span><span style="color:#c0c5ce;">= new </span><span style="color:#bf616a;">DontApplyDuplicate</span><span style="color:#c0c5ce;">(new </span><span style="color:#bf616a;">Applying</span><span style="color:#c0c5ce;">(</span><span style="color:#d08770;">10.0</span><span style="color:#c0c5ce;">));
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#b48ead;">const </span><span style="color:#c0c5ce;">{
+</span><span style="color:#c0c5ce;">  </span><span style="color:#bf616a;">usedDiscounts</span><span style="color:#c0c5ce;">,
+</span><span style="color:#c0c5ce;">  </span><span style="color:#bf616a;">duplicated</span><span style="color:#c0c5ce;">,
+</span><span style="color:#c0c5ce;">  strategy: { </span><span style="color:#bf616a;">list </span><span style="color:#c0c5ce;">},
+</span><span style="color:#c0c5ce;">} = </span><span style="color:#bf616a;">discounts</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">reduce</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">applyDiscount</span><span style="color:#c0c5ce;">, </span><span style="color:#bf616a;">strategy</span><span style="color:#c0c5ce;">);
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#bf616a;">usedDiscount </span><span style="color:#c0c5ce;">= [</span><span style="color:#d08770;">1.0</span><span style="color:#c0c5ce;">, </span><span style="color:#d08770;">4.0</span><span style="color:#c0c5ce;">];
+</span><span style="color:#bf616a;">duplicated </span><span style="color:#c0c5ce;">= [</span><span style="color:#d08770;">1.0</span><span style="color:#c0c5ce;">];
+</span><span style="color:#bf616a;">list </span><span style="color:#c0c5ce;">= [</span><span style="color:#d08770;">6.0</span><span style="color:#c0c5ce;">];
+</span>
+</code></pre></section>
+<script type="application/javascript" src="./js/highlight.min.js"></script>
+</main></body></html>
