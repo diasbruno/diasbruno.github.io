@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+<meta charset="UTF-8">
+<title>diasbruno</title>
+<base href="/">
+<link rel="stylesheet" type="text/css" href="./css/reset.css" />
+<link rel="stylesheet" type="text/css" href="./css/style.css" />
+<link rel="stylesheet" type="text/css" href="./css/highlight.min.css" />
+<body><main>
+<nav>
+  <div><a href="/"><h1>diasbruno</h1></a></div>
+  <div class="nav-links"><a href="/">articles</a></div>
+</nav>
+<section class="content"><h1>Property-based testing for the win!</h1>
+<div class="content-info"><span class="content-kind">article</span> &#10072; <time class="content-datetime" datetime="2022-05-28T22:30:52+00:00">May 28, 2022</time></div>
+<p>Favorite last words:</p>
+<pre style="background-color:#2b303b;"><code>
+<span style="color:#c0c5ce;">&quot;The feature is fully tested. EVERY POSSIBLE CASE!&quot;
+</span>
+</code></pre>
+<p>It's very hard to think about every possible test case
+for a feature.</p>
+<p>Let's see an example:</p>
+<pre style="background-color:#2b303b;"><code class="language-rb">
+<span style="color:#c0c5ce;">describe &#39;</span><span style="color:#a3be8c;">filling the bucket</span><span style="color:#c0c5ce;">&#39; </span><span style="color:#b48ead;">do
+</span><span style="color:#c0c5ce;">  it &#39;</span><span style="color:#a3be8c;">should not overflow</span><span style="color:#c0c5ce;">&#39; </span><span style="color:#b48ead;">do
+</span><span style="color:#c0c5ce;">    </span><span style="color:#65737e;"># args are (capacity, quantity)
+</span><span style="color:#c0c5ce;">    b = described_class.filled(</span><span style="color:#d08770;">2</span><span style="color:#c0c5ce;">, </span><span style="color:#d08770;">0</span><span style="color:#c0c5ce;">)
+</span><span style="color:#c0c5ce;">    c = </span><span style="color:#ebcb8b;">Cup</span><span style="color:#c0c5ce;">.filled(</span><span style="color:#d08770;">2</span><span style="color:#c0c5ce;">, </span><span style="color:#d08770;">2</span><span style="color:#c0c5ce;">)
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#c0c5ce;">    expect(b.fill(c).quantity).to be &lt;= b.capacity
+</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">end
+</span><span style="color:#b48ead;">end
+</span>
+</code></pre>
+<p>What can go wrong?</p>
+<p>Problem is that we know how to write
+the easy solution.</p>
+<p>What would happen if we change the capacity and quantity
+to be random numbers?</p>
+<pre style="background-color:#2b303b;"><code class="language-rb">
+<span style="color:#c0c5ce;">describe &#39;</span><span style="color:#a3be8c;">filling the bucket</span><span style="color:#c0c5ce;">&#39; </span><span style="color:#b48ead;">do
+</span><span style="color:#c0c5ce;">  it &#39;</span><span style="color:#a3be8c;">should not overflow</span><span style="color:#c0c5ce;">&#39; </span><span style="color:#b48ead;">do
+</span><span style="color:#c0c5ce;">    </span><span style="color:#65737e;"># args are (capacity, quantity)
+</span><span style="color:#c0c5ce;">    b = described_class.filled(</span><span style="color:#96b5b4;">rand</span><span style="color:#c0c5ce;">, </span><span style="color:#96b5b4;">rand</span><span style="color:#c0c5ce;">)
+</span><span style="color:#c0c5ce;">    c = </span><span style="color:#ebcb8b;">Cup</span><span style="color:#c0c5ce;">.filled(</span><span style="color:#96b5b4;">rand</span><span style="color:#c0c5ce;">, </span><span style="color:#96b5b4;">rand</span><span style="color:#c0c5ce;">)
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#c0c5ce;">    expect(b.fill(c).quantity).to be &lt;= b.capacity
+</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">end
+</span><span style="color:#b48ead;">end
+</span>
+</code></pre>
+<p>Eventually it fails. One of the possibilities
+is that the <code>Cup</code> can be bigger than the <code>Bucket</code>, so
+it will overflow.</p>
+<p>So, let's improve the testing to check some properties
+about the problem.</p>
+<pre style="background-color:#2b303b;"><code class="language-rb">
+<span style="color:#c0c5ce;">describe &#39;</span><span style="color:#a3be8c;">filling the bucket</span><span style="color:#c0c5ce;">&#39; </span><span style="color:#b48ead;">do
+</span><span style="color:#c0c5ce;">  it &#39;</span><span style="color:#a3be8c;">should not overflow</span><span style="color:#c0c5ce;">&#39; </span><span style="color:#b48ead;">do
+</span><span style="color:#c0c5ce;">    b = </span><span style="color:#ebcb8b;">Bucket</span><span style="color:#c0c5ce;">.filled(</span><span style="color:#96b5b4;">rand</span><span style="color:#c0c5ce;">, </span><span style="color:#96b5b4;">rand</span><span style="color:#c0c5ce;">)
+</span><span style="color:#c0c5ce;">    c = </span><span style="color:#ebcb8b;">Cup</span><span style="color:#c0c5ce;">.filled(</span><span style="color:#96b5b4;">rand</span><span style="color:#c0c5ce;">, </span><span style="color:#96b5b4;">rand</span><span style="color:#c0c5ce;">)
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#c0c5ce;">    </span><span style="color:#65737e;"># if the cup is not empty, bucket must not be full
+</span><span style="color:#c0c5ce;">    </span><span style="color:#65737e;"># there is the case where the cup is empty
+</span><span style="color:#c0c5ce;">    </span><span style="color:#b48ead;">if</span><span style="color:#c0c5ce;"> c.quantity &gt; </span><span style="color:#d08770;">0
+</span><span style="color:#c0c5ce;">        expect(b.quantity).to be &lt; b.capacity
+</span><span style="color:#c0c5ce;">    </span><span style="color:#b48ead;">else
+</span><span style="color:#c0c5ce;">        expect(b.quantity).to be &lt;= b.capacity
+</span><span style="color:#c0c5ce;">    </span><span style="color:#b48ead;">end
+</span><span style="color:#c0c5ce;">    </span><span style="color:#65737e;"># cup must not overflow
+</span><span style="color:#c0c5ce;">    expect(c.quantity).to be &lt;= c.capacity
+</span><span style="color:#c0c5ce;">    </span><span style="color:#65737e;"># filling the bucket must not overflow
+</span><span style="color:#c0c5ce;">    expect(b.fill(c).quantity).to be &lt;= b.capacity
+</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">end
+</span><span style="color:#b48ead;">end
+</span>
+</code></pre>
+<p>Now we can understand a little more about the problem.</p>
+<p>It will fail randomily on one of the assertions and
+part of the problem is that there is no validation
+when we construct both objects.</p>
+<pre style="background-color:#2b303b;"><code class="language-rb">
+<span style="color:#65737e;"># both classes extends this one
+</span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">Recipient
+</span><span style="color:#eff1f5;">  </span><span style="color:#b48ead;">def </span><span style="color:#bf616a;">self</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">validate</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">capacity</span><span style="color:#c0c5ce;">, </span><span style="color:#bf616a;">quantity</span><span style="color:#c0c5ce;">)
+</span><span style="color:#c0c5ce;">    assert(capacity &gt; </span><span style="color:#d08770;">0</span><span style="color:#c0c5ce;">, </span><span style="color:#bf616a;">CAPACITY_GREATER_THAN_ZERO</span><span style="color:#c0c5ce;">)
+</span><span style="color:#c0c5ce;">    assert(quantity &gt;= </span><span style="color:#d08770;">0 </span><span style="color:#c0c5ce;">&amp;&amp; quantity &lt;= capacity, </span><span style="color:#bf616a;">QUATITY_BETWEEN_ZERO_AND_CAPACITY</span><span style="color:#c0c5ce;">)
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#c0c5ce;">    </span><span style="color:#d08770;">true
+</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">end
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">def </span><span style="color:#bf616a;">self</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">filled</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">capacity</span><span style="color:#c0c5ce;">, </span><span style="color:#bf616a;">quantity</span><span style="color:#c0c5ce;">)
+</span><span style="color:#c0c5ce;">    validate(capacity, quantity)
+</span><span style="color:#c0c5ce;">    </span><span style="color:#8fa1b3;">new</span><span style="color:#c0c5ce;">(capacity, quantity)
+</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">end
+</span><span style="color:#b48ead;">end
+</span>
+</code></pre>
+<p>Now we know that we can only instantiate a valid recipient...
+time to write some tests for the <code>Recipient</code> class, but instead
+of thinking on the valid ones, we are going to stress out
+the failing case.</p>
+<pre style="background-color:#2b303b;"><code class="language-rb">
+<span style="color:#c0c5ce;">describe &#39;</span><span style="color:#a3be8c;">instantiate</span><span style="color:#c0c5ce;">&#39; </span><span style="color:#b48ead;">do
+</span><span style="color:#c0c5ce;">  it &#39;</span><span style="color:#a3be8c;">must fail for every case</span><span style="color:#c0c5ce;">&#39; </span><span style="color:#b48ead;">do
+</span><span style="color:#c0c5ce;">    </span><span style="color:#65737e;"># we create a pair of integers (capacity, quantity)
+</span><span style="color:#c0c5ce;">    </span><span style="color:#65737e;"># and they have a special property...
+</span><span style="color:#c0c5ce;">    </span><span style="color:#65737e;"># if the test fails, this kind of test
+</span><span style="color:#c0c5ce;">    </span><span style="color:#65737e;"># knows how to &quot;shrink&quot; the result
+</span><span style="color:#c0c5ce;">    </span><span style="color:#65737e;"># to find the smallest possible failing case.
+</span><span style="color:#c0c5ce;">    </span><span style="color:#65737e;"># by default it will run 100 times with different
+</span><span style="color:#c0c5ce;">    </span><span style="color:#65737e;"># values.
+</span><span style="color:#c0c5ce;">    </span><span style="color:#96b5b4;">p </span><span style="color:#c0c5ce;">= property_of { [integer, integer] }
+</span><span style="color:#c0c5ce;">    </span><span style="color:#96b5b4;">p</span><span style="color:#c0c5ce;">.check </span><span style="color:#b48ead;">do </span><span style="color:#c0c5ce;">|</span><span style="color:#bf616a;">opts</span><span style="color:#c0c5ce;">|
+</span><span style="color:#c0c5ce;">      capacity, quantity = opts
+</span><span style="color:#c0c5ce;">      expect {
+</span><span style="color:#c0c5ce;">        </span><span style="color:#ebcb8b;">Recipient</span><span style="color:#c0c5ce;">.filled(capacity, quantity)
+</span><span style="color:#c0c5ce;">      }.to raise_error(</span><span style="color:#bf616a;">StandardError</span><span style="color:#c0c5ce;">)
+</span><span style="color:#c0c5ce;">    </span><span style="color:#b48ead;">end
+</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">end
+</span><span style="color:#b48ead;">end
+</span>
+</code></pre>
+<p>This is how you can write a property-based testing, but it's
+not done yet.</p>
+<p>Every pair of values must be invalid in this case and if we
+got it right we don't need to write the other case.</p>
+<pre style="background-color:#2b303b;"><code class="language-rb">
+<span style="color:#c0c5ce;">describe &#39;</span><span style="color:#a3be8c;">instantiate</span><span style="color:#c0c5ce;">&#39; </span><span style="color:#b48ead;">do
+</span><span style="color:#c0c5ce;">  it &#39;</span><span style="color:#a3be8c;">must fail for every case</span><span style="color:#c0c5ce;">&#39; </span><span style="color:#b48ead;">do
+</span><span style="color:#c0c5ce;">    </span><span style="color:#96b5b4;">p </span><span style="color:#c0c5ce;">= property_of </span><span style="color:#b48ead;">do
+</span><span style="color:#c0c5ce;">      capacity = integer
+</span><span style="color:#c0c5ce;">      quantity = integer
+</span><span style="color:#c0c5ce;">      guard(capacity &lt; </span><span style="color:#d08770;">0 </span><span style="color:#c0c5ce;">|| quantity &lt; </span><span style="color:#d08770;">0 </span><span style="color:#c0c5ce;">|| quantity &gt; capacity)
+</span><span style="color:#c0c5ce;">      [capacity, quantity]
+</span><span style="color:#c0c5ce;">    </span><span style="color:#b48ead;">end
+</span><span style="color:#c0c5ce;">    </span><span style="color:#96b5b4;">p</span><span style="color:#c0c5ce;">.check </span><span style="color:#b48ead;">do </span><span style="color:#c0c5ce;">|</span><span style="color:#bf616a;">opts</span><span style="color:#c0c5ce;">|
+</span><span style="color:#c0c5ce;">      capacity, quantity = opts
+</span><span style="color:#c0c5ce;">      expect {
+</span><span style="color:#c0c5ce;">        </span><span style="color:#ebcb8b;">Recipient</span><span style="color:#c0c5ce;">.filled(capacity, quantity)
+</span><span style="color:#c0c5ce;">      }.to raise_error(</span><span style="color:#bf616a;">StandardError</span><span style="color:#c0c5ce;">)
+</span><span style="color:#c0c5ce;">    </span><span style="color:#b48ead;">end
+</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">end
+</span><span style="color:#b48ead;">end
+</span>
+</code></pre>
+<p>Now we can be confident that we have cover a lot of spots when
+instantiating any subclass of Recipient. If we want, we can
+use <code>.check(t)</code>, where <code>t</code> is how many tests we want, to stress
+even further.</p>
+<p>We can now go back to the broken test and try to fix it.</p>
+<p>So, it should be possible to instantiate a Bucket
+and an as many Cups as we want and it should always end up
+on our goal state (the bucket been full).</p>
+<p>It would be nice if we could implement &quot;shrink&quot;
+on our classes so we could right this test instead.</p>
+<pre style="background-color:#2b303b;"><code class="language-rb">
+<span style="color:#c0c5ce;">it &#39;</span><span style="color:#a3be8c;">should not overflow</span><span style="color:#c0c5ce;">&#39; </span><span style="color:#b48ead;">do
+</span><span style="color:#c0c5ce;">  </span><span style="color:#96b5b4;">p </span><span style="color:#c0c5ce;">= property_of </span><span style="color:#b48ead;">do
+</span><span style="color:#c0c5ce;">    b = bucket
+</span><span style="color:#c0c5ce;">    cs = array { cup }
+</span><span style="color:#c0c5ce;">    [b, cs]
+</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">end
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#c0c5ce;">  </span><span style="color:#96b5b4;">p</span><span style="color:#c0c5ce;">.check </span><span style="color:#b48ead;">do </span><span style="color:#c0c5ce;">|</span><span style="color:#bf616a;">opts</span><span style="color:#c0c5ce;">|
+</span><span style="color:#c0c5ce;">    bucket, cups = opts
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#c0c5ce;">    cups.reduce(bucket) </span><span style="color:#b48ead;">do </span><span style="color:#c0c5ce;">|</span><span style="color:#bf616a;">b</span><span style="color:#c0c5ce;">, </span><span style="color:#bf616a;">cup</span><span style="color:#c0c5ce;">|
+</span><span style="color:#c0c5ce;">      b.fill(cup)
+</span><span style="color:#c0c5ce;">    </span><span style="color:#b48ead;">end
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#c0c5ce;">    expect(b.quantity).to be &lt;= b.capacity
+</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">end
+</span><span style="color:#b48ead;">end
+</span>
+</code></pre>
+<p>To implement &quot;shrink&quot; for our classes they must implement
+2 methods (<code>shrinkable?</code> and <code>shrink</code>).</p>
+<pre style="background-color:#2b303b;"><code class="language-rb">
+<span style="color:#b48ead;">module </span><span style="color:#c0c5ce;">RecipientShrinkable
+</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">def </span><span style="color:#8fa1b3;">shrink
+</span><span style="color:#c0c5ce;">    copy = </span><span style="color:#8fa1b3;">new</span><span style="color:#c0c5ce;">(@</span><span style="color:#bf616a;">capacity</span><span style="color:#c0c5ce;">, @</span><span style="color:#bf616a;">quantity</span><span style="color:#c0c5ce;">)
+</span><span style="color:#c0c5ce;">    copy.capacity.shrink </span><span style="color:#b48ead;">if </span><span style="color:#c0c5ce;">@</span><span style="color:#bf616a;">capacity</span><span style="color:#c0c5ce;">.shrinkable?
+</span><span style="color:#c0c5ce;">    copy.quantity.shrink </span><span style="color:#b48ead;">if </span><span style="color:#c0c5ce;">@</span><span style="color:#bf616a;">quantity</span><span style="color:#c0c5ce;">.shrinkable?
+</span><span style="color:#c0c5ce;">    copy
+</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">end
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">def </span><span style="color:#8fa1b3;">shrinkable?
+</span><span style="color:#c0c5ce;">    @</span><span style="color:#bf616a;">capacity</span><span style="color:#c0c5ce;">.shrinkable? || @</span><span style="color:#bf616a;">quantity</span><span style="color:#c0c5ce;">.shrinkable?
+</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">end
+</span><span style="color:#b48ead;">end
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">BucketGen </span><span style="color:#eff1f5;">&lt; </span><span style="color:#a3be8c;">Bucket
+</span><span style="color:#c0c5ce;">  </span><span style="color:#8fa1b3;">include </span><span style="color:#bf616a;">RecipientShrinkable
+</span><span style="color:#b48ead;">end
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">CupGen </span><span style="color:#eff1f5;">&lt; </span><span style="color:#a3be8c;">Cup
+</span><span style="color:#c0c5ce;">  </span><span style="color:#8fa1b3;">include </span><span style="color:#bf616a;">RecipientShrinkable
+</span><span style="color:#b48ead;">end
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#65737e;"># creates the data to create a valid recipient
+</span><span style="color:#b48ead;">def </span><span style="color:#8fa1b3;">valid_recipient
+</span><span style="color:#c0c5ce;">  capacity = range(</span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">, </span><span style="color:#d08770;">10</span><span style="color:#c0c5ce;">)
+</span><span style="color:#c0c5ce;">  guard(capacity &gt; </span><span style="color:#d08770;">0</span><span style="color:#c0c5ce;">)
+</span><span style="color:#c0c5ce;">  quantity = range(</span><span style="color:#d08770;">0</span><span style="color:#c0c5ce;">, capacity)
+</span><span style="color:#c0c5ce;">  [capacity, quantity]
+</span><span style="color:#b48ead;">end
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#65737e;"># always creates a valid bucket
+</span><span style="color:#b48ead;">def </span><span style="color:#8fa1b3;">bucket
+</span><span style="color:#c0c5ce;">  </span><span style="color:#ebcb8b;">BucketGen</span><span style="color:#c0c5ce;">.filled(*valid_recipient)
+</span><span style="color:#b48ead;">end
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#65737e;"># always creates a valid cup
+</span><span style="color:#b48ead;">def </span><span style="color:#8fa1b3;">cup
+</span><span style="color:#c0c5ce;">  </span><span style="color:#ebcb8b;">CupGen</span><span style="color:#c0c5ce;">.filled(*valid_recipient)
+</span><span style="color:#b48ead;">end
+</span>
+</code></pre>
+<p>With this we have a small DSL (domain specific language)
+to write our tests.</p>
+<p>Our previous test, will also fails, because we can have
+a cup bigger that the bucket, maybe there are more cups than
+what the bucket can handle...so we need to improve the preconditions
+of our test.</p>
+<p>First let's make the precondition for just a single cup.</p>
+<pre style="background-color:#2b303b;"><code class="language-rb">
+<span style="color:#c0c5ce;">it &#39;</span><span style="color:#a3be8c;">should not overflow</span><span style="color:#c0c5ce;">&#39; </span><span style="color:#b48ead;">do
+</span><span style="color:#c0c5ce;">  </span><span style="color:#96b5b4;">p </span><span style="color:#c0c5ce;">= property_of </span><span style="color:#b48ead;">do
+</span><span style="color:#c0c5ce;">    b = bucket
+</span><span style="color:#c0c5ce;">    c = cup
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#c0c5ce;">    </span><span style="color:#65737e;"># only test if it won&#39;t overflow
+</span><span style="color:#c0c5ce;">    guard((c.quantity + b.quantity) &lt;= b.capacity)
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#c0c5ce;">    [b, c]
+</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">end
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#c0c5ce;">  </span><span style="color:#96b5b4;">p</span><span style="color:#c0c5ce;">.check(</span><span style="color:#d08770;">1000</span><span style="color:#c0c5ce;">) </span><span style="color:#b48ead;">do </span><span style="color:#c0c5ce;">|</span><span style="color:#bf616a;">opts</span><span style="color:#c0c5ce;">|
+</span><span style="color:#c0c5ce;">    b, c = opts
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#c0c5ce;">    b.fill(c)
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#c0c5ce;">    </span><span style="color:#65737e;"># we expect in this case that the bucket
+</span><span style="color:#c0c5ce;">    </span><span style="color:#65737e;"># maybe full or not.
+</span><span style="color:#c0c5ce;">    expect(b.quantity).to be &lt;= b.capacity
+</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">end
+</span><span style="color:#b48ead;">end
+</span>
+</code></pre>
+<p>Now let's make for any number of cups...</p>
+<pre style="background-color:#2b303b;"><code class="language-rb">
+<span style="color:#c0c5ce;">it &#39;</span><span style="color:#a3be8c;">should not overflow</span><span style="color:#c0c5ce;">&#39; </span><span style="color:#b48ead;">do
+</span><span style="color:#c0c5ce;">  </span><span style="color:#96b5b4;">p </span><span style="color:#c0c5ce;">= property_of </span><span style="color:#b48ead;">do
+</span><span style="color:#c0c5ce;">    b = bucket
+</span><span style="color:#c0c5ce;">    cs = array(</span><span style="color:#d08770;">20</span><span style="color:#c0c5ce;">) { cup }
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#c0c5ce;">    </span><span style="color:#65737e;"># check if all the cups can overflow
+</span><span style="color:#c0c5ce;">    </span><span style="color:#65737e;"># and reduce the list if necessary
+</span><span style="color:#c0c5ce;">    cs, _, check = cs.reduce([[], b.capacity, b.quantity]) </span><span style="color:#b48ead;">do </span><span style="color:#c0c5ce;">|</span><span style="color:#bf616a;">acc</span><span style="color:#c0c5ce;">, </span><span style="color:#bf616a;">cup</span><span style="color:#c0c5ce;">|
+</span><span style="color:#c0c5ce;">      cs, max, quantity = acc
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#c0c5ce;">      q = quantity + cup.quantity
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#c0c5ce;">      </span><span style="color:#b48ead;">if</span><span style="color:#c0c5ce;"> q &lt;= max
+</span><span style="color:#c0c5ce;">        cs.push(cup)
+</span><span style="color:#c0c5ce;">      </span><span style="color:#b48ead;">else
+</span><span style="color:#c0c5ce;">        q = quantity
+</span><span style="color:#c0c5ce;">      </span><span style="color:#b48ead;">end
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#c0c5ce;">      [cs, max, q]
+</span><span style="color:#c0c5ce;">    </span><span style="color:#b48ead;">end
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#c0c5ce;">    </span><span style="color:#65737e;"># if the bucket is full
+</span><span style="color:#c0c5ce;">    </span><span style="color:#65737e;"># check == b.capacity
+</span><span style="color:#c0c5ce;">    </span><span style="color:#65737e;"># so the array will still be empty
+</span><span style="color:#c0c5ce;">    </span><span style="color:#65737e;"># so it&#39;s covered
+</span><span style="color:#c0c5ce;">    </span><span style="color:#b48ead;">if</span><span style="color:#c0c5ce;"> check &lt; b.capacity
+</span><span style="color:#c0c5ce;">      remainder = b.capacity - check
+</span><span style="color:#c0c5ce;">      c = </span><span style="color:#ebcb8b;">CupGen</span><span style="color:#c0c5ce;">.filled(remainder, remainder)
+</span><span style="color:#c0c5ce;">      cs.push(c)
+</span><span style="color:#c0c5ce;">    </span><span style="color:#b48ead;">end
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#c0c5ce;">    [b, cs]
+</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">end
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#c0c5ce;">  </span><span style="color:#96b5b4;">p</span><span style="color:#c0c5ce;">.check </span><span style="color:#b48ead;">do </span><span style="color:#c0c5ce;">|</span><span style="color:#bf616a;">opts</span><span style="color:#c0c5ce;">|
+</span><span style="color:#c0c5ce;">    b, cs = opts
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#c0c5ce;">    cs.reduce(b) </span><span style="color:#b48ead;">do </span><span style="color:#c0c5ce;">|</span><span style="color:#bf616a;">b</span><span style="color:#c0c5ce;">, </span><span style="color:#bf616a;">c</span><span style="color:#c0c5ce;">|
+</span><span style="color:#c0c5ce;">      b.fill(c)
+</span><span style="color:#c0c5ce;">    </span><span style="color:#b48ead;">end
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#c0c5ce;">    expect(b.full?).to be(</span><span style="color:#d08770;">true</span><span style="color:#c0c5ce;">)
+</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">end
+</span><span style="color:#b48ead;">end
+</span>
+</code></pre></section>
+<script type="application/javascript" src="./js/highlight.min.js"></script>
+</main></body></html>
