@@ -1,3 +1,20 @@
+*, *::after, *::before {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 24px;
+  font-weight: 300;
+}
+
+body {
+  padding: 80px 60px;
+  font-size: 1em;
+  font-family: "San Francisco", "Helvetica Neue", Arial, sans-serif;
+  color: #efefef;
+  background-color: #171717;
+}
+
 h1, h2, h3, h4, h5, h6 {
   font-weight: bold;
 }
@@ -123,7 +140,7 @@ blockquote p {
 }
 
 p {
-  margin-bottom:2em;
+  margin-bottom: 2em;
   line-height: 1.4rem;
 }
 
@@ -149,35 +166,9 @@ figure figcaption {
 
 img {
   margin-bottom: 10px;
-}
-
-img {
   width: 100%;
   height: auto;
   display: block;
-}
-
-/* --------------------------------
-
-Primary Site style
-
--------------------------------- */
-
-*, *::after, *::before {
-  box-sizing: border-box;
-}
-
-html {
-  font-size: 24px;
-  font-weight: 300;
-}
-
-body {
-  padding: 80px 60px;
-  font-size: 1em;
-  font-family: "San Francisco", "Helvetica Neue", Arial, sans-serif;
-  color: #efefef;
-  background-color: #171717;
 }
 
 a {
@@ -236,4 +227,45 @@ nav a {
 
 .content-datetime {
   font-size: 0.8rem;
+}
+
+.article-item {
+  margin-bottom: 30px;
+}
+
+.article-item a {
+  display: block;
+  margin-bottom: 10px;
+  border-bottom: none;
+}
+
+@media (max-width: 720px) {
+  html {
+    font-size: 24px;
+  }
+
+  body {
+    padding: 40px 30px;
+  }
+  
+  main {
+    width: 100%;
+  }
+
+  h1, .article-item h1 {
+    font-size: 1.6rem;
+  }
+
+  p {
+    margin-bottom: 1.1em;
+    line-height: 1.2rem;
+  }
+
+  pre {
+    font-size: 0.4rem;
+  }
+
+  pre code {
+    line-height: 0.7rem;
+  }
 }
