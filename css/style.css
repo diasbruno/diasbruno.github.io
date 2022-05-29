@@ -217,16 +217,9 @@ nav a {
 }
 
 .content-info {
+  font-size: 0.8rem;
   margin-top: 20px;
   margin-bottom: 50px;
-}
-
-.content-kind {
-  font-size: 0.8rem;
-}
-
-.content-datetime {
-  font-size: 0.8rem;
 }
 
 .article-item {
