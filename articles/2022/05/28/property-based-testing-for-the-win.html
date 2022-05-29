@@ -13,7 +13,8 @@
   <div class="nav-links"><a href="/">articles</a></div>
 </nav>
 <section class="content"><h1>Property-based testing for the win!</h1>
-<div class="content-info"><span class="content-kind">article</span> &#10072; <span>draft</span> &#10072; <time class="content-datetime" datetime="2022-05-28T22:30:52+00:00">May 28, 2022</time></div>
+<div class="content-info"><span>article</span> &#10072; <span>draft</span> &#10072; <time datetime="2022-05-28T22:30:52+00:00">May 28, 2022</time></div>
+<p>Repository link: <a href="https://github.com/diasbruno/property-based-testing-article">github@diasbruno/property-based-testing-article</a></p>
 <p>Favorite last words:</p>
 <pre style="background-color:#2b303b;"><code>
 <span style="color:#c0c5ce;">&quot;The feature is fully tested. EVERY POSSIBLE CASE!&quot;
@@ -34,9 +35,13 @@ for a feature.</p>
 </span><span style="color:#b48ead;">end
 </span>
 </code></pre>
-<p>What can go wrong?</p>
+<p>And you ask...</p>
+<pre style="background-color:#2b303b;"><code>
+<span style="color:#c0c5ce;">What can go wrong?
+</span>
+</code></pre>
 <p>Problem is that we know how to write
-the easy solution.</p>
+the easy solutions.</p>
 <p>What would happen if we change the capacity and quantity
 to be random numbers?</p>
 <pre style="background-color:#2b303b;"><code class="language-rb">
@@ -52,9 +57,9 @@ to be random numbers?</p>
 </span>
 </code></pre>
 <p>Eventually it fails. One of the possibilities
-is that the <code>Cup</code> can be bigger than the <code>Bucket</code>, so
-it will overflow.</p>
-<p>So, let's improve the testing to check some properties
+is that the <code>Cup</code> can be larger than the <code>Bucket</code>,
+so it will overflow.</p>
+<p>So, let's improve the test by checking some properties
 about the problem.</p>
 <pre style="background-color:#2b303b;"><code class="language-rb">
 <span style="color:#c0c5ce;">describe &#39;</span><span style="color:#a3be8c;">filling the bucket</span><span style="color:#c0c5ce;">&#39; </span><span style="color:#b48ead;">do
@@ -62,7 +67,7 @@ about the problem.</p>
 </span><span style="color:#c0c5ce;">    b = </span><span style="color:#ebcb8b;">Bucket</span><span style="color:#c0c5ce;">.filled(</span><span style="color:#96b5b4;">rand</span><span style="color:#c0c5ce;">, </span><span style="color:#96b5b4;">rand</span><span style="color:#c0c5ce;">)
 </span><span style="color:#c0c5ce;">    c = </span><span style="color:#ebcb8b;">Cup</span><span style="color:#c0c5ce;">.filled(</span><span style="color:#96b5b4;">rand</span><span style="color:#c0c5ce;">, </span><span style="color:#96b5b4;">rand</span><span style="color:#c0c5ce;">)
 </span><span style="color:#c0c5ce;">
-</span><span style="color:#c0c5ce;">    </span><span style="color:#65737e;"># if the cup is not empty, bucket must not be full
+</span><span style="color:#c0c5ce;">    </span><span style="color:#65737e;"># if the cup is not empty, bucket must not be full...
 </span><span style="color:#c0c5ce;">    </span><span style="color:#65737e;"># there is the case where the cup is empty
 </span><span style="color:#c0c5ce;">    </span><span style="color:#b48ead;">if</span><span style="color:#c0c5ce;"> c.quantity &gt; </span><span style="color:#d08770;">0
 </span><span style="color:#c0c5ce;">        expect(b.quantity).to be &lt; b.capacity
@@ -77,10 +82,17 @@ about the problem.</p>
 </span><span style="color:#b48ead;">end
 </span>
 </code></pre>
-<p>Now we can understand a little more about the problem.</p>
-<p>It will fail randomily on one of the assertions and
+<p>Now that we understand a little bit more
+about the problem.</p>
+<p>It will fail randomly on one of the assertions and
 part of the problem is that there is no validation
-when we construct both objects.</p>
+when we construct both objects like:</p>
+<ul>
+<li>The <code>capacity</code> and <code>quantity</code> can be negative</li>
+<li><code>quantity</code> can be greater that the <code>capacity</code></li>
+</ul>
+<p>So, let's introduce a validation of the inputs
+for the <code>Recipient</code> class.</p>
 <pre style="background-color:#2b303b;"><code class="language-rb">
 <span style="color:#65737e;"># both classes extends this one
 </span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">Recipient
@@ -100,8 +112,8 @@ when we construct both objects.</p>
 </code></pre>
 <p>Now we know that we can only instantiate a valid recipient...
 time to write some tests for the <code>Recipient</code> class, but instead
-of thinking on the valid ones, we are going to stress out
-the failing case.</p>
+of thinking on the valid cases, we are going to stress out
+the failing cases.</p>
 <pre style="background-color:#2b303b;"><code class="language-rb">
 <span style="color:#c0c5ce;">describe &#39;</span><span style="color:#a3be8c;">instantiate</span><span style="color:#c0c5ce;">&#39; </span><span style="color:#b48ead;">do
 </span><span style="color:#c0c5ce;">  it &#39;</span><span style="color:#a3be8c;">must fail for every case</span><span style="color:#c0c5ce;">&#39; </span><span style="color:#b48ead;">do
@@ -123,17 +135,20 @@ the failing case.</p>
 </span><span style="color:#b48ead;">end
 </span>
 </code></pre>
-<p>This is how you can write a property-based testing, but it's
+<p>This is how you can write a property-based test. But it's
 not done yet.</p>
-<p>Every pair of values must be invalid in this case and if we
-got it right we don't need to write the other case.</p>
+<p>Every pair of values must be invalid in this case and, if we
+got it right, we don't need to write the valid cases.</p>
 <pre style="background-color:#2b303b;"><code class="language-rb">
 <span style="color:#c0c5ce;">describe &#39;</span><span style="color:#a3be8c;">instantiate</span><span style="color:#c0c5ce;">&#39; </span><span style="color:#b48ead;">do
 </span><span style="color:#c0c5ce;">  it &#39;</span><span style="color:#a3be8c;">must fail for every case</span><span style="color:#c0c5ce;">&#39; </span><span style="color:#b48ead;">do
 </span><span style="color:#c0c5ce;">    </span><span style="color:#96b5b4;">p </span><span style="color:#c0c5ce;">= property_of </span><span style="color:#b48ead;">do
 </span><span style="color:#c0c5ce;">      capacity = integer
 </span><span style="color:#c0c5ce;">      quantity = integer
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#c0c5ce;">      </span><span style="color:#65737e;"># preconditions to be create an invalid recipient
 </span><span style="color:#c0c5ce;">      guard(capacity &lt; </span><span style="color:#d08770;">0 </span><span style="color:#c0c5ce;">|| quantity &lt; </span><span style="color:#d08770;">0 </span><span style="color:#c0c5ce;">|| quantity &gt; capacity)
+</span><span style="color:#c0c5ce;">
 </span><span style="color:#c0c5ce;">      [capacity, quantity]
 </span><span style="color:#c0c5ce;">    </span><span style="color:#b48ead;">end
 </span><span style="color:#c0c5ce;">    </span><span style="color:#96b5b4;">p</span><span style="color:#c0c5ce;">.check </span><span style="color:#b48ead;">do </span><span style="color:#c0c5ce;">|</span><span style="color:#bf616a;">opts</span><span style="color:#c0c5ce;">|
@@ -146,16 +161,16 @@ got it right we don't need to write the other case.</p>
 </span><span style="color:#b48ead;">end
 </span>
 </code></pre>
-<p>Now we can be confident that we have cover a lot of spots when
+<p>Now, we can be confident that we have cover a lot of spots when
 instantiating any subclass of Recipient. If we want, we can
 use <code>.check(t)</code>, where <code>t</code> is how many tests we want, to stress
 even further.</p>
 <p>We can now go back to the broken test and try to fix it.</p>
 <p>So, it should be possible to instantiate a Bucket
-and an as many Cups as we want and it should always end up
+and many Cups as we want and it should always end up
 on our goal state (the bucket been full).</p>
 <p>It would be nice if we could implement &quot;shrink&quot;
-on our classes so we could right this test instead.</p>
+on our classes so we could write the test like this.</p>
 <pre style="background-color:#2b303b;"><code class="language-rb">
 <span style="color:#c0c5ce;">it &#39;</span><span style="color:#a3be8c;">should not overflow</span><span style="color:#c0c5ce;">&#39; </span><span style="color:#b48ead;">do
 </span><span style="color:#c0c5ce;">  </span><span style="color:#96b5b4;">p </span><span style="color:#c0c5ce;">= property_of </span><span style="color:#b48ead;">do
@@ -176,7 +191,7 @@ on our classes so we could right this test instead.</p>
 </span><span style="color:#b48ead;">end
 </span>
 </code></pre>
-<p>To implement &quot;shrink&quot; for our classes they must implement
+<p>To implement &quot;shrink&quot; for our classes, they must implement
 2 methods (<code>shrinkable?</code> and <code>shrink</code>).</p>
 <pre style="background-color:#2b303b;"><code class="language-rb">
 <span style="color:#b48ead;">module </span><span style="color:#c0c5ce;">RecipientShrinkable
@@ -219,13 +234,13 @@ on our classes so we could right this test instead.</p>
 </span><span style="color:#b48ead;">end
 </span>
 </code></pre>
-<p>With this we have a small DSL (domain specific language)
+<p>With this, we have a small DSL (domain specific language)
 to write our tests.</p>
 <p>Our previous test, will also fails, because we can have
-a cup bigger that the bucket, maybe there are more cups than
+a cup larger that the bucket, maybe there are more cups than
 what the bucket can handle...so we need to improve the preconditions
 of our test.</p>
-<p>First let's make the precondition for just a single cup.</p>
+<p>First, let's make the precondition for just a single cup.</p>
 <pre style="background-color:#2b303b;"><code class="language-rb">
 <span style="color:#c0c5ce;">it &#39;</span><span style="color:#a3be8c;">should not overflow</span><span style="color:#c0c5ce;">&#39; </span><span style="color:#b48ead;">do
 </span><span style="color:#c0c5ce;">  </span><span style="color:#96b5b4;">p </span><span style="color:#c0c5ce;">= property_of </span><span style="color:#b48ead;">do
@@ -233,6 +248,8 @@ of our test.</p>
 </span><span style="color:#c0c5ce;">    c = cup
 </span><span style="color:#c0c5ce;">
 </span><span style="color:#c0c5ce;">    </span><span style="color:#65737e;"># only test if it won&#39;t overflow
+</span><span style="color:#c0c5ce;">    </span><span style="color:#65737e;"># we are interest on the possibilities of state
+</span><span style="color:#c0c5ce;">    </span><span style="color:#65737e;"># of the bucket and cup
 </span><span style="color:#c0c5ce;">    guard((c.quantity + b.quantity) &lt;= b.capacity)
 </span><span style="color:#c0c5ce;">
 </span><span style="color:#c0c5ce;">    [b, c]
@@ -250,15 +267,18 @@ of our test.</p>
 </span><span style="color:#b48ead;">end
 </span>
 </code></pre>
-<p>Now let's make for any number of cups...</p>
+<p>Now, for any number of cups...</p>
 <pre style="background-color:#2b303b;"><code class="language-rb">
 <span style="color:#c0c5ce;">it &#39;</span><span style="color:#a3be8c;">should not overflow</span><span style="color:#c0c5ce;">&#39; </span><span style="color:#b48ead;">do
 </span><span style="color:#c0c5ce;">  </span><span style="color:#96b5b4;">p </span><span style="color:#c0c5ce;">= property_of </span><span style="color:#b48ead;">do
 </span><span style="color:#c0c5ce;">    b = bucket
 </span><span style="color:#c0c5ce;">    cs = array(</span><span style="color:#d08770;">20</span><span style="color:#c0c5ce;">) { cup }
 </span><span style="color:#c0c5ce;">
-</span><span style="color:#c0c5ce;">    </span><span style="color:#65737e;"># check if all the cups can overflow
-</span><span style="color:#c0c5ce;">    </span><span style="color:#65737e;"># and reduce the list if necessary
+</span><span style="color:#c0c5ce;">    </span><span style="color:#65737e;"># check if all the cups can overflow the bucket
+</span><span style="color:#c0c5ce;">    </span><span style="color:#65737e;"># and reject the ones that cause the overflow.
+</span><span style="color:#c0c5ce;">    </span><span style="color:#65737e;">#
+</span><span style="color:#c0c5ce;">    </span><span style="color:#65737e;"># we have the case b.quantity == b.capacity
+</span><span style="color:#c0c5ce;">    </span><span style="color:#65737e;"># in this case we are going to have no cups (empty list)
 </span><span style="color:#c0c5ce;">    cs, _, check = cs.reduce([[], b.capacity, b.quantity]) </span><span style="color:#b48ead;">do </span><span style="color:#c0c5ce;">|</span><span style="color:#bf616a;">acc</span><span style="color:#c0c5ce;">, </span><span style="color:#bf616a;">cup</span><span style="color:#c0c5ce;">|
 </span><span style="color:#c0c5ce;">      cs, max, quantity = acc
 </span><span style="color:#c0c5ce;">
@@ -273,10 +293,9 @@ of our test.</p>
 </span><span style="color:#c0c5ce;">      [cs, max, q]
 </span><span style="color:#c0c5ce;">    </span><span style="color:#b48ead;">end
 </span><span style="color:#c0c5ce;">
-</span><span style="color:#c0c5ce;">    </span><span style="color:#65737e;"># if the bucket is full
-</span><span style="color:#c0c5ce;">    </span><span style="color:#65737e;"># check == b.capacity
-</span><span style="color:#c0c5ce;">    </span><span style="color:#65737e;"># so the array will still be empty
-</span><span style="color:#c0c5ce;">    </span><span style="color:#65737e;"># so it&#39;s covered
+</span><span style="color:#c0c5ce;">    </span><span style="color:#65737e;"># if there is still space on the bucket
+</span><span style="color:#c0c5ce;">    </span><span style="color:#65737e;"># we create a new cup to precisily fill it
+</span><span style="color:#c0c5ce;">    </span><span style="color:#65737e;"># so we reach the goal state.
 </span><span style="color:#c0c5ce;">    </span><span style="color:#b48ead;">if</span><span style="color:#c0c5ce;"> check &lt; b.capacity
 </span><span style="color:#c0c5ce;">      remainder = b.capacity - check
 </span><span style="color:#c0c5ce;">      c = </span><span style="color:#ebcb8b;">CupGen</span><span style="color:#c0c5ce;">.filled(remainder, remainder)
