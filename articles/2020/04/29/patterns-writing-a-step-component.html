@@ -36,7 +36,7 @@ functions to move around.</p>
 <span style="color:#b48ead;">interface </span><span style="color:#ebcb8b;">StepController </span><span style="color:#eff1f5;">{
 </span><span style="color:#eff1f5;">  </span><span style="color:#b48ead;">void </span><span style="color:#8fa1b3;">goToStep</span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">step</span><span style="color:#eff1f5;">);
 </span><span style="color:#eff1f5;">  </span><span style="color:#65737e;">// T represents additional stuff you can pass
-</span><span style="color:#eff1f5;">  </span><span style="color:#65737e;">// if you need extra functionality like submit function... 
+</span><span style="color:#eff1f5;">  </span><span style="color:#65737e;">// if you need extra functionality like submit function...
 </span><span style="color:#eff1f5;">  </span><span style="color:#b48ead;">void </span><span style="color:#8fa1b3;">forward</span><span style="color:#eff1f5;">(</span><span style="color:#ebcb8b;">T </span><span style="color:#bf616a;">env</span><span style="color:#eff1f5;">);
 </span><span style="color:#eff1f5;">  </span><span style="color:#b48ead;">void </span><span style="color:#8fa1b3;">back</span><span style="color:#eff1f5;">(</span><span style="color:#ebcb8b;">T </span><span style="color:#bf616a;">env</span><span style="color:#eff1f5;">);
 </span><span style="color:#eff1f5;">}
@@ -55,10 +55,15 @@ your language supports, like <code>async/await</code>, <code>Promise</code>,
 </span><span style="color:#eff1f5;">}
 </span>
 </code></pre>
-<p>{% replit @diasbruno/step-component-java %}</p>
+<iframe frameborder="0" width="100%" height="500px" src="https://replit.com/@diasbruno/step-component-java?embed=true"></iframe>
 <h2>With React</h2>
 <p>Managing the state is not a problem,
 you can use either <code>useState</code>, <code>useReducer</code>...</p>
-<p>{% codesandbox step-component-react-8ietx %}</p></section>
+<iframe src="https://codesandbox.io/embed/step-component-react-8ietx?fontsize=14&hidenavigation=1&theme=dark"
+	 style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;"
+	 title="step-component-react"
+	 allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+	 sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+   ></iframe></section>
 <script type="application/javascript" src="./js/highlight.min.js"></script>
 </main></body></html>
