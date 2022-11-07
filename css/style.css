@@ -1,113 +1,3 @@
-*, *::after, *::before {
-  box-sizing: border-box;
-}
-
-html {
-  font-size: 24px;
-  font-weight: 300;
-}
-
-body {
-  padding: 80px 60px;
-  font-size: 1em;
-  font-family: "San Francisco", "Helvetica Neue", Arial, sans-serif;
-  color: #efefef;
-  background-color: #171717;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-weight: bold;
-}
-
-h1 {
-  color: #fff;
-  font-size: 2rem;
-}
-
-h2 {
-  color: #fff;
-  font-size: 24px;
-}
-
-h3 {
-  font-size: 18px;
-}
-
-h4 {
-  font-size: 16px;
-}
-
-h5 {
-  font-size: 14px;
-}
-
-h6 {
-  color: #777777;
-  background-color: inherit;
-  font-size: 14px;
-}
-
-hr {
-  height: 0.1em;
-  boder: 0;
-  color: #CCCCCC;
-  background-color: #CCCCCC;
-}
-
-blockquote, ul, ol, dl, li, table, pre {
-  margin: 15px 0;
-}
-
-button {
-  font-size: 10pt;
-  padding: 4px 6px;
-  border-radius: 5px;
-  border: 1px solid #bbb;
-  background-color: #eee;
-}
-
-table, dl, blockquote, code, kbd, pre, samp {
-    margin: 1em 0;
-}
-
-code, kbd, pre, samp, #ws, #message {
-  font-family: monospace, monospace;
-  font-size: 1em;
-}
-
-code {
-  margin: 0;
-  padding: 0;
-  line-height: 1.1rem;
-}
-
-pre {
-  overflow: auto;
-  display: block;
-  padding: 16px 20px;
-  /*margin: 0 0 10px;*/
-  font-size: 0.7rem;
-  color: #333;
-  word-break: break-all;
-  word-wrap: break-word;
-  background-color: #f5f5f5;
-  margin-bottom: 30px;
-}
-
-pre code {
-  padding: 0;
-  font-size: inherit;
-  color: inherit;
-  white-space: pre-wrap;
-  background-color: transparent;
-  border-radius: 0;
-}
-
-fieldset {
-  border: none;
-  padding: 0
-}
-
 ::-webkit-input-placeholder {
   color: #D8D8DC;
   opacity: 1
@@ -126,6 +16,77 @@ fieldset {
 ::placeholder {
   color: #D8D8DC;
   opacity: 1
+}
+
+*, *::after, *::before {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 14px;
+  font-weight: 300;
+}
+
+body {
+  padding: 80px 60px;
+  font-family: monospace;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: bold;
+  margin-bottom: 1.1em;
+}
+
+hr {
+  height: 0.1em;
+  boder: 0;
+}
+
+blockquote, ul, ol, dl, li, table, pre {
+  margin: 15px 0;
+}
+
+button {
+  padding: 4px 6px;
+  border-radius: 5px;
+}
+
+table, dl, blockquote, code, kbd, pre, samp {
+    margin: 1em 0;
+}
+
+code, kbd, pre, samp, #ws, #message {
+  font-family: monospace, monospace;
+}
+
+code {
+  margin: 0;
+  padding: 0;
+  line-height: 1.1rem;
+}
+
+pre {
+  overflow: auto;
+  display: block;
+  padding: 16px 20px;
+  /*margin: 0 0 10px;*/
+  word-break: break-all;
+  word-wrap: break-word;
+  margin-bottom: 30px;
+}
+
+pre code {
+  padding: 0;
+  font-size: inherit;
+  color: inherit;
+  white-space: pre-wrap;
+  background-color: transparent;
+  border-radius: 0;
+}
+
+fieldset {
+  border: none;
+  padding: 0
 }
 
 blockquote {
@@ -157,28 +118,15 @@ figure {
 }
 
 figure figcaption {
-  font-size: 12px;
-  font-family: "San Francisco", "Helvetica Neue", "Arial", sans-serif;
+  font-family: monospace;
   font-weight: bold;
-  color: #bbbbbb;
   text-align: center;
 }
 
 img {
   margin-bottom: 10px;
-  width: 100%;
   height: auto;
   display: block;
-}
-
-a {
-  color: #2a76e8;
-  text-decoration: none;
-}
-
-a:hover {
-  color: #257ced;
-  border-bottom: 1px solid #257ced;
 }
 
 img, svg {
@@ -195,7 +143,6 @@ nav {
 }
 
 nav h1 {
-  font-size: 1.2rem;
 }
 
 nav li {
@@ -203,12 +150,10 @@ nav li {
 }
 
 nav a {
-  color: #efefef;
   border-bottom: 1px solid #efefef;
 }
 
 .nav-links {
-  font-size: 0.8rem;
   margin-top: 10px;
 }
 
@@ -217,7 +162,6 @@ nav a {
 }
 
 .content-info {
-  font-size: 0.8rem;
   margin-top: 20px;
   margin-bottom: 50px;
 }
@@ -233,9 +177,7 @@ nav a {
 }
 
 @media (max-width: 720px) {
-  html {
-    font-size: 24px;
-  }
+  html {}
 
   body {
     padding: 40px 30px;
@@ -246,7 +188,6 @@ nav a {
   }
 
   h1, .article-item h1 {
-    font-size: 1.6rem;
   }
 
   p {
@@ -254,9 +195,7 @@ nav a {
     line-height: 1.2rem;
   }
 
-  pre {
-    font-size: 0.4rem;
-  }
+  pre {}
 
   pre code {
     line-height: 0.7rem;
