@@ -13,7 +13,7 @@
   <div class="nav-links"><a href="/">articles</a></div>
 </nav>
 <section class="content"><h1>Metaprogramming in javascript</h1>
-<div class="content-info"><span>article</span> &#10072;  <time datetime="2020-03-20T15:00:00+00:00">Mar 20, 2020</time></div>
+<div class="content-info"><span>article</span> &#10072; <span>publish</span> &#10072; <time datetime="2020-03-20T15:00:00+00:00">Mar 20, 2020</time></div>
 <p>Sometimes it's tedious to write the same pattern
 or function.</p>
 <p>In some cases, we can get away with just a closure,
@@ -93,16 +93,16 @@ the function will have no arguments.</p>
 </span><span style="color:#b48ead;">const </span><span style="color:#8fa1b3;">collectVars </span><span style="color:#c0c5ce;">= route </span><span style="color:#b48ead;">=&gt; </span><span style="color:#c0c5ce;">{
 </span><span style="color:#c0c5ce;">   </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">items </span><span style="color:#c0c5ce;">= [];
 </span><span style="color:#c0c5ce;">   </span><span style="color:#b48ead;">for </span><span style="color:#c0c5ce;">(
-</span><span style="color:#c0c5ce;">	 </span><span style="color:#b48ead;">let </span><span style="color:#bf616a;">str </span><span style="color:#c0c5ce;">= </span><span style="color:#bf616a;">route</span><span style="color:#c0c5ce;">, </span><span style="color:#bf616a;">open </span><span style="color:#c0c5ce;">= -</span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">, </span><span style="color:#bf616a;">close </span><span style="color:#c0c5ce;">= </span><span style="color:#d08770;">0</span><span style="color:#c0c5ce;">;
-</span><span style="color:#c0c5ce;">	 (
-</span><span style="color:#c0c5ce;">	   </span><span style="color:#bf616a;">open </span><span style="color:#c0c5ce;">= </span><span style="color:#bf616a;">str</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">indexOf</span><span style="color:#c0c5ce;">(&#39;</span><span style="color:#a3be8c;">{</span><span style="color:#c0c5ce;">&#39;),
-</span><span style="color:#c0c5ce;">	   </span><span style="color:#bf616a;">close </span><span style="color:#c0c5ce;">= </span><span style="color:#bf616a;">str</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">indexOf</span><span style="color:#c0c5ce;">(&#39;</span><span style="color:#a3be8c;">}</span><span style="color:#c0c5ce;">&#39;),
-</span><span style="color:#c0c5ce;">	   </span><span style="color:#bf616a;">open </span><span style="color:#c0c5ce;">&gt;= </span><span style="color:#d08770;">0
-</span><span style="color:#c0c5ce;">	 );
-</span><span style="color:#c0c5ce;">	 </span><span style="color:#bf616a;">str </span><span style="color:#c0c5ce;">= </span><span style="color:#bf616a;">str</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">slice</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">close </span><span style="color:#c0c5ce;">+ </span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">)
-</span><span style="color:#c0c5ce;">	 ) {
-</span><span style="color:#c0c5ce;">	 </span><span style="color:#b48ead;">if </span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">close </span><span style="color:#c0c5ce;">&lt; </span><span style="color:#d08770;">0</span><span style="color:#c0c5ce;">) </span><span style="color:#b48ead;">throw </span><span style="color:#8fa1b3;">Error</span><span style="color:#c0c5ce;">(&quot;</span><span style="color:#a3be8c;">Bad route</span><span style="color:#c0c5ce;">&quot;);
-</span><span style="color:#c0c5ce;">	 </span><span style="color:#bf616a;">items</span><span style="color:#c0c5ce;">.</span><span style="color:#96b5b4;">push</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">str</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">slice</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">open </span><span style="color:#c0c5ce;">+ </span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">, </span><span style="color:#bf616a;">close</span><span style="color:#c0c5ce;">))
+</span><span style="color:#c0c5ce;">     </span><span style="color:#b48ead;">let </span><span style="color:#bf616a;">str </span><span style="color:#c0c5ce;">= </span><span style="color:#bf616a;">route</span><span style="color:#c0c5ce;">, </span><span style="color:#bf616a;">open </span><span style="color:#c0c5ce;">= -</span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">, </span><span style="color:#bf616a;">close </span><span style="color:#c0c5ce;">= </span><span style="color:#d08770;">0</span><span style="color:#c0c5ce;">;
+</span><span style="color:#c0c5ce;">     (
+</span><span style="color:#c0c5ce;">       </span><span style="color:#bf616a;">open </span><span style="color:#c0c5ce;">= </span><span style="color:#bf616a;">str</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">indexOf</span><span style="color:#c0c5ce;">(&#39;</span><span style="color:#a3be8c;">{</span><span style="color:#c0c5ce;">&#39;),
+</span><span style="color:#c0c5ce;">       </span><span style="color:#bf616a;">close </span><span style="color:#c0c5ce;">= </span><span style="color:#bf616a;">str</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">indexOf</span><span style="color:#c0c5ce;">(&#39;</span><span style="color:#a3be8c;">}</span><span style="color:#c0c5ce;">&#39;),
+</span><span style="color:#c0c5ce;">       </span><span style="color:#bf616a;">open </span><span style="color:#c0c5ce;">&gt;= </span><span style="color:#d08770;">0
+</span><span style="color:#c0c5ce;">     );
+</span><span style="color:#c0c5ce;">     </span><span style="color:#bf616a;">str </span><span style="color:#c0c5ce;">= </span><span style="color:#bf616a;">str</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">slice</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">close </span><span style="color:#c0c5ce;">+ </span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">)
+</span><span style="color:#c0c5ce;">     ) {
+</span><span style="color:#c0c5ce;">     </span><span style="color:#b48ead;">if </span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">close </span><span style="color:#c0c5ce;">&lt; </span><span style="color:#d08770;">0</span><span style="color:#c0c5ce;">) </span><span style="color:#b48ead;">throw </span><span style="color:#8fa1b3;">Error</span><span style="color:#c0c5ce;">(&quot;</span><span style="color:#a3be8c;">Bad route</span><span style="color:#c0c5ce;">&quot;);
+</span><span style="color:#c0c5ce;">     </span><span style="color:#bf616a;">items</span><span style="color:#c0c5ce;">.</span><span style="color:#96b5b4;">push</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">str</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">slice</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">open </span><span style="color:#c0c5ce;">+ </span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">, </span><span style="color:#bf616a;">close</span><span style="color:#c0c5ce;">))
 </span><span style="color:#c0c5ce;">   }
 </span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">items</span><span style="color:#c0c5ce;">;
 </span><span style="color:#c0c5ce;">}
@@ -129,9 +129,9 @@ so you can also add a <code>debugger</code> inside of it.</p>
 </span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">const </span><span style="color:#c0c5ce;">{ </span><span style="color:#bf616a;">status </span><span style="color:#c0c5ce;">} = </span><span style="color:#bf616a;">response</span><span style="color:#c0c5ce;">;
 </span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">data </span><span style="color:#c0c5ce;">= </span><span style="color:#bf616a;">await response</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">json</span><span style="color:#c0c5ce;">();
 </span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">return </span><span style="color:#c0c5ce;">{
-</span><span style="color:#c0c5ce;">	&#39;</span><span style="color:#a3be8c;">status</span><span style="color:#c0c5ce;">&#39;: (</span><span style="color:#bf616a;">status </span><span style="color:#c0c5ce;">&gt;= </span><span style="color:#d08770;">200 </span><span style="color:#c0c5ce;">&amp;&amp; </span><span style="color:#bf616a;">status </span><span style="color:#c0c5ce;">&lt;= </span><span style="color:#d08770;">299 </span><span style="color:#c0c5ce;">? &#39;</span><span style="color:#a3be8c;">success</span><span style="color:#c0c5ce;">&#39; :
-</span><span style="color:#c0c5ce;">		(</span><span style="color:#bf616a;">status </span><span style="color:#c0c5ce;">&gt;= </span><span style="color:#d08770;">400 </span><span style="color:#c0c5ce;">? &#39;</span><span style="color:#a3be8c;">error</span><span style="color:#c0c5ce;">&#39; : &#39;</span><span style="color:#a3be8c;">redirect</span><span style="color:#c0c5ce;">&#39;)),
-</span><span style="color:#c0c5ce;">	</span><span style="color:#bf616a;">data
+</span><span style="color:#c0c5ce;">    &#39;</span><span style="color:#a3be8c;">status</span><span style="color:#c0c5ce;">&#39;: (</span><span style="color:#bf616a;">status </span><span style="color:#c0c5ce;">&gt;= </span><span style="color:#d08770;">200 </span><span style="color:#c0c5ce;">&amp;&amp; </span><span style="color:#bf616a;">status </span><span style="color:#c0c5ce;">&lt;= </span><span style="color:#d08770;">299 </span><span style="color:#c0c5ce;">? &#39;</span><span style="color:#a3be8c;">success</span><span style="color:#c0c5ce;">&#39; :
+</span><span style="color:#c0c5ce;">        (</span><span style="color:#bf616a;">status </span><span style="color:#c0c5ce;">&gt;= </span><span style="color:#d08770;">400 </span><span style="color:#c0c5ce;">? &#39;</span><span style="color:#a3be8c;">error</span><span style="color:#c0c5ce;">&#39; : &#39;</span><span style="color:#a3be8c;">redirect</span><span style="color:#c0c5ce;">&#39;)),
+</span><span style="color:#c0c5ce;">    </span><span style="color:#bf616a;">data
 </span><span style="color:#c0c5ce;">  }
 </span><span style="color:#c0c5ce;">}
 </span><span style="color:#c0c5ce;">
@@ -145,18 +145,18 @@ so you can also add a <code>debugger</code> inside of it.</p>
 </span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">routeTemplate </span><span style="color:#c0c5ce;">= `</span><span style="color:#96b5b4;">\`</span><span style="color:#c0c5ce;">${</span><span style="color:#bf616a;">route</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">replace</span><span style="color:#c0c5ce;">(/</span><span style="color:#96b5b4;">\{</span><span style="color:#c0c5ce;">/</span><span style="color:#b48ead;">g</span><span style="color:#c0c5ce;">, &#39;</span><span style="color:#a3be8c;">${</span><span style="color:#c0c5ce;">&#39;)}</span><span style="color:#96b5b4;">\`</span><span style="color:#c0c5ce;">`;
 </span><span style="color:#c0c5ce;">
 </span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">let </span><span style="color:#bf616a;">vars </span><span style="color:#c0c5ce;">= </span><span style="color:#8fa1b3;">collectVars</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">route</span><span style="color:#c0c5ce;">).</span><span style="color:#8fa1b3;">concat</span><span style="color:#c0c5ce;">(
-</span><span style="color:#c0c5ce;">	</span><span style="color:#bf616a;">method </span><span style="color:#c0c5ce;">!= &#39;</span><span style="color:#a3be8c;">get</span><span style="color:#c0c5ce;">&#39; ? [&quot;</span><span style="color:#a3be8c;">data=null</span><span style="color:#c0c5ce;">&quot;] : []
+</span><span style="color:#c0c5ce;">    </span><span style="color:#bf616a;">method </span><span style="color:#c0c5ce;">!= &#39;</span><span style="color:#a3be8c;">get</span><span style="color:#c0c5ce;">&#39; ? [&quot;</span><span style="color:#a3be8c;">data=null</span><span style="color:#c0c5ce;">&quot;] : []
 </span><span style="color:#c0c5ce;">  ).</span><span style="color:#8fa1b3;">concat</span><span style="color:#c0c5ce;">(
-</span><span style="color:#c0c5ce;">	[&quot;</span><span style="color:#a3be8c;">headers={}</span><span style="color:#c0c5ce;">&quot;]
+</span><span style="color:#c0c5ce;">    [&quot;</span><span style="color:#a3be8c;">headers={}</span><span style="color:#c0c5ce;">&quot;]
 </span><span style="color:#c0c5ce;">  );
 </span><span style="color:#c0c5ce;">
 </span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">fnBody </span><span style="color:#c0c5ce;">= `
 </span><span style="color:#a3be8c;">return fetch(
 </span><span style="color:#a3be8c;">  </span><span style="color:#c0c5ce;">${</span><span style="color:#bf616a;">routeTemplate</span><span style="color:#c0c5ce;">}</span><span style="color:#a3be8c;">,
 </span><span style="color:#a3be8c;">  {
-</span><span style="color:#a3be8c;">	method: &quot;</span><span style="color:#c0c5ce;">${</span><span style="color:#bf616a;">method</span><span style="color:#c0c5ce;">}</span><span style="color:#a3be8c;">&quot;,
-</span><span style="color:#a3be8c;">	...headers,
-</span><span style="color:#a3be8c;">	body: data
+</span><span style="color:#a3be8c;">    method: &quot;</span><span style="color:#c0c5ce;">${</span><span style="color:#bf616a;">method</span><span style="color:#c0c5ce;">}</span><span style="color:#a3be8c;">&quot;,
+</span><span style="color:#a3be8c;">    ...headers,
+</span><span style="color:#a3be8c;">    body: data
 </span><span style="color:#a3be8c;">  }
 </span><span style="color:#a3be8c;">).then(processResponse);
 </span><span style="color:#c0c5ce;">`;
@@ -165,7 +165,7 @@ so you can also add a <code>debugger</code> inside of it.</p>
 </span><span style="color:#c0c5ce;">
 </span><span style="color:#c0c5ce;">  </span><span style="color:#65737e;">// to make it easy to debug...
 </span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">if </span><span style="color:#c0c5ce;">(process.env.NODE_ENV != &#39;</span><span style="color:#a3be8c;">production</span><span style="color:#c0c5ce;">&#39;) {
-</span><span style="color:#c0c5ce;">	</span><span style="color:#bf616a;">fn</span><span style="color:#c0c5ce;">.args = </span><span style="color:#bf616a;">vars</span><span style="color:#c0c5ce;">;
+</span><span style="color:#c0c5ce;">    </span><span style="color:#bf616a;">fn</span><span style="color:#c0c5ce;">.args = </span><span style="color:#bf616a;">vars</span><span style="color:#c0c5ce;">;
 </span><span style="color:#c0c5ce;">  }
 </span><span style="color:#c0c5ce;">
 </span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">fn</span><span style="color:#c0c5ce;">;
