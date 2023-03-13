@@ -62,7 +62,6 @@ code, kbd, pre, samp, #ws, #message {
 code {
   margin: 0;
   padding: 0;
-  line-height: 1.1rem;
 }
 
 pre {
@@ -102,7 +101,6 @@ blockquote p {
 
 p {
   margin-bottom: 2em;
-  line-height: 1.4rem;
 }
 
 ul, ol {
@@ -192,12 +190,10 @@ nav a {
 
   p {
     margin-bottom: 1.1em;
-    line-height: 1.2rem;
   }
 
   pre {}
 
   pre code {
-    line-height: 0.7rem;
   }
 }
