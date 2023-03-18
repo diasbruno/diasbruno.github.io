@@ -11,7 +11,7 @@
 <meta property="og:title" content="some interesting ideas with types and javascript" />
 <meta property="og:type" content="article" />
 <meta property="og:image" content="/image/20230317.png" />
-<meta property="og:url" content="https://diasbruno.github.io/2023/03/17/some-interesting-ideas-with-types-and-javascript.html" />
+<meta property="og:url" content="https://diasbruno.github.io/articles/2023/03/17/some-interesting-ideas-with-types-and-javascript.html" />
 </head>
 <body><main>
 <nav>
@@ -42,8 +42,8 @@ what can be simple functions instead.</p>
 </span><span style="color:#c0c5ce;">
 </span><span style="color:#b48ead;">function </span><span style="color:#8fa1b3;">onA</span><span style="color:#c0c5ce;">(object) {
 </span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">return </span><span style="color:#8fa1b3;">match</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">object</span><span style="color:#c0c5ce;">, {
-</span><span style="color:#c0c5ce;">	</span><span style="color:#8fa1b3;">A</span><span style="color:#c0c5ce;">: (a) </span><span style="color:#b48ead;">=&gt; </span><span style="color:#c0c5ce;">console.</span><span style="color:#96b5b4;">log</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">a</span><span style="color:#c0c5ce;">),
-</span><span style="color:#c0c5ce;">	&#39;</span><span style="color:#8fa1b3;">_</span><span style="color:#c0c5ce;">&#39;: () </span><span style="color:#b48ead;">=&gt; </span><span style="color:#c0c5ce;">console.</span><span style="color:#96b5b4;">log</span><span style="color:#c0c5ce;">(&quot;</span><span style="color:#a3be8c;">like default on a switch</span><span style="color:#c0c5ce;">&quot;)
+</span><span style="color:#c0c5ce;">    </span><span style="color:#8fa1b3;">A</span><span style="color:#c0c5ce;">: (a) </span><span style="color:#b48ead;">=&gt; </span><span style="color:#c0c5ce;">console.</span><span style="color:#96b5b4;">log</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">a</span><span style="color:#c0c5ce;">),
+</span><span style="color:#c0c5ce;">    &#39;</span><span style="color:#8fa1b3;">_</span><span style="color:#c0c5ce;">&#39;: () </span><span style="color:#b48ead;">=&gt; </span><span style="color:#c0c5ce;">console.</span><span style="color:#96b5b4;">log</span><span style="color:#c0c5ce;">(&quot;</span><span style="color:#a3be8c;">like default on a switch</span><span style="color:#c0c5ce;">&quot;)
 </span><span style="color:#c0c5ce;">  });
 </span><span style="color:#c0c5ce;">}
 </span><span style="color:#c0c5ce;">
@@ -64,7 +64,7 @@ match to return accordingly.</p>
 <pre style="background-color:#2b303b;"><code class="language-js">
 <span style="color:#b48ead;">function </span><span style="color:#8fa1b3;">A</span><span style="color:#c0c5ce;">(value) {
 </span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">if </span><span style="color:#c0c5ce;">(!(</span><span style="color:#bf616a;">this </span><span style="color:#c0c5ce;">instanceof </span><span style="color:#bf616a;">A</span><span style="color:#c0c5ce;">))
-</span><span style="color:#c0c5ce;">	</span><span style="color:#b48ead;">return </span><span style="color:#c0c5ce;">new </span><span style="color:#bf616a;">A</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">value</span><span style="color:#c0c5ce;">);
+</span><span style="color:#c0c5ce;">    </span><span style="color:#b48ead;">return </span><span style="color:#c0c5ce;">new </span><span style="color:#bf616a;">A</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">value</span><span style="color:#c0c5ce;">);
 </span><span style="color:#c0c5ce;">  </span><span style="color:#bf616a;">this</span><span style="color:#c0c5ce;">.value = </span><span style="color:#bf616a;">value</span><span style="color:#c0c5ce;">;
 </span><span style="color:#c0c5ce;">}
 </span><span style="color:#c0c5ce;">
@@ -72,8 +72,8 @@ match to return accordingly.</p>
 </span><span style="color:#65737e;">// we are not using the value
 </span><span style="color:#b48ead;">function </span><span style="color:#8fa1b3;">asNumber</span><span style="color:#c0c5ce;">(object) {
 </span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">return </span><span style="color:#8fa1b3;">match</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">object</span><span style="color:#c0c5ce;">, {
-</span><span style="color:#c0c5ce;">	</span><span style="color:#8fa1b3;">A</span><span style="color:#c0c5ce;">: () </span><span style="color:#b48ead;">=&gt; </span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">,
-</span><span style="color:#c0c5ce;">	&#39;</span><span style="color:#8fa1b3;">_</span><span style="color:#c0c5ce;">&#39;: () </span><span style="color:#b48ead;">=&gt; </span><span style="color:#d08770;">0
+</span><span style="color:#c0c5ce;">    </span><span style="color:#8fa1b3;">A</span><span style="color:#c0c5ce;">: () </span><span style="color:#b48ead;">=&gt; </span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">,
+</span><span style="color:#c0c5ce;">    &#39;</span><span style="color:#8fa1b3;">_</span><span style="color:#c0c5ce;">&#39;: () </span><span style="color:#b48ead;">=&gt; </span><span style="color:#d08770;">0
 </span><span style="color:#c0c5ce;">  });
 </span><span style="color:#c0c5ce;">}
 </span><span style="color:#c0c5ce;">
@@ -84,15 +84,15 @@ match to return accordingly.</p>
 </span><span style="color:#65737e;">// if we want)
 </span><span style="color:#b48ead;">function </span><span style="color:#8fa1b3;">asString</span><span style="color:#c0c5ce;">(object) {
 </span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">return </span><span style="color:#8fa1b3;">match</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">object</span><span style="color:#c0c5ce;">, {
-</span><span style="color:#c0c5ce;">	</span><span style="color:#8fa1b3;">A</span><span style="color:#c0c5ce;">: (a) </span><span style="color:#b48ead;">=&gt; </span><span style="color:#bf616a;">a</span><span style="color:#c0c5ce;">.value,
-</span><span style="color:#c0c5ce;">	&#39;</span><span style="color:#8fa1b3;">_</span><span style="color:#c0c5ce;">&#39;: () </span><span style="color:#b48ead;">=&gt; </span><span style="color:#c0c5ce;">&#39;&#39;
+</span><span style="color:#c0c5ce;">    </span><span style="color:#8fa1b3;">A</span><span style="color:#c0c5ce;">: (a) </span><span style="color:#b48ead;">=&gt; </span><span style="color:#bf616a;">a</span><span style="color:#c0c5ce;">.value,
+</span><span style="color:#c0c5ce;">    &#39;</span><span style="color:#8fa1b3;">_</span><span style="color:#c0c5ce;">&#39;: () </span><span style="color:#b48ead;">=&gt; </span><span style="color:#c0c5ce;">&#39;&#39;
 </span><span style="color:#c0c5ce;">  });
 </span><span style="color:#c0c5ce;">}
 </span><span style="color:#c0c5ce;">
 </span><span style="color:#b48ead;">function </span><span style="color:#8fa1b3;">stringSize</span><span style="color:#c0c5ce;">(object) {
 </span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">return </span><span style="color:#8fa1b3;">match</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">object</span><span style="color:#c0c5ce;">, {
-</span><span style="color:#c0c5ce;">	</span><span style="color:#8fa1b3;">A</span><span style="color:#c0c5ce;">: (a) </span><span style="color:#b48ead;">=&gt; </span><span style="color:#bf616a;">a</span><span style="color:#c0c5ce;">.value.length,
-</span><span style="color:#c0c5ce;">	&#39;</span><span style="color:#8fa1b3;">_</span><span style="color:#c0c5ce;">&#39;: () </span><span style="color:#b48ead;">=&gt; </span><span style="color:#d08770;">0
+</span><span style="color:#c0c5ce;">    </span><span style="color:#8fa1b3;">A</span><span style="color:#c0c5ce;">: (a) </span><span style="color:#b48ead;">=&gt; </span><span style="color:#bf616a;">a</span><span style="color:#c0c5ce;">.value.length,
+</span><span style="color:#c0c5ce;">    &#39;</span><span style="color:#8fa1b3;">_</span><span style="color:#c0c5ce;">&#39;: () </span><span style="color:#b48ead;">=&gt; </span><span style="color:#d08770;">0
 </span><span style="color:#c0c5ce;">  });
 </span><span style="color:#c0c5ce;">}
 </span><span style="color:#c0c5ce;">
@@ -169,7 +169,7 @@ we can instantiate once and just pass it around.</p>
 </span><span style="color:#c0c5ce;">
 </span><span style="color:#b48ead;">function </span><span style="color:#8fa1b3;">Just</span><span style="color:#c0c5ce;">(a) {
 </span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">if </span><span style="color:#c0c5ce;">(!(</span><span style="color:#bf616a;">this </span><span style="color:#c0c5ce;">instanceof </span><span style="color:#bf616a;">Just</span><span style="color:#c0c5ce;">)) {
-</span><span style="color:#c0c5ce;">	</span><span style="color:#b48ead;">return </span><span style="color:#c0c5ce;">new </span><span style="color:#bf616a;">Just</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">a</span><span style="color:#c0c5ce;">);
+</span><span style="color:#c0c5ce;">    </span><span style="color:#b48ead;">return </span><span style="color:#c0c5ce;">new </span><span style="color:#bf616a;">Just</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">a</span><span style="color:#c0c5ce;">);
 </span><span style="color:#c0c5ce;">  }
 </span><span style="color:#c0c5ce;">  </span><span style="color:#bf616a;">this</span><span style="color:#c0c5ce;">.value = </span><span style="color:#bf616a;">a</span><span style="color:#c0c5ce;">;
 </span><span style="color:#c0c5ce;">}
@@ -189,7 +189,7 @@ explaining it.</p>
 </span><span style="color:#c0c5ce;">
 </span><span style="color:#b48ead;">function </span><span style="color:#8fa1b3;">Just</span><span style="color:#c0c5ce;">(a) {
 </span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">if </span><span style="color:#c0c5ce;">(!(</span><span style="color:#bf616a;">this </span><span style="color:#c0c5ce;">instanceof </span><span style="color:#bf616a;">Just</span><span style="color:#c0c5ce;">)) {
-</span><span style="color:#c0c5ce;">	</span><span style="color:#b48ead;">return </span><span style="color:#c0c5ce;">new </span><span style="color:#bf616a;">Just</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">a</span><span style="color:#c0c5ce;">);
+</span><span style="color:#c0c5ce;">    </span><span style="color:#b48ead;">return </span><span style="color:#c0c5ce;">new </span><span style="color:#bf616a;">Just</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">a</span><span style="color:#c0c5ce;">);
 </span><span style="color:#c0c5ce;">  }
 </span><span style="color:#c0c5ce;">  </span><span style="color:#bf616a;">this</span><span style="color:#c0c5ce;">.value = </span><span style="color:#bf616a;">a</span><span style="color:#c0c5ce;">;
 </span><span style="color:#c0c5ce;">}
@@ -203,7 +203,7 @@ explaining it.</p>
 </span><span style="color:#c0c5ce;">};
 </span><span style="color:#c0c5ce;">
 </span><span style="color:#8fa1b3;">Just</span><span style="color:#c0c5ce;">(</span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">).</span><span style="color:#8fa1b3;">map</span><span style="color:#c0c5ce;">(v </span><span style="color:#b48ead;">=&gt; </span><span style="color:#bf616a;">v </span><span style="color:#c0c5ce;">+ </span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">).</span><span style="color:#8fa1b3;">map</span><span style="color:#c0c5ce;">(v </span><span style="color:#b48ead;">=&gt; </span><span style="color:#bf616a;">v </span><span style="color:#c0c5ce;">* </span><span style="color:#d08770;">2</span><span style="color:#c0c5ce;">)
-</span><span style="color:#65737e;">// 4
+</span><span style="color:#65737e;">// Just(4)
 </span><span style="color:#bf616a;">Nothing</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">map</span><span style="color:#c0c5ce;">(v </span><span style="color:#b48ead;">=&gt; </span><span style="color:#bf616a;">v </span><span style="color:#c0c5ce;">+ </span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">).</span><span style="color:#8fa1b3;">map</span><span style="color:#c0c5ce;">(v </span><span style="color:#b48ead;">=&gt; </span><span style="color:#bf616a;">v </span><span style="color:#c0c5ce;">* </span><span style="color:#d08770;">2</span><span style="color:#c0c5ce;">)
 </span><span style="color:#65737e;">// Nothing
 </span><span style="color:#c0c5ce;">
@@ -217,7 +217,7 @@ explaining it.</p>
 </span><span style="color:#c0c5ce;">}
 </span><span style="color:#c0c5ce;">
 </span><span style="color:#8fa1b3;">valueToMaybe</span><span style="color:#c0c5ce;">(</span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">).</span><span style="color:#8fa1b3;">map</span><span style="color:#c0c5ce;">(v </span><span style="color:#b48ead;">=&gt; </span><span style="color:#bf616a;">v </span><span style="color:#c0c5ce;">+ </span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">).</span><span style="color:#8fa1b3;">map</span><span style="color:#c0c5ce;">(v </span><span style="color:#b48ead;">=&gt; </span><span style="color:#bf616a;">v </span><span style="color:#c0c5ce;">* </span><span style="color:#d08770;">2</span><span style="color:#c0c5ce;">)
-</span><span style="color:#65737e;">// 4
+</span><span style="color:#65737e;">// Just(4)
 </span><span style="color:#8fa1b3;">valueToMaybe</span><span style="color:#c0c5ce;">(</span><span style="color:#d08770;">11</span><span style="color:#c0c5ce;">).</span><span style="color:#8fa1b3;">map</span><span style="color:#c0c5ce;">(v </span><span style="color:#b48ead;">=&gt; </span><span style="color:#bf616a;">v </span><span style="color:#c0c5ce;">+ </span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">).</span><span style="color:#8fa1b3;">map</span><span style="color:#c0c5ce;">(v </span><span style="color:#b48ead;">=&gt; </span><span style="color:#bf616a;">v </span><span style="color:#c0c5ce;">* </span><span style="color:#d08770;">2</span><span style="color:#c0c5ce;">)
 </span><span style="color:#65737e;">// Nothing
 </span><span style="color:#c0c5ce;">
