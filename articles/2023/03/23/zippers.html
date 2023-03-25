@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns#" >
+<head>
+<meta charset="UTF-8">
+<title>diasbruno</title>
+<base href="/">
+<meta name="viewport" content="width=device-width" />
+<link rel="stylesheet" type="text/css" href="./css/style.css" />
+<link rel="stylesheet" type="text/css" href="./css/milligram.css" />
+<link rel="stylesheet" type="text/css" href="./css/highlight.min.css" />
+<meta property="og:title" content="zippers" />
+<meta property="og:type" content="article" />
+<meta property="og:image" content="https://diasbruno.github.io/images/20230319.png" />
+<meta property="og:url" content="https://diasbruno.github.io/articles/2023/03/23/zippers.html" />
+</head>
+<body><main>
+<nav>
+  <div><a href="/"><h1>diasbruno</h1></a></div>
+  <div class="nav-links"><a href="/">articles</a></div>
+</nav>
+<section class="content"><h1>zippers</h1>
+<div class="content-info"><span>article</span> &#10072; <span>publish</span> &#10072; <time datetime="2023-03-23T12:47:32+00:00">Mar 23, 2023</time></div>
+<p>references:</p>
+<p><a href="https://www.st.cs.uni-saarland.de/edu/seminare/2005/advanced-fp/docs/huet-zipper.pdf">Functional pears - The zipper - Gérard Huet 1997</a></p>
+<hr />
+<p>zipper is way to navigate a data structure keeping
+a focal point.</p>
+<p>the main operations are: <code>left</code>, <code>right</code>, <code>up</code> and <code>down</code>.</p>
+<p>they are very handy because when a point of interest
+is found, you can edit in-place with zero cost.</p>
+<p>let's right a simple zipper for an array (it will be a mutable
+structure for convinience).</p>
+<p>a array zipper will have 3 properties:</p>
+<ul>
+<li>left</li>
+</ul>
+<p>keep the elements we walked, from start to focal point.</p>
+<ul>
+<li>at</li>
+</ul>
+<p>the current focusing element.</p>
+<ul>
+<li>right</li>
+</ul>
+<p>keep the elements from focal point to right.</p>
+<pre style="background-color:#2b303b;"><code class="language-js">
+<span style="color:#b48ead;">function </span><span style="color:#8fa1b3;">ArrayZipper</span><span style="color:#c0c5ce;">(array) {
+</span><span style="color:#c0c5ce;">  </span><span style="color:#bf616a;">this</span><span style="color:#c0c5ce;">._left = [];
+</span><span style="color:#c0c5ce;">  </span><span style="color:#bf616a;">this</span><span style="color:#c0c5ce;">._at = </span><span style="color:#bf616a;">array</span><span style="color:#c0c5ce;">[</span><span style="color:#d08770;">0</span><span style="color:#c0c5ce;">];
+</span><span style="color:#c0c5ce;">  </span><span style="color:#bf616a;">this</span><span style="color:#c0c5ce;">._right = </span><span style="color:#bf616a;">array</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">slice</span><span style="color:#c0c5ce;">(</span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">);
+</span><span style="color:#c0c5ce;">}
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#ebcb8b;">ArrayZipper</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">of </span><span style="color:#c0c5ce;">= (array) </span><span style="color:#b48ead;">=&gt; </span><span style="color:#c0c5ce;">new </span><span style="color:#bf616a;">ArrayZipper</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">array</span><span style="color:#c0c5ce;">);
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">azp </span><span style="color:#c0c5ce;">= </span><span style="color:#ebcb8b;">ArrayZipper</span><span style="color:#c0c5ce;">.prototype;
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#65737e;">// just get the focusing element
+</span><span style="color:#ebcb8b;">azp</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">at </span><span style="color:#c0c5ce;">= </span><span style="color:#b48ead;">function</span><span style="color:#c0c5ce;">() {
+</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">this</span><span style="color:#c0c5ce;">._at;
+</span><span style="color:#c0c5ce;">};
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#65737e;">// replace the focusing element with a new value
+</span><span style="color:#ebcb8b;">azp</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">edit </span><span style="color:#c0c5ce;">= </span><span style="color:#b48ead;">function</span><span style="color:#c0c5ce;">(v) {
+</span><span style="color:#c0c5ce;">  </span><span style="color:#bf616a;">this</span><span style="color:#c0c5ce;">._at = </span><span style="color:#bf616a;">v</span><span style="color:#c0c5ce;">;
+</span><span style="color:#c0c5ce;">};
+</span>
+</code></pre>
+<p>with our zipper, we can walk right...</p>
+<pre style="background-color:#2b303b;"><code class="language-js">
+<span style="color:#ebcb8b;">azp</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">right </span><span style="color:#c0c5ce;">= </span><span style="color:#b48ead;">function</span><span style="color:#c0c5ce;">() {
+</span><span style="color:#c0c5ce;">  </span><span style="color:#bf616a;">this</span><span style="color:#c0c5ce;">._left.</span><span style="color:#96b5b4;">push</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">this</span><span style="color:#c0c5ce;">._at);
+</span><span style="color:#c0c5ce;">  </span><span style="color:#bf616a;">this</span><span style="color:#c0c5ce;">._at = </span><span style="color:#bf616a;">this</span><span style="color:#c0c5ce;">._right.</span><span style="color:#96b5b4;">shift</span><span style="color:#c0c5ce;">();
+</span><span style="color:#c0c5ce;">};
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#b48ead;">let </span><span style="color:#bf616a;">z </span><span style="color:#c0c5ce;">= </span><span style="color:#bf616a;">ArrayZipper</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">of</span><span style="color:#c0c5ce;">([</span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">, </span><span style="color:#d08770;">2</span><span style="color:#c0c5ce;">, </span><span style="color:#d08770;">3</span><span style="color:#c0c5ce;">]);
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#bf616a;">z</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">right</span><span style="color:#c0c5ce;">(), </span><span style="color:#bf616a;">z</span><span style="color:#c0c5ce;">;
+</span><span style="color:#65737e;">// ArrayZipper { _left: [ 1 ], _at: 2, _right: [ 3 ] }
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#bf616a;">z</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">right</span><span style="color:#c0c5ce;">(), </span><span style="color:#bf616a;">z</span><span style="color:#c0c5ce;">;
+</span><span style="color:#65737e;">// ArrayZipper { _left: [ 1, 2 ], _at: 3, _right: [] }
+</span>
+</code></pre>
+<p>or walking left...</p>
+<pre style="background-color:#2b303b;"><code class="language-js">
+<span style="color:#ebcb8b;">azp</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">left </span><span style="color:#c0c5ce;">= </span><span style="color:#b48ead;">function</span><span style="color:#c0c5ce;">() {
+</span><span style="color:#c0c5ce;">  </span><span style="color:#bf616a;">this</span><span style="color:#c0c5ce;">._right = [</span><span style="color:#bf616a;">this</span><span style="color:#c0c5ce;">._at].</span><span style="color:#8fa1b3;">concat</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">this</span><span style="color:#c0c5ce;">._right);
+</span><span style="color:#c0c5ce;">  </span><span style="color:#bf616a;">this</span><span style="color:#c0c5ce;">._at = </span><span style="color:#bf616a;">this</span><span style="color:#c0c5ce;">._left.</span><span style="color:#96b5b4;">pop</span><span style="color:#c0c5ce;">();
+</span><span style="color:#c0c5ce;">};
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#65737e;">// walking from our previous defined zipper
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#bf616a;">z</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">edit</span><span style="color:#c0c5ce;">(</span><span style="color:#d08770;">10</span><span style="color:#c0c5ce;">), </span><span style="color:#bf616a;">z</span><span style="color:#c0c5ce;">;
+</span><span style="color:#65737e;">// ArrayZipper { _left: [ 1, 2 ], _at: 10, _right: [] }
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#bf616a;">z</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">left</span><span style="color:#c0c5ce;">(), </span><span style="color:#bf616a;">z
+</span><span style="color:#65737e;">// ArrayZipper { _left: [ 1 ], _at: 2, _right: [ 10 ] }
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#bf616a;">z</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">left</span><span style="color:#c0c5ce;">(), </span><span style="color:#bf616a;">z
+</span><span style="color:#65737e;">// ArrayZipper { _left: [], _at: 1, _right: [ 2, 10 ] }
+</span>
+</code></pre>
+<p>but it can also conform to other interfaces.</p>
+<pre style="background-color:#2b303b;"><code class="language-js">
+<span style="color:#ebcb8b;">azp</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">map </span><span style="color:#c0c5ce;">= </span><span style="color:#b48ead;">function</span><span style="color:#c0c5ce;">(f) {
+</span><span style="color:#c0c5ce;">  </span><span style="color:#bf616a;">this</span><span style="color:#c0c5ce;">._left = </span><span style="color:#bf616a;">this</span><span style="color:#c0c5ce;">._left.</span><span style="color:#8fa1b3;">map</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">f</span><span style="color:#c0c5ce;">);
+</span><span style="color:#c0c5ce;">  </span><span style="color:#bf616a;">this</span><span style="color:#c0c5ce;">._at = </span><span style="color:#8fa1b3;">f</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">this</span><span style="color:#c0c5ce;">._at);
+</span><span style="color:#c0c5ce;">  </span><span style="color:#bf616a;">this</span><span style="color:#c0c5ce;">._right = </span><span style="color:#bf616a;">this</span><span style="color:#c0c5ce;">._right.</span><span style="color:#8fa1b3;">map</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">f</span><span style="color:#c0c5ce;">);
+</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">this</span><span style="color:#c0c5ce;">;
+</span><span style="color:#c0c5ce;">};
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#bf616a;">z
+</span><span style="color:#65737e;">// ArrayZipper { _left: [], _at: 1, _right: [ 2, 10 ] }
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#bf616a;">z</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">map</span><span style="color:#c0c5ce;">(x </span><span style="color:#b48ead;">=&gt; </span><span style="color:#bf616a;">x </span><span style="color:#c0c5ce;">+ </span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">), </span><span style="color:#bf616a;">z</span><span style="color:#c0c5ce;">;
+</span><span style="color:#65737e;">// ArrayZipper { _left: [], _at: 2, _right: [ 3, 11 ] }
+</span>
+</code></pre>
+<p>focus (just like <code>find</code>, but to look at an element).</p>
+<pre style="background-color:#2b303b;"><code class="language-js">
+<span style="color:#ebcb8b;">azp</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">focus </span><span style="color:#c0c5ce;">= </span><span style="color:#b48ead;">function</span><span style="color:#c0c5ce;">(f) {
+</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">tmp </span><span style="color:#c0c5ce;">= </span><span style="color:#bf616a;">this</span><span style="color:#c0c5ce;">._left.</span><span style="color:#8fa1b3;">concat</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">this</span><span style="color:#c0c5ce;">._at).</span><span style="color:#8fa1b3;">concat</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">this</span><span style="color:#c0c5ce;">._right);
+</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">position </span><span style="color:#c0c5ce;">= </span><span style="color:#bf616a;">tmp</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">findIndex</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">f</span><span style="color:#c0c5ce;">);
+</span><span style="color:#c0c5ce;">  </span><span style="color:#bf616a;">this</span><span style="color:#c0c5ce;">._left = </span><span style="color:#bf616a;">tmp</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">slice</span><span style="color:#c0c5ce;">(</span><span style="color:#d08770;">0</span><span style="color:#c0c5ce;">, </span><span style="color:#bf616a;">position</span><span style="color:#c0c5ce;">);
+</span><span style="color:#c0c5ce;">  </span><span style="color:#bf616a;">this</span><span style="color:#c0c5ce;">._at = </span><span style="color:#bf616a;">tmp</span><span style="color:#c0c5ce;">[</span><span style="color:#bf616a;">position</span><span style="color:#c0c5ce;">];
+</span><span style="color:#c0c5ce;">  </span><span style="color:#bf616a;">this</span><span style="color:#c0c5ce;">._right = </span><span style="color:#bf616a;">tmp</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">slice</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">position </span><span style="color:#c0c5ce;">+ </span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">, </span><span style="color:#bf616a;">tmp</span><span style="color:#c0c5ce;">.length);
+</span><span style="color:#c0c5ce;">};
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#bf616a;">z
+</span><span style="color:#65737e;">// ArrayZipper { _left: [], _at: 2, _right: [ 3, 11 ] }
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#bf616a;">z</span><span style="color:#c0c5ce;">.</span><span style="color:#96b5b4;">focus</span><span style="color:#c0c5ce;">(v </span><span style="color:#b48ead;">=&gt; </span><span style="color:#bf616a;">v </span><span style="color:#c0c5ce;">== </span><span style="color:#d08770;">11</span><span style="color:#c0c5ce;">), console.</span><span style="color:#96b5b4;">log</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">z</span><span style="color:#c0c5ce;">);
+</span><span style="color:#65737e;">// ArrayZipper { _left: [ 2, 3 ], _at: 11, _right: [] }
+</span>
+</code></pre>
+<p>or...find, find...</p>
+<pre style="background-color:#2b303b;"><code class="language-js">
+<span style="color:#ebcb8b;">azp</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">find </span><span style="color:#c0c5ce;">= </span><span style="color:#b48ead;">function</span><span style="color:#c0c5ce;">(f) {
+</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">this</span><span style="color:#c0c5ce;">._left.</span><span style="color:#8fa1b3;">find</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">f</span><span style="color:#c0c5ce;">) ||
+</span><span style="color:#c0c5ce;">	(</span><span style="color:#8fa1b3;">f</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">this</span><span style="color:#c0c5ce;">._at) &amp;&amp; </span><span style="color:#bf616a;">this</span><span style="color:#c0c5ce;">._at) ||
+</span><span style="color:#c0c5ce;">	</span><span style="color:#bf616a;">this</span><span style="color:#c0c5ce;">._right.</span><span style="color:#8fa1b3;">find</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">f</span><span style="color:#c0c5ce;">) ||
+</span><span style="color:#c0c5ce;">	</span><span style="color:#d08770;">null</span><span style="color:#c0c5ce;">;
+</span><span style="color:#c0c5ce;">};
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#bf616a;">z</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">find</span><span style="color:#c0c5ce;">(v </span><span style="color:#b48ead;">=&gt; </span><span style="color:#bf616a;">v </span><span style="color:#c0c5ce;">== </span><span style="color:#d08770;">11</span><span style="color:#c0c5ce;">)
+</span><span style="color:#65737e;">// 11
+</span>
+</code></pre></section>
+<script type="application/javascript" src="./js/highlight.min.js"></script>
+</main></body></html>
