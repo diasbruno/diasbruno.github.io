@@ -178,13 +178,56 @@ nav a {
   border-bottom: none;
 }
 
+.opensource-lang {
+}
+
+.opensource-lang h5 span {
+  padding: 8px 12px;
+  background-color: #606c76;
+  color: #fff;
+}
+
+.opensource-lang-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0px;
+}
+
+.opensource-item {
+  padding: 20px;
+}
+
+.opensource-item:nth-child(n) {
+  padding-left: 0;
+  padding-right: 20px;
+}
+
+.opensource-item:nth-child(3n) {
+  padding-left: 20px;
+  padding-right: 0;
+}
+
+.opensource-item:nth-child(3n+2) {
+  padding-left: 20px;
+  padding-right: 20px;
+  background-color: #f1eaf3;
+}
+
+.opensource-item h3 {
+  margin: 0 0 5px 0;
+}
+
+.opensource-item p {
+  margin: 0 0 10px 0;
+}
+
 @media (max-width: 720px) {
   html {}
 
   body {
     padding: 40px 30px;
   }
-  
+
   main {
     width: 100%;
   }
@@ -199,5 +242,9 @@ nav a {
   pre {}
 
   pre code {
+  }
+
+  .opensource-lang-list {
+    display: block;
   }
 }
