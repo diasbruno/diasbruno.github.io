@@ -132,7 +132,10 @@ img, svg {
 }
 
 main {
-  width: 720px;
+}
+
+.article-section {
+  max-width: 720px;
 }
 
 nav {
