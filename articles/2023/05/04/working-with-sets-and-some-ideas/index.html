@@ -206,6 +206,10 @@ it uses strict equality, so it must be the same instance.</p>
 on a particular property, because we know that all objects are the same
 (they are just duplicated), or, if we try to add an item with the same key
 we are not going to accept it (like unique constrait).</p>
+<p>NOTE: consider this one a port from <code>lodash.setWith</code>
+to use Set directly, because that function exists
+for so long now and i use daily.
+or rename <code>SetWith</code> with <code>UniqueOnKey</code>.</p>
 <pre style="background-color:#2b303b;"><code class="language-js">
 <span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">SetWith </span><span style="color:#b48ead;">extends </span><span style="color:#a3be8c;">Set </span><span style="color:#eff1f5;">{
 </span><span style="color:#eff1f5;">  </span><span style="color:#8fa1b3;">constructor</span><span style="color:#eff1f5;">(</span><span style="color:#c0c5ce;">initial</span><span style="color:#eff1f5;">, </span><span style="color:#c0c5ce;">testFunction</span><span style="color:#eff1f5;">) {
