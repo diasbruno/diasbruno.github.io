@@ -60,7 +60,7 @@ but this one is kinda easy to fix...</p>
 </span><span style="color:#eff1f5;">}
 </span>
 </code></pre>
-<p>now we have something to work on.</p>
+<p>now we have something to work with.</p>
 <p><a href="https://codesandbox.io/p/sandbox/quizzical-haze-qfyxow?file=%2Findex.js">codesandbox with example</a></p>
 <p>we could implement iterator, but this one is for the reader.</p>
 <h2>the json problem</h2>
@@ -68,7 +68,7 @@ but this one is kinda easy to fix...</p>
 <p>json doesn't have any representation for Sets,
 only for array.</p>
 <p>this is a serializer/deserializer problem and not a JSON one.</p>
-<p>this means that if we want to retrieve a Set from a json (and to json),
+<p>this means that if we want to retrieve a Set from a json (and convert to json),
 we need to explicitly tell that a particular value is a Set.</p>
 <p>this is great because we can parse directly into a class,
 and not use raw objects.</p>
@@ -103,10 +103,10 @@ and not use raw objects.</p>
 </span>
 </code></pre>
 <p>which means that <code>User.fromJSON . User.toJSON = id</code>.
-(it reads fromJSON composed with toJSON
+(it reads <code>fromJSON</code> composed with <code>toJSON</code>
 is the same of doing nothing).</p>
 <p><a href="https://codesandbox.io/p/sandbox/weird-ideas-with-sets-forked-5mgurt?file=%2Findex.js">codesandbox with example</a></p>
-<p>this is handmade, but probably there is some packages smart enouth
+<p>this is handmade, but probably there are some packages smart enough
 to help with this.</p>
 <h2>use Set when you need a Set...</h2>
 <p>this is a snippet people share on social media:</p>
@@ -128,9 +128,9 @@ to help with this.</p>
 <ul>
 <li>expand the set into a new list (?)</li>
 </ul>
-<p>this operation allocates at least a new list with size <code>N - m</code>
-been <code>N</code> the size of the initial list and <code>m</code> the number of duplicated
-items. worst case is when <code>m = 0</code> meaning where are just cloning the list.</p>
+<p>this operation allocates a new list with size <code>N - m</code>
+where <code>N</code> is the size of the initial list and <code>m</code> the number of duplicated
+items. worst case is when <code>m = 0</code> which means we are just cloning the list.</p>
 <p>the operation itself is not critical if executed once or twice,
 the problems starts when the list grows or executing this operation
 too many times.</p>
@@ -146,10 +146,10 @@ and keep adding stuff to it.</p>
 </span><span style="color:#65737e;">// Set { 1, 2 }
 </span>
 </code></pre>
-<p>i would guess the reason is because most people use raw objects
+<p>i would guess, the reason is because most people use raw objects
 on their projects and Set is not easily converted to/from JSON.
 maybe it is related to what tools are available to facilitate
-serialize/deserialize objects.</p>
+serialization/deserialization objects.</p>
 <p>but there are more interesting uses of Set!</p>
 <h3>Togglable set</h3>
 <p>a nice class to work when you need to use bulk (mass) selection.</p>
@@ -178,7 +178,7 @@ serialize/deserialize objects.</p>
 <h3>SetWith - Set, but by a specific property of an object</h3>
 <p>Set can accept objects, but to check if the object is present
 it uses strict equality, so it must be the same instance.</p>
-<p>sometimes we don't want this. we want that it behaves live a Set
+<p>sometimes we don't want this. we want that it behaves like a Set
 on a particular property, because we know that all objects are the same
 (they are just duplicated), or, if we try to add an item with the same key
 we are not going to accept it (like unique constrait).</p>
