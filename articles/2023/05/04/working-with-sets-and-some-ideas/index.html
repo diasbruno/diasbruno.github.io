@@ -37,25 +37,25 @@ but this one is kinda easy to fix...</p>
 <pre style="background-color:#2b303b;"><code class="language-js">
 <span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">AsSet </span><span style="color:#b48ead;">extends </span><span style="color:#a3be8c;">Set </span><span style="color:#eff1f5;">{
 </span><span style="color:#eff1f5;">  </span><span style="color:#8fa1b3;">constructor</span><span style="color:#eff1f5;">(</span><span style="color:#c0c5ce;">initial</span><span style="color:#eff1f5;">) {
-</span><span style="color:#eff1f5;">	</span><span style="color:#96b5b4;">super</span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">initial</span><span style="color:#eff1f5;">);
+</span><span style="color:#eff1f5;">    </span><span style="color:#96b5b4;">super</span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">initial</span><span style="color:#eff1f5;">);
 </span><span style="color:#eff1f5;">  }
 </span><span style="color:#eff1f5;">
 </span><span style="color:#eff1f5;">  </span><span style="color:#8fa1b3;">reduce</span><span style="color:#eff1f5;">(</span><span style="color:#c0c5ce;">f</span><span style="color:#eff1f5;">, </span><span style="color:#c0c5ce;">acc</span><span style="color:#eff1f5;">) {
-</span><span style="color:#eff1f5;">	</span><span style="color:#b48ead;">for </span><span style="color:#eff1f5;">(</span><span style="color:#b48ead;">let </span><span style="color:#eff1f5;">[</span><span style="color:#bf616a;">_</span><span style="color:#eff1f5;">, </span><span style="color:#bf616a;">value</span><span style="color:#eff1f5;">] </span><span style="color:#c0c5ce;">of </span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.</span><span style="color:#8fa1b3;">entries</span><span style="color:#eff1f5;">()) {
-</span><span style="color:#eff1f5;">	  </span><span style="color:#bf616a;">acc </span><span style="color:#c0c5ce;">= </span><span style="color:#8fa1b3;">f</span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">acc</span><span style="color:#eff1f5;">, </span><span style="color:#bf616a;">value</span><span style="color:#eff1f5;">);
-</span><span style="color:#eff1f5;">	}
-</span><span style="color:#eff1f5;">	</span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">acc</span><span style="color:#eff1f5;">;
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">for </span><span style="color:#eff1f5;">(</span><span style="color:#b48ead;">let </span><span style="color:#eff1f5;">[</span><span style="color:#bf616a;">_</span><span style="color:#eff1f5;">, </span><span style="color:#bf616a;">value</span><span style="color:#eff1f5;">] </span><span style="color:#c0c5ce;">of </span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.</span><span style="color:#8fa1b3;">entries</span><span style="color:#eff1f5;">()) {
+</span><span style="color:#eff1f5;">      </span><span style="color:#bf616a;">acc </span><span style="color:#c0c5ce;">= </span><span style="color:#8fa1b3;">f</span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">acc</span><span style="color:#eff1f5;">, </span><span style="color:#bf616a;">value</span><span style="color:#eff1f5;">);
+</span><span style="color:#eff1f5;">    }
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">acc</span><span style="color:#eff1f5;">;
 </span><span style="color:#eff1f5;">  }
 </span><span style="color:#eff1f5;">
 </span><span style="color:#eff1f5;">  </span><span style="color:#8fa1b3;">map</span><span style="color:#eff1f5;">(</span><span style="color:#c0c5ce;">f</span><span style="color:#eff1f5;">) {
-</span><span style="color:#eff1f5;">	</span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.</span><span style="color:#8fa1b3;">reduce</span><span style="color:#eff1f5;">(
-</span><span style="color:#eff1f5;">	  (</span><span style="color:#c0c5ce;">acc</span><span style="color:#eff1f5;">, </span><span style="color:#c0c5ce;">item</span><span style="color:#eff1f5;">) </span><span style="color:#b48ead;">=&gt; </span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">acc</span><span style="color:#eff1f5;">.</span><span style="color:#96b5b4;">add</span><span style="color:#eff1f5;">(</span><span style="color:#8fa1b3;">f</span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">item</span><span style="color:#eff1f5;">)), </span><span style="color:#bf616a;">acc</span><span style="color:#eff1f5;">),
-</span><span style="color:#eff1f5;">	  </span><span style="color:#c0c5ce;">new </span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.</span><span style="color:#8fa1b3;">constructor</span><span style="color:#eff1f5;">()
-</span><span style="color:#eff1f5;">	);
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.</span><span style="color:#8fa1b3;">reduce</span><span style="color:#eff1f5;">(
+</span><span style="color:#eff1f5;">      (</span><span style="color:#c0c5ce;">acc</span><span style="color:#eff1f5;">, </span><span style="color:#c0c5ce;">item</span><span style="color:#eff1f5;">) </span><span style="color:#b48ead;">=&gt; </span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">acc</span><span style="color:#eff1f5;">.</span><span style="color:#96b5b4;">add</span><span style="color:#eff1f5;">(</span><span style="color:#8fa1b3;">f</span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">item</span><span style="color:#eff1f5;">)), </span><span style="color:#bf616a;">acc</span><span style="color:#eff1f5;">),
+</span><span style="color:#eff1f5;">      </span><span style="color:#c0c5ce;">new </span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.</span><span style="color:#8fa1b3;">constructor</span><span style="color:#eff1f5;">()
+</span><span style="color:#eff1f5;">    );
 </span><span style="color:#eff1f5;">  }
 </span><span style="color:#eff1f5;">
 </span><span style="color:#eff1f5;">  </span><span style="color:#8fa1b3;">find</span><span style="color:#eff1f5;">(</span><span style="color:#c0c5ce;">f</span><span style="color:#eff1f5;">) {
-</span><span style="color:#eff1f5;">	</span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.</span><span style="color:#8fa1b3;">reduce</span><span style="color:#eff1f5;">((</span><span style="color:#c0c5ce;">acc</span><span style="color:#eff1f5;">, </span><span style="color:#c0c5ce;">item</span><span style="color:#eff1f5;">) </span><span style="color:#b48ead;">=&gt; </span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">acc </span><span style="color:#c0c5ce;">? </span><span style="color:#bf616a;">acc </span><span style="color:#c0c5ce;">: </span><span style="color:#8fa1b3;">f</span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">item</span><span style="color:#eff1f5;">) </span><span style="color:#c0c5ce;">&amp;&amp; </span><span style="color:#bf616a;">item</span><span style="color:#eff1f5;">), </span><span style="color:#d08770;">null</span><span style="color:#eff1f5;">);
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.</span><span style="color:#8fa1b3;">reduce</span><span style="color:#eff1f5;">((</span><span style="color:#c0c5ce;">acc</span><span style="color:#eff1f5;">, </span><span style="color:#c0c5ce;">item</span><span style="color:#eff1f5;">) </span><span style="color:#b48ead;">=&gt; </span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">acc </span><span style="color:#c0c5ce;">? </span><span style="color:#bf616a;">acc </span><span style="color:#c0c5ce;">: </span><span style="color:#8fa1b3;">f</span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">item</span><span style="color:#eff1f5;">) </span><span style="color:#c0c5ce;">&amp;&amp; </span><span style="color:#bf616a;">item</span><span style="color:#eff1f5;">), </span><span style="color:#d08770;">null</span><span style="color:#eff1f5;">);
 </span><span style="color:#eff1f5;">  }
 </span><span style="color:#eff1f5;">}
 </span>
@@ -66,7 +66,7 @@ but this one is kinda easy to fix...</p>
 <h2>the json problem</h2>
 <p>this is actually something good to talk about.</p>
 <p>json doesn't have any representation for Sets,
-only for array.</p>
+only for arrays.</p>
 <p>this is a serializer/deserializer problem and not a JSON one.</p>
 <p>this means that if we want to retrieve a Set from a json (and convert to json),
 we need to explicitly tell that a particular value is a Set.</p>
@@ -102,7 +102,8 @@ and not use raw objects.</p>
 </span><span style="color:#8fa1b3;">deepEqual</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">user</span><span style="color:#c0c5ce;">, </span><span style="color:#bf616a;">User</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">fromJSON</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">User</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">toJSON</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">user</span><span style="color:#c0c5ce;">)));
 </span>
 </code></pre>
-<p>which means that <code>User.fromJSON . User.toJSON = id</code>.
+<p>which means that <code>User.fromJSON . User.toJSON = id</code>
+and <code>User.toJSON . User.fromJSON = id</code>.
 (it reads <code>fromJSON</code> composed with <code>toJSON</code>
 is the same of doing nothing).</p>
 <p><a href="https://codesandbox.io/p/sandbox/weird-ideas-with-sets-forked-5mgurt?file=%2Findex.js">codesandbox with example</a></p>
@@ -122,7 +123,12 @@ to help with this.</p>
 <p>this is ok. <code>Set</code> can be initiated with a list or another <code>Set</code>
 (like a copy constructor).</p>
 <ul>
-<li>Set will remove duplicates</li>
+<li>
+<p>create a Set with the initial list</p>
+</li>
+<li>
+<p>Set will remove duplicates</p>
+</li>
 </ul>
 <p>it is its job...keep only unique items.</p>
 <ul>
@@ -130,12 +136,12 @@ to help with this.</p>
 </ul>
 <p>this operation allocates a new list with size <code>N - m</code>
 where <code>N</code> is the size of the initial list and <code>m</code> the number of duplicated
-items. worst case is when <code>m = 0</code> which means we are just cloning the list.</p>
+items. worst case is when <code>m = 0</code> (and N is big), which means we are just cloning a big list.</p>
 <p>the operation itself is not critical if executed once or twice,
 the problems starts when the list grows or executing this operation
 too many times.</p>
 <p>the question here is why?</p>
-<p>in most cases, this operation is uneccessary. we don't really need
+<p>in most cases, this operation is unneccessary. we don't really need
 to change data structures. we can just start directly with a Set
 and keep adding stuff to it.</p>
 <pre style="background-color:#2b303b;"><code class="language-js">
@@ -149,29 +155,47 @@ and keep adding stuff to it.</p>
 <p>i would guess, the reason is because most people use raw objects
 on their projects and Set is not easily converted to/from JSON.
 maybe it is related to what tools are available to facilitate
-serialization/deserialization objects.</p>
+serialization/deserialization of objects.</p>
 <p>but there are more interesting uses of Set!</p>
 <h3>Togglable set</h3>
-<p>a nice class to work when you need to use bulk (mass) selection.</p>
+<p>a nice class to use when you need bulk selection (mass action).</p>
+<p>we use an identifier to later check if an item was marked
+or not to display on the GUI and to collect all marked items
+to perform an action.</p>
 <pre style="background-color:#2b303b;"><code class="language-js">
 <span style="color:#b48ead;">const </span><span style="color:#bf616a;">ADD </span><span style="color:#c0c5ce;">= &quot;</span><span style="color:#a3be8c;">add</span><span style="color:#c0c5ce;">&quot;;
 </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">DELETE </span><span style="color:#c0c5ce;">= &quot;</span><span style="color:#a3be8c;">delete</span><span style="color:#c0c5ce;">&quot;;
 </span><span style="color:#c0c5ce;">
 </span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">Togglable </span><span style="color:#b48ead;">extends </span><span style="color:#a3be8c;">AsSet </span><span style="color:#eff1f5;">{
 </span><span style="color:#eff1f5;">  </span><span style="color:#8fa1b3;">toggle</span><span style="color:#eff1f5;">(</span><span style="color:#c0c5ce;">x</span><span style="color:#eff1f5;">) {
-</span><span style="color:#eff1f5;">	</span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">[</span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.</span><span style="color:#8fa1b3;">has</span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">x</span><span style="color:#eff1f5;">) </span><span style="color:#c0c5ce;">? </span><span style="color:#bf616a;">DELETE </span><span style="color:#c0c5ce;">: </span><span style="color:#bf616a;">ADD</span><span style="color:#eff1f5;">](</span><span style="color:#bf616a;">x</span><span style="color:#eff1f5;">);
+</span><span style="color:#eff1f5;">    </span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">[</span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.</span><span style="color:#8fa1b3;">has</span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">x</span><span style="color:#eff1f5;">) </span><span style="color:#c0c5ce;">? </span><span style="color:#bf616a;">DELETE </span><span style="color:#c0c5ce;">: </span><span style="color:#bf616a;">ADD</span><span style="color:#eff1f5;">](</span><span style="color:#bf616a;">x</span><span style="color:#eff1f5;">);
+</span><span style="color:#eff1f5;">  }
+</span><span style="color:#eff1f5;">
+</span><span style="color:#eff1f5;">  </span><span style="color:#8fa1b3;">marked</span><span style="color:#eff1f5;">(</span><span style="color:#c0c5ce;">x</span><span style="color:#eff1f5;">) {
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.</span><span style="color:#8fa1b3;">has</span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">x</span><span style="color:#eff1f5;">);
+</span><span style="color:#eff1f5;">  }
+</span><span style="color:#eff1f5;">
+</span><span style="color:#eff1f5;">  </span><span style="color:#8fa1b3;">filterAllMarked</span><span style="color:#eff1f5;">(</span><span style="color:#c0c5ce;">collection</span><span style="color:#eff1f5;">, </span><span style="color:#c0c5ce;">onProperty</span><span style="color:#eff1f5;">) {
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">collection</span><span style="color:#eff1f5;">.</span><span style="color:#8fa1b3;">filter</span><span style="color:#eff1f5;">(</span><span style="color:#c0c5ce;">x </span><span style="color:#b48ead;">=&gt; </span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.</span><span style="color:#8fa1b3;">has</span><span style="color:#eff1f5;">(</span><span style="color:#8fa1b3;">onProperty</span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">x</span><span style="color:#eff1f5;">)));
 </span><span style="color:#eff1f5;">  }
 </span><span style="color:#eff1f5;">}
 </span><span style="color:#c0c5ce;">
 </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">a </span><span style="color:#c0c5ce;">= new </span><span style="color:#bf616a;">Togglable</span><span style="color:#c0c5ce;">()
+</span><span style="color:#c0c5ce;">
 </span><span style="color:#bf616a;">a</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">toggle</span><span style="color:#c0c5ce;">(</span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">);
 </span><span style="color:#65737e;">// Set { 1 }
+</span><span style="color:#c0c5ce;">
 </span><span style="color:#bf616a;">a</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">toggle</span><span style="color:#c0c5ce;">(</span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">)
 </span><span style="color:#65737e;">// Set { }
+</span><span style="color:#c0c5ce;">
 </span><span style="color:#bf616a;">a</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">toggle</span><span style="color:#c0c5ce;">(</span><span style="color:#d08770;">2</span><span style="color:#c0c5ce;">)
 </span><span style="color:#65737e;">// Set { 2 }
+</span><span style="color:#c0c5ce;">
 </span><span style="color:#ebcb8b;">Array</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">from</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">a</span><span style="color:#c0c5ce;">);
 </span><span style="color:#65737e;">// [ 2 ]
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#bf616a;">a</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">marked</span><span style="color:#c0c5ce;">(</span><span style="color:#d08770;">2</span><span style="color:#c0c5ce;">);
+</span><span style="color:#65737e;">// true
 </span>
 </code></pre>
 <p><a href="https://codesandbox.io/p/sandbox/togglable-set-p0vbf1?file=%2Findex.js">codesandbox with example</a></p>
@@ -185,36 +209,36 @@ we are not going to accept it (like unique constrait).</p>
 <pre style="background-color:#2b303b;"><code class="language-js">
 <span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">SetWith </span><span style="color:#b48ead;">extends </span><span style="color:#a3be8c;">Set </span><span style="color:#eff1f5;">{
 </span><span style="color:#eff1f5;">  </span><span style="color:#8fa1b3;">constructor</span><span style="color:#eff1f5;">(</span><span style="color:#c0c5ce;">initial</span><span style="color:#eff1f5;">, </span><span style="color:#c0c5ce;">testFunction</span><span style="color:#eff1f5;">) {
-</span><span style="color:#eff1f5;">	</span><span style="color:#96b5b4;">super</span><span style="color:#eff1f5;">();
-</span><span style="color:#eff1f5;">	</span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.sublist </span><span style="color:#c0c5ce;">= </span><span style="color:#eff1f5;">{};
-</span><span style="color:#eff1f5;">	</span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.testFunction </span><span style="color:#c0c5ce;">= </span><span style="color:#bf616a;">testFunction</span><span style="color:#eff1f5;">;
-</span><span style="color:#eff1f5;">	</span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">._add </span><span style="color:#c0c5ce;">= </span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.add;
-</span><span style="color:#eff1f5;">	</span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">._delete </span><span style="color:#c0c5ce;">= </span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.delete;
+</span><span style="color:#eff1f5;">    </span><span style="color:#96b5b4;">super</span><span style="color:#eff1f5;">();
+</span><span style="color:#eff1f5;">    </span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.sublist </span><span style="color:#c0c5ce;">= </span><span style="color:#eff1f5;">{};
+</span><span style="color:#eff1f5;">    </span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.testFunction </span><span style="color:#c0c5ce;">= </span><span style="color:#bf616a;">testFunction</span><span style="color:#eff1f5;">;
+</span><span style="color:#eff1f5;">    </span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">._add </span><span style="color:#c0c5ce;">= </span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.add;
+</span><span style="color:#eff1f5;">    </span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">._delete </span><span style="color:#c0c5ce;">= </span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.delete;
 </span><span style="color:#eff1f5;">
-</span><span style="color:#eff1f5;">	</span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.</span><span style="color:#8fa1b3;">add </span><span style="color:#c0c5ce;">= </span><span style="color:#eff1f5;">(</span><span style="color:#c0c5ce;">x</span><span style="color:#eff1f5;">) </span><span style="color:#b48ead;">=&gt; </span><span style="color:#eff1f5;">{
-</span><span style="color:#eff1f5;">	  </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">value </span><span style="color:#c0c5ce;">= </span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.</span><span style="color:#8fa1b3;">testFunction</span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">x</span><span style="color:#eff1f5;">);
-</span><span style="color:#eff1f5;">	  </span><span style="color:#b48ead;">if </span><span style="color:#eff1f5;">(</span><span style="color:#c0c5ce;">!</span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.</span><span style="color:#8fa1b3;">has</span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">value</span><span style="color:#eff1f5;">)) {
-</span><span style="color:#eff1f5;">		</span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.sublist[</span><span style="color:#bf616a;">value</span><span style="color:#eff1f5;">] </span><span style="color:#c0c5ce;">= </span><span style="color:#bf616a;">x</span><span style="color:#eff1f5;">;
-</span><span style="color:#eff1f5;">		</span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.</span><span style="color:#8fa1b3;">_add</span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">value</span><span style="color:#eff1f5;">);
-</span><span style="color:#eff1f5;">	  }
-</span><span style="color:#eff1f5;">	};
+</span><span style="color:#eff1f5;">    </span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.</span><span style="color:#8fa1b3;">add </span><span style="color:#c0c5ce;">= </span><span style="color:#eff1f5;">(</span><span style="color:#c0c5ce;">x</span><span style="color:#eff1f5;">) </span><span style="color:#b48ead;">=&gt; </span><span style="color:#eff1f5;">{
+</span><span style="color:#eff1f5;">      </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">value </span><span style="color:#c0c5ce;">= </span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.</span><span style="color:#8fa1b3;">testFunction</span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">x</span><span style="color:#eff1f5;">);
+</span><span style="color:#eff1f5;">      </span><span style="color:#b48ead;">if </span><span style="color:#eff1f5;">(</span><span style="color:#c0c5ce;">!</span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.</span><span style="color:#8fa1b3;">has</span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">value</span><span style="color:#eff1f5;">)) {
+</span><span style="color:#eff1f5;">        </span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.sublist[</span><span style="color:#bf616a;">value</span><span style="color:#eff1f5;">] </span><span style="color:#c0c5ce;">= </span><span style="color:#bf616a;">x</span><span style="color:#eff1f5;">;
+</span><span style="color:#eff1f5;">        </span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.</span><span style="color:#8fa1b3;">_add</span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">value</span><span style="color:#eff1f5;">);
+</span><span style="color:#eff1f5;">      }
+</span><span style="color:#eff1f5;">    };
 </span><span style="color:#eff1f5;">
-</span><span style="color:#eff1f5;">	</span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.</span><span style="color:#8fa1b3;">delete </span><span style="color:#c0c5ce;">= </span><span style="color:#eff1f5;">(</span><span style="color:#c0c5ce;">x</span><span style="color:#eff1f5;">) </span><span style="color:#b48ead;">=&gt; </span><span style="color:#eff1f5;">{
-</span><span style="color:#eff1f5;">	  </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">value </span><span style="color:#c0c5ce;">= </span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.</span><span style="color:#8fa1b3;">testFunction</span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">x</span><span style="color:#eff1f5;">);
-</span><span style="color:#eff1f5;">	  </span><span style="color:#b48ead;">if </span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.</span><span style="color:#8fa1b3;">has</span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">value</span><span style="color:#eff1f5;">)) {
-</span><span style="color:#eff1f5;">		</span><span style="color:#c0c5ce;">delete </span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.sublist[</span><span style="color:#bf616a;">value</span><span style="color:#eff1f5;">];
-</span><span style="color:#eff1f5;">		</span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.</span><span style="color:#8fa1b3;">_delete</span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">value</span><span style="color:#eff1f5;">);
-</span><span style="color:#eff1f5;">	  }
-</span><span style="color:#eff1f5;">	};
+</span><span style="color:#eff1f5;">    </span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.</span><span style="color:#8fa1b3;">delete </span><span style="color:#c0c5ce;">= </span><span style="color:#eff1f5;">(</span><span style="color:#c0c5ce;">x</span><span style="color:#eff1f5;">) </span><span style="color:#b48ead;">=&gt; </span><span style="color:#eff1f5;">{
+</span><span style="color:#eff1f5;">      </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">value </span><span style="color:#c0c5ce;">= </span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.</span><span style="color:#8fa1b3;">testFunction</span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">x</span><span style="color:#eff1f5;">);
+</span><span style="color:#eff1f5;">      </span><span style="color:#b48ead;">if </span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.</span><span style="color:#8fa1b3;">has</span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">value</span><span style="color:#eff1f5;">)) {
+</span><span style="color:#eff1f5;">        </span><span style="color:#c0c5ce;">delete </span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.sublist[</span><span style="color:#bf616a;">value</span><span style="color:#eff1f5;">];
+</span><span style="color:#eff1f5;">        </span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.</span><span style="color:#8fa1b3;">_delete</span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">value</span><span style="color:#eff1f5;">);
+</span><span style="color:#eff1f5;">      }
+</span><span style="color:#eff1f5;">    };
 </span><span style="color:#eff1f5;">
-</span><span style="color:#eff1f5;">	</span><span style="color:#bf616a;">initial</span><span style="color:#eff1f5;">.</span><span style="color:#8fa1b3;">forEach</span><span style="color:#eff1f5;">((</span><span style="color:#c0c5ce;">item</span><span style="color:#eff1f5;">) </span><span style="color:#b48ead;">=&gt; </span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.</span><span style="color:#96b5b4;">add</span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">item</span><span style="color:#eff1f5;">));
+</span><span style="color:#eff1f5;">    </span><span style="color:#bf616a;">initial</span><span style="color:#eff1f5;">.</span><span style="color:#8fa1b3;">forEach</span><span style="color:#eff1f5;">((</span><span style="color:#c0c5ce;">item</span><span style="color:#eff1f5;">) </span><span style="color:#b48ead;">=&gt; </span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.</span><span style="color:#96b5b4;">add</span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">item</span><span style="color:#eff1f5;">));
 </span><span style="color:#eff1f5;">  }
 </span><span style="color:#eff1f5;">
 </span><span style="color:#eff1f5;">  </span><span style="color:#8fa1b3;">find</span><span style="color:#eff1f5;">(</span><span style="color:#c0c5ce;">f</span><span style="color:#eff1f5;">) {
-</span><span style="color:#eff1f5;">	</span><span style="color:#b48ead;">for </span><span style="color:#eff1f5;">(</span><span style="color:#b48ead;">let </span><span style="color:#bf616a;">x </span><span style="color:#c0c5ce;">of </span><span style="color:#ebcb8b;">Object</span><span style="color:#eff1f5;">.</span><span style="color:#8fa1b3;">values</span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.sublist)) {
-</span><span style="color:#eff1f5;">	  </span><span style="color:#b48ead;">if </span><span style="color:#eff1f5;">(</span><span style="color:#8fa1b3;">f</span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">x</span><span style="color:#eff1f5;">)) </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">x</span><span style="color:#eff1f5;">;
-</span><span style="color:#eff1f5;">	}
-</span><span style="color:#eff1f5;">	</span><span style="color:#b48ead;">return </span><span style="color:#d08770;">null</span><span style="color:#eff1f5;">;
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">for </span><span style="color:#eff1f5;">(</span><span style="color:#b48ead;">let </span><span style="color:#bf616a;">x </span><span style="color:#c0c5ce;">of </span><span style="color:#ebcb8b;">Object</span><span style="color:#eff1f5;">.</span><span style="color:#8fa1b3;">values</span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.sublist)) {
+</span><span style="color:#eff1f5;">      </span><span style="color:#b48ead;">if </span><span style="color:#eff1f5;">(</span><span style="color:#8fa1b3;">f</span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">x</span><span style="color:#eff1f5;">)) </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">x</span><span style="color:#eff1f5;">;
+</span><span style="color:#eff1f5;">    }
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">return </span><span style="color:#d08770;">null</span><span style="color:#eff1f5;">;
 </span><span style="color:#eff1f5;">  }
 </span><span style="color:#eff1f5;">}
 </span><span style="color:#c0c5ce;">
@@ -258,6 +282,6 @@ duplicated values.</p>
    </section>
   </main>
   <script type="application/javascript"
-	  src="/js/highlight.min.js"></script>
+          src="/js/highlight.min.js"></script>
  </body>
 </html>
