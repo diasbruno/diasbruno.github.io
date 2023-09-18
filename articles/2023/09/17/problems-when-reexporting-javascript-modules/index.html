@@ -1,0 +1,102 @@
+<html><head><title>problems when reexporting javascript modules</title><meta name="viewport" content="width=device-width"><meta name="author" content="Bruno Dias"><meta name="title" content="problems when reexporting javascript modules"><meta name="og:image" content="/images/reexport.png"><meta name="og:title" content="problems when reexporting javascript modules"><link rel="stylesheet" type="text/css" href="/css/style.css"><link rel="stylesheet" type="text/css" href="/css/highlight.min.css"><link rel="stylesheet" type="text/css" href="/css/milligram.css"></head><body><main><nav><div><a href="/"><h1>diasbruno</h1></a><div class="nav-links"><a class="nav-links" href="/">articles</a><a class="nav-links" href="/opensource">opensource</a><a class="nav-links" href="https://github.com/diasbruno" target="_blank">github</a></div></div></nav><section class="content"><div class="article-section"><h1>problems when reexporting javascript modules</h1><div class="content-info"><span>article</span> - publish - <time class="content-datetime" datetime="2023-09-17T22:29:09Z">Sep 17, 2023</time></div><div><p>we all get excited when we see an interesting trick.</p>
+<p>some are &quot;one-liners&quot;, or an exotic optimization...</p>
+<p>but everytime there is something that looks convenient,
+it will probably collect your soul later...</p>
+<p>some people don't like when their files starts with a
+huge list of imports. I can agree that is not that aesthetic.</p>
+<p>to avoid huge lists of imports, we can use a file to reexport
+all the modules into a single entry.</p>
+<pre style="background-color:#2b303b;"><code class="language-js"><span style="color:#b48ead;">import </span><span style="color:#c0c5ce;">{
+</span><span style="color:#c0c5ce;">    </span><span style="color:#bf616a;">a</span><span style="color:#c0c5ce;">,
+</span><span style="color:#c0c5ce;">    </span><span style="color:#bf616a;">b</span><span style="color:#c0c5ce;">,
+</span><span style="color:#c0c5ce;">    </span><span style="color:#bf616a;">c</span><span style="color:#c0c5ce;">,
+</span><span style="color:#c0c5ce;">    </span><span style="color:#bf616a;">d</span><span style="color:#c0c5ce;">,
+</span><span style="color:#c0c5ce;">    </span><span style="color:#bf616a;">e</span><span style="color:#c0c5ce;">,
+</span><span style="color:#c0c5ce;">    </span><span style="color:#bf616a;">f</span><span style="color:#c0c5ce;">,
+</span><span style="color:#c0c5ce;">    </span><span style="color:#bf616a;">g</span><span style="color:#c0c5ce;">,
+</span><span style="color:#c0c5ce;">    </span><span style="color:#bf616a;">h</span><span style="color:#c0c5ce;">,
+</span><span style="color:#c0c5ce;">    </span><span style="color:#bf616a;">i</span><span style="color:#c0c5ce;">,
+</span><span style="color:#c0c5ce;">    </span><span style="color:#bf616a;">j</span><span style="color:#c0c5ce;">,
+</span><span style="color:#c0c5ce;">    </span><span style="color:#bf616a;">k</span><span style="color:#c0c5ce;">,
+</span><span style="color:#c0c5ce;">    </span><span style="color:#bf616a;">l</span><span style="color:#c0c5ce;">,
+</span><span style="color:#c0c5ce;">    </span><span style="color:#bf616a;">m</span><span style="color:#c0c5ce;">,
+</span><span style="color:#c0c5ce;">    </span><span style="color:#bf616a;">n</span><span style="color:#c0c5ce;">,
+</span><span style="color:#c0c5ce;">    </span><span style="color:#bf616a;">o</span><span style="color:#c0c5ce;">,
+</span><span style="color:#c0c5ce;">    </span><span style="color:#bf616a;">p</span><span style="color:#c0c5ce;">,
+</span><span style="color:#c0c5ce;">    </span><span style="color:#bf616a;">q</span><span style="color:#c0c5ce;">,
+</span><span style="color:#c0c5ce;">    </span><span style="color:#bf616a;">r</span><span style="color:#c0c5ce;">,
+</span><span style="color:#c0c5ce;">    </span><span style="color:#bf616a;">s</span><span style="color:#c0c5ce;">,
+</span><span style="color:#c0c5ce;">    </span><span style="color:#bf616a;">t</span><span style="color:#c0c5ce;">,
+</span><span style="color:#c0c5ce;">    </span><span style="color:#bf616a;">u</span><span style="color:#c0c5ce;">,
+</span><span style="color:#c0c5ce;">    </span><span style="color:#bf616a;">v</span><span style="color:#c0c5ce;">,
+</span><span style="color:#c0c5ce;">    </span><span style="color:#bf616a;">x</span><span style="color:#c0c5ce;">,
+</span><span style="color:#c0c5ce;">    </span><span style="color:#bf616a;">z </span><span style="color:#c0c5ce;">}
+</span><span style="color:#c0c5ce;">    </span><span style="color:#b48ead;">from </span><span style="color:#c0c5ce;">&quot;</span><span style="color:#a3be8c;">@/components</span><span style="color:#c0c5ce;">&quot;;
+</span></code></pre>
+<p>well...that doesn't look good either.</p>
+<p>here is a list of problems you may found when reexporting
+modules:</p>
+<ul>
+<li>circular dependencies</li>
+<li>loading more resource than necessary</li>
+<li>import modules that instantiate objects on top-level</li>
+<li>test pollution and unnecessary mocking</li>
+</ul>
+<h3>circular dependencies</h3>
+<p>If you have a file that exports everything,
+you better use it!</p>
+<pre style="background-color:#2b303b;"><code class="language-js"><span style="color:#65737e;">// Component A
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#b48ead;">import </span><span style="color:#c0c5ce;">{ </span><span style="color:#bf616a;">B</span><span style="color:#c0c5ce;">, </span><span style="color:#bf616a;">C </span><span style="color:#c0c5ce;">} </span><span style="color:#b48ead;">from </span><span style="color:#c0c5ce;">&quot;</span><span style="color:#a3be8c;">@/components</span><span style="color:#c0c5ce;">&quot;;
+</span></code></pre>
+<pre style="background-color:#2b303b;"><code class="language-js"><span style="color:#65737e;">// Component C
+</span><span style="color:#b48ead;">import </span><span style="color:#c0c5ce;">{ </span><span style="color:#bf616a;">A </span><span style="color:#c0c5ce;">} </span><span style="color:#b48ead;">from </span><span style="color:#c0c5ce;">&quot;</span><span style="color:#a3be8c;">@/components</span><span style="color:#c0c5ce;">&quot;;
+</span></code></pre>
+<pre style="background-color:#2b303b;"><code class="language-js"><span style="color:#65737e;">// Components (syntax of this file is not important...)
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#65737e;">/* correct import order */
+</span><span style="color:#b48ead;">export </span><span style="color:#c0c5ce;">{ </span><span style="color:#bf616a;">default </span><span style="color:#b48ead;">as </span><span style="color:#bf616a;">C </span><span style="color:#c0c5ce;">} </span><span style="color:#b48ead;">from </span><span style="color:#c0c5ce;">&quot;</span><span style="color:#a3be8c;">./ComponentC</span><span style="color:#c0c5ce;">&quot;;
+</span><span style="color:#b48ead;">export </span><span style="color:#c0c5ce;">{ </span><span style="color:#bf616a;">default </span><span style="color:#b48ead;">as </span><span style="color:#bf616a;">B </span><span style="color:#c0c5ce;">} </span><span style="color:#b48ead;">from </span><span style="color:#c0c5ce;">&quot;</span><span style="color:#a3be8c;">./ComponentB</span><span style="color:#c0c5ce;">&quot;;
+</span><span style="color:#b48ead;">export </span><span style="color:#c0c5ce;">{ </span><span style="color:#bf616a;">default </span><span style="color:#b48ead;">as </span><span style="color:#bf616a;">A </span><span style="color:#c0c5ce;">} </span><span style="color:#b48ead;">from </span><span style="color:#c0c5ce;">&quot;</span><span style="color:#a3be8c;">./ComponentA</span><span style="color:#c0c5ce;">&quot;;
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#65737e;">/* incorrect import order */
+</span><span style="color:#b48ead;">export </span><span style="color:#c0c5ce;">{ </span><span style="color:#bf616a;">default </span><span style="color:#b48ead;">as </span><span style="color:#bf616a;">A </span><span style="color:#c0c5ce;">} </span><span style="color:#b48ead;">from </span><span style="color:#c0c5ce;">&quot;</span><span style="color:#a3be8c;">./ComponentA</span><span style="color:#c0c5ce;">&quot;;
+</span><span style="color:#b48ead;">export </span><span style="color:#c0c5ce;">{ </span><span style="color:#bf616a;">default </span><span style="color:#b48ead;">as </span><span style="color:#bf616a;">B </span><span style="color:#c0c5ce;">} </span><span style="color:#b48ead;">from </span><span style="color:#c0c5ce;">&quot;</span><span style="color:#a3be8c;">./ComponentB</span><span style="color:#c0c5ce;">&quot;;
+</span><span style="color:#b48ead;">export </span><span style="color:#c0c5ce;">{ </span><span style="color:#bf616a;">default </span><span style="color:#b48ead;">as </span><span style="color:#bf616a;">C </span><span style="color:#c0c5ce;">} </span><span style="color:#b48ead;">from </span><span style="color:#c0c5ce;">&quot;</span><span style="color:#a3be8c;">./ComponentC</span><span style="color:#c0c5ce;">&quot;;
+</span></code></pre>
+<p>depending on the order of the imports,
+you may not see the problem...</p>
+<p>but when it's wrong, you will probably spend hours trying
+to remember what is going on.</p>
+<p>some will say that a simple solution to fix this is that
+&quot;components should not use the file that reexports everything&quot;,
+or basically getting back from where we started.</p>
+<p>this is the first rule we need to make the entire team to follow
+just to have a single file.</p>
+<h3>loading more resource than necessary</h3>
+<p>getting the tools to properly do a &quot;tree-shake&quot;
+or to better bundle the application is the last thing
+I want to spend time.</p>
+<p>this makes it harder for the compiler to decide what to do.
+so we are starting to introduce problems to create tools
+(we don't need), just to have a file to group modules.</p>
+<h3>import modules that instantiate objects on top-level</h3>
+<p>once you import a module, if it evaluates an expressions on the top-level,
+this work can be unncessary an slow down specially tests.</p>
+<p>it is almost impossible to mock or to avoid running the code,
+or, you will end up writing a lot of unnecessary code
+to &quot;skip this code when testing&quot;.</p>
+<h3>test pollution and unnecessary mocking</h3>
+<p>as you may have modules that instantiates objects on the top-level,
+they are kinda unpredictable or you may know, and now, you have
+to create a general mocking file that every test must import.</p>
+<p>this creates all sorts of problems:</p>
+<ul>
+<li>people assuming the mock has &quot;correct&quot; data</li>
+<li>incomplete use cases testing because &quot;it just works&quot;</li>
+</ul>
+<p>so, just because of this trick, we are risking to introduce
+a lot of unnecessary code and all kinds of problems...</p>
+<p>this doesn't look like a good idea...</p>
+<p><a href="https://codesandbox.io/s/javascript-reexporting-problems-vzmw5h">codesandbox with some problems</a></p>
+</div></div></section></main><script type="application/javascript" src="/js/highlight.min.js"></script></body></html>
