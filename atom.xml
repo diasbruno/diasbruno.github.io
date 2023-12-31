@@ -7,9 +7,29 @@
         https://diasbruno.github.io/atom.xml
     </id>
     <updated>
-        2023-09-20
+        2023-12-31
     </updated>
     <link href="https://diasbruno.github.io"/>
+    <entry>
+        <id>
+            https://diasbruno.github.io/articles/2023/12/30/building-pipelines-and-avoid-suffering
+        </id>
+        <title type="text">
+            building pipelines and avoid suffering
+        </title>
+        <updated>
+            2023-12-30T22:34:58Z
+        </updated>
+        <author>
+            <name>
+                Bruno Dias
+            </name>
+        </author>
+        <content type="html">
+            building pipelines and avoid suffering
+        </content>
+        <link href="https://diasbruno.github.io/articles/2023/12/30/building-pipelines-and-avoid-suffering"/>
+    </entry>
     <entry>
         <id>
             https://diasbruno.github.io/articles/2023/09/17/problems-when-reexporting-javascript-modules
