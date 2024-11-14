@@ -1,4 +1,4 @@
-<html><head><title>diasbruno - forget about state; think about events/commands</title><meta name="viewport" content="width=device-width"><meta name="author" content="Bruno Dias"><meta name="title" content="diasbruno - forget about state; think about events/commands"><meta name="title" property="og:title" content="forget about state; think about events/commands"><link rel="stylesheet" type="text/css" href="/css/style.css"><link rel="stylesheet" type="text/css" href="/css/highlight.min.css"><link rel="stylesheet" type="text/css" href="/css/milligram.css"></head><body><main><nav><div><a href="/"><h1>diasbruno</h1></a><div class="nav-links"><a class="nav-links" href="/">articles</a><a class="nav-links" href="/opensource">opensource</a><a class="nav-links" href="https://github.com/diasbruno" target="_blank">github</a></div></div></nav><section class="content"><div class="article-section"><h1>forget about state; think about events/commands</h1><div class="content-info"><span>article</span> - publish - <time class="content-datetime" datetime="2023-03-12T19:58:55Z">Mar 12, 2023</time></div><div><h3>Why?</h3>
+<html><head><title>diasbruno - forget about state; think about events/commands</title><meta name="viewport" content="width=device-width"><meta name="author" content="Bruno Dias"><meta name="title" content="diasbruno - forget about state; think about events/commands"><meta name="title" property="og:title" content="forget about state; think about events/commands"><link rel="stylesheet" type="text/css" href="/css/style.css"><link rel="stylesheet" type="text/css" href="/css/highlight.min.css"><link rel="stylesheet" type="text/css" href="/css/milligram.css"></head><body><main><nav><div><a href="/"><h1>diasbruno</h1></a><div class="nav-links"><a class="nav-link" href="/">articles</a><a class="nav-link" href="/opensource">opensource</a><a class="nav-link" href="https://github.com/diasbruno" target="_blank">github</a></div></div></nav><section class="content"><div class="article-section"><h1>forget about state; think about events/commands</h1><div class="content-info"><span>article</span> - publish - <time class="content-datetime" datetime="2023-03-12T19:58:55Z">Mar 12, 2023</time></div><div><h3>Why?</h3>
 <p>When managing state, it's easy to just
 think about which knobs you need
 to change manually. This is a low-level view
@@ -17,10 +17,10 @@ and transitions an application really needs.</p>
 <li>submit a form to an endpoint</li>
 </ul>
 <p>And translate into code as:</p>
-<pre style="background-color:#2b303b;"><code class="language-java"><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">RouteTo </span><span style="color:#b48ead;">implements </span><span style="color:#a3be8c;">Command </span><span style="color:#eff1f5;">{}
-</span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">SelectedItem </span><span style="color:#b48ead;">implements </span><span style="color:#a3be8c;">Command </span><span style="color:#eff1f5;">{}
-</span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">SubmitForm </span><span style="color:#b48ead;">implements </span><span style="color:#a3be8c;">Command </span><span style="color:#eff1f5;">{}
-</span></code></pre>
+<pre><code class="language-java">class RouteTo implements Command {}
+class SelectedItem implements Command {}
+class SubmitForm implements Command {}
+</code></pre>
 <h3>The application state</h3>
 <p>State, specially in most mainstream front-end
 technologies, they are all just a union of
@@ -34,104 +34,104 @@ to separate one from another, but in some cases,
 you need to run actions for each of the states,
 causing many requests to render for a single event.</p>
 <p>Instead, we can start using a state machine.</p>
-<pre style="background-color:#2b303b;"><code class="language-java"><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">ListingUsers </span><span style="color:#b48ead;">implements </span><span style="color:#a3be8c;">State </span><span style="color:#eff1f5;">{}
-</span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">CreatingUser </span><span style="color:#b48ead;">implements </span><span style="color:#a3be8c;">State </span><span style="color:#eff1f5;">{}
-</span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">EditingUser </span><span style="color:#b48ead;">implements </span><span style="color:#a3be8c;">State </span><span style="color:#eff1f5;">{}
-</span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">ViewUser </span><span style="color:#b48ead;">implements </span><span style="color:#a3be8c;">State </span><span style="color:#eff1f5;">{}
-</span></code></pre>
+<pre><code class="language-java">class ListingUsers implements State {}
+class CreatingUser implements State {}
+class EditingUser implements State {}
+class ViewUser implements State {}
+</code></pre>
 <p><a href="/images/evstatemachine.png"><img src="/images/evstatemachine.png" alt="" title="state machine" /></a></p>
 <h3>Commands and state</h3>
 <p>To get everything together, we can use a simple
 reduce.</p>
-<pre style="background-color:#2b303b;"><code class="language-js"><span style="color:#65737e;">/**
-</span><span style="color:#65737e;"> * Pattern matching objects by their contructor&#39;s
-</span><span style="color:#65737e;"> * name.
-</span><span style="color:#65737e;"> */
-</span><span style="color:#b48ead;">function </span><span style="color:#8fa1b3;">match</span><span style="color:#c0c5ce;">(object, table) {
-</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">name </span><span style="color:#c0c5ce;">= </span><span style="color:#bf616a;">object</span><span style="color:#c0c5ce;">.</span><span style="color:#bf616a;">constructor</span><span style="color:#c0c5ce;">.name;
-</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">return </span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">table</span><span style="color:#c0c5ce;">[</span><span style="color:#bf616a;">name</span><span style="color:#c0c5ce;">] || </span><span style="color:#bf616a;">table</span><span style="color:#c0c5ce;">[&#39;</span><span style="color:#a3be8c;">_</span><span style="color:#c0c5ce;">&#39;])(</span><span style="color:#bf616a;">object</span><span style="color:#c0c5ce;">);
-</span><span style="color:#c0c5ce;">}
-</span><span style="color:#c0c5ce;">
-</span><span style="color:#65737e;">/**
-</span><span style="color:#65737e;"> * Given a state and many commands,
-</span><span style="color:#65737e;"> * integrate each and accumulate
-</span><span style="color:#65737e;"> * the next commands each command
-</span><span style="color:#65737e;"> * can issue.
-</span><span style="color:#65737e;"> */
-</span><span style="color:#b48ead;">function </span><span style="color:#8fa1b3;">updateState</span><span style="color:#c0c5ce;">(state, commands) {
-</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">let </span><span style="color:#bf616a;">nextState </span><span style="color:#c0c5ce;">= { </span><span style="color:#bf616a;">state</span><span style="color:#c0c5ce;">, </span><span style="color:#bf616a;">commands </span><span style="color:#c0c5ce;">};
-</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">do </span><span style="color:#c0c5ce;">{
-</span><span style="color:#c0c5ce;">    </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">commands </span><span style="color:#c0c5ce;">= </span><span style="color:#bf616a;">nextState</span><span style="color:#c0c5ce;">.commands;
-</span><span style="color:#c0c5ce;">    </span><span style="color:#bf616a;">nextState</span><span style="color:#c0c5ce;">.commands = [];
-</span><span style="color:#c0c5ce;">    </span><span style="color:#bf616a;">nextState </span><span style="color:#c0c5ce;">= </span><span style="color:#bf616a;">commands</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">reduce</span><span style="color:#c0c5ce;">(
-</span><span style="color:#c0c5ce;">      (currentState, command) </span><span style="color:#b48ead;">=&gt; </span><span style="color:#c0c5ce;">{
-</span><span style="color:#c0c5ce;">        </span><span style="color:#b48ead;">const </span><span style="color:#c0c5ce;">{ </span><span style="color:#bf616a;">state</span><span style="color:#c0c5ce;">, </span><span style="color:#bf616a;">commands </span><span style="color:#c0c5ce;">} = </span><span style="color:#bf616a;">currentState</span><span style="color:#c0c5ce;">;
-</span><span style="color:#c0c5ce;">        </span><span style="color:#b48ead;">const </span><span style="color:#c0c5ce;">[</span><span style="color:#bf616a;">s</span><span style="color:#c0c5ce;">, </span><span style="color:#bf616a;">cs</span><span style="color:#c0c5ce;">] = </span><span style="color:#bf616a;">command</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">apply</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">state</span><span style="color:#c0c5ce;">);
-</span><span style="color:#c0c5ce;">        </span><span style="color:#bf616a;">currentState</span><span style="color:#c0c5ce;">.state = </span><span style="color:#bf616a;">s</span><span style="color:#c0c5ce;">;
-</span><span style="color:#c0c5ce;">        </span><span style="color:#bf616a;">currentState</span><span style="color:#c0c5ce;">.commands = </span><span style="color:#bf616a;">commands</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">concat</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">cs</span><span style="color:#c0c5ce;">);
-</span><span style="color:#c0c5ce;">        </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">currentState</span><span style="color:#c0c5ce;">;
-</span><span style="color:#c0c5ce;">      },
-</span><span style="color:#c0c5ce;">      </span><span style="color:#bf616a;">nextState
-</span><span style="color:#c0c5ce;">    );
-</span><span style="color:#c0c5ce;">  } </span><span style="color:#b48ead;">while </span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">nextState</span><span style="color:#c0c5ce;">.commands.length != </span><span style="color:#d08770;">0</span><span style="color:#c0c5ce;">);
-</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">nextState</span><span style="color:#c0c5ce;">.state;
-</span><span style="color:#c0c5ce;">}
-</span><span style="color:#c0c5ce;">
-</span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">ListingUsers </span><span style="color:#eff1f5;">{}
-</span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">ViewingUser </span><span style="color:#eff1f5;">{}
-</span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">CreatingUser </span><span style="color:#eff1f5;">{}
-</span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">EditingUser </span><span style="color:#eff1f5;">{}
-</span><span style="color:#c0c5ce;">
-</span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">SelectedUser </span><span style="color:#eff1f5;">{
-</span><span style="color:#eff1f5;">  </span><span style="color:#8fa1b3;">constructor</span><span style="color:#eff1f5;">(</span><span style="color:#c0c5ce;">user</span><span style="color:#eff1f5;">) { </span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.user </span><span style="color:#c0c5ce;">= </span><span style="color:#bf616a;">user</span><span style="color:#eff1f5;">; }
-</span><span style="color:#eff1f5;">
-</span><span style="color:#eff1f5;">  </span><span style="color:#8fa1b3;">apply</span><span style="color:#eff1f5;">(</span><span style="color:#c0c5ce;">state</span><span style="color:#eff1f5;">) {
-</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">return </span><span style="color:#8fa1b3;">match</span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">state</span><span style="color:#eff1f5;">, {
-</span><span style="color:#eff1f5;">      </span><span style="color:#8fa1b3;">ListingUsers</span><span style="color:#eff1f5;">: (</span><span style="color:#c0c5ce;">s</span><span style="color:#eff1f5;">) </span><span style="color:#b48ead;">=&gt; </span><span style="color:#eff1f5;">[</span><span style="color:#c0c5ce;">new </span><span style="color:#bf616a;">ViewingUser</span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.user), []],
-</span><span style="color:#eff1f5;">      </span><span style="color:#c0c5ce;">&#39;</span><span style="color:#8fa1b3;">_</span><span style="color:#c0c5ce;">&#39;</span><span style="color:#eff1f5;">: () </span><span style="color:#b48ead;">=&gt; </span><span style="color:#eff1f5;">{
-</span><span style="color:#eff1f5;">        </span><span style="color:#b48ead;">throw </span><span style="color:#c0c5ce;">new </span><span style="color:#ebcb8b;">Error</span><span style="color:#eff1f5;">(</span><span style="color:#c0c5ce;">&#39;</span><span style="color:#a3be8c;">cannot select if not on ListingUser state.</span><span style="color:#c0c5ce;">&#39;</span><span style="color:#eff1f5;">);
-</span><span style="color:#eff1f5;">      }
-</span><span style="color:#eff1f5;">    })
-</span><span style="color:#eff1f5;">  }
-</span><span style="color:#eff1f5;">}
-</span><span style="color:#c0c5ce;">
-</span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">EditUser </span><span style="color:#eff1f5;">{
-</span><span style="color:#eff1f5;">  </span><span style="color:#8fa1b3;">constructor</span><span style="color:#eff1f5;">(</span><span style="color:#c0c5ce;">user</span><span style="color:#eff1f5;">) { </span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.user </span><span style="color:#c0c5ce;">= </span><span style="color:#bf616a;">user</span><span style="color:#eff1f5;">; }
-</span><span style="color:#eff1f5;">
-</span><span style="color:#eff1f5;">  </span><span style="color:#8fa1b3;">apply</span><span style="color:#eff1f5;">(</span><span style="color:#c0c5ce;">state</span><span style="color:#eff1f5;">) {
-</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">return </span><span style="color:#8fa1b3;">match</span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">state</span><span style="color:#eff1f5;">, {
-</span><span style="color:#eff1f5;">      </span><span style="color:#8fa1b3;">ViewingUser</span><span style="color:#eff1f5;">: (</span><span style="color:#c0c5ce;">s</span><span style="color:#eff1f5;">) </span><span style="color:#b48ead;">=&gt; </span><span style="color:#eff1f5;">[</span><span style="color:#c0c5ce;">new </span><span style="color:#bf616a;">EditingUser</span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.user), []],
-</span><span style="color:#eff1f5;">      </span><span style="color:#c0c5ce;">&#39;</span><span style="color:#8fa1b3;">_</span><span style="color:#c0c5ce;">&#39;</span><span style="color:#eff1f5;">: () </span><span style="color:#b48ead;">=&gt; </span><span style="color:#eff1f5;">{
-</span><span style="color:#eff1f5;">        </span><span style="color:#b48ead;">throw </span><span style="color:#c0c5ce;">new </span><span style="color:#ebcb8b;">Error</span><span style="color:#eff1f5;">(</span><span style="color:#c0c5ce;">&#39;</span><span style="color:#a3be8c;">cannot edit if on ViewUser state.</span><span style="color:#c0c5ce;">&#39;</span><span style="color:#eff1f5;">);
-</span><span style="color:#eff1f5;">      }
-</span><span style="color:#eff1f5;">    })
-</span><span style="color:#eff1f5;">  }
-</span><span style="color:#eff1f5;">}
-</span><span style="color:#c0c5ce;">
-</span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">CreateUser </span><span style="color:#eff1f5;">{
-</span><span style="color:#eff1f5;">  </span><span style="color:#8fa1b3;">apply</span><span style="color:#eff1f5;">(</span><span style="color:#c0c5ce;">state</span><span style="color:#eff1f5;">) {
-</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">return </span><span style="color:#8fa1b3;">match</span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">state</span><span style="color:#eff1f5;">, {
-</span><span style="color:#eff1f5;">      </span><span style="color:#8fa1b3;">ListingUsers</span><span style="color:#eff1f5;">: (</span><span style="color:#c0c5ce;">s</span><span style="color:#eff1f5;">) </span><span style="color:#b48ead;">=&gt; </span><span style="color:#eff1f5;">[</span><span style="color:#c0c5ce;">new </span><span style="color:#bf616a;">CreatingUser</span><span style="color:#eff1f5;">({}), []],
-</span><span style="color:#eff1f5;">      </span><span style="color:#c0c5ce;">&#39;</span><span style="color:#8fa1b3;">_</span><span style="color:#c0c5ce;">&#39;</span><span style="color:#eff1f5;">: () </span><span style="color:#b48ead;">=&gt; </span><span style="color:#eff1f5;">{
-</span><span style="color:#eff1f5;">         </span><span style="color:#b48ead;">throw </span><span style="color:#c0c5ce;">new </span><span style="color:#ebcb8b;">Error</span><span style="color:#eff1f5;">(</span><span style="color:#c0c5ce;">&#39;</span><span style="color:#a3be8c;">cannot create user if on ListingUser state.</span><span style="color:#c0c5ce;">&#39;</span><span style="color:#eff1f5;">);
-</span><span style="color:#eff1f5;">      }
-</span><span style="color:#eff1f5;">    })
-</span><span style="color:#eff1f5;">  }
-</span><span style="color:#eff1f5;">}
-</span><span style="color:#c0c5ce;">
-</span><span style="color:#b48ead;">let </span><span style="color:#bf616a;">list </span><span style="color:#c0c5ce;">= [{ user: &#39;</span><span style="color:#a3be8c;">me</span><span style="color:#c0c5ce;">&#39; }];
-</span><span style="color:#b48ead;">let </span><span style="color:#bf616a;">state </span><span style="color:#c0c5ce;">= new </span><span style="color:#bf616a;">ListingUsers</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">list</span><span style="color:#c0c5ce;">);
-</span><span style="color:#c0c5ce;">
-</span><span style="color:#65737e;">// start at this state
-</span><span style="color:#bf616a;">state </span><span style="color:#c0c5ce;">= new </span><span style="color:#bf616a;">ListingUsers</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">list</span><span style="color:#c0c5ce;">);
-</span><span style="color:#c0c5ce;">
-</span><span style="color:#65737e;">// transitioned to ViewingUser
-</span><span style="color:#bf616a;">state </span><span style="color:#c0c5ce;">= </span><span style="color:#8fa1b3;">updateState</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">state</span><span style="color:#c0c5ce;">, [new </span><span style="color:#bf616a;">SelectedUser</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">list</span><span style="color:#c0c5ce;">[</span><span style="color:#d08770;">0</span><span style="color:#c0c5ce;">])]);
-</span><span style="color:#c0c5ce;">
-</span><span style="color:#65737e;">// throws because ViewingUser
-</span><span style="color:#65737e;">// can&#39;t handle SelectedUser event
-</span><span style="color:#bf616a;">state </span><span style="color:#c0c5ce;">= </span><span style="color:#8fa1b3;">updateState</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">state</span><span style="color:#c0c5ce;">, [new </span><span style="color:#bf616a;">SelectedUser</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">list</span><span style="color:#c0c5ce;">[</span><span style="color:#d08770;">0</span><span style="color:#c0c5ce;">])]);
-</span></code></pre>
+<pre><code class="language-js">/**
+ * Pattern matching objects by their contructor's
+ * name.
+ */
+function match(object, table) {
+  const name = object.constructor.name;
+  return (table[name] || table['_'])(object);
+}
+
+/**
+ * Given a state and many commands,
+ * integrate each and accumulate
+ * the next commands each command
+ * can issue.
+ */
+function updateState(state, commands) {
+  let nextState = { state, commands };
+  do {
+    const commands = nextState.commands;
+    nextState.commands = [];
+    nextState = commands.reduce(
+      (currentState, command) =&gt; {
+        const { state, commands } = currentState;
+        const [s, cs] = command.apply(state);
+        currentState.state = s;
+        currentState.commands = commands.concat(cs);
+        return currentState;
+      },
+      nextState
+    );
+  } while (nextState.commands.length != 0);
+  return nextState.state;
+}
+
+class ListingUsers {}
+class ViewingUser {}
+class CreatingUser {}
+class EditingUser {}
+
+class SelectedUser {
+  constructor(user) { this.user = user; }
+
+  apply(state) {
+    return match(state, {
+      ListingUsers: (s) =&gt; [new ViewingUser(this.user), []],
+      '_': () =&gt; {
+        throw new Error('cannot select if not on ListingUser state.');
+      }
+    })
+  }
+}
+
+class EditUser {
+  constructor(user) { this.user = user; }
+
+  apply(state) {
+    return match(state, {
+      ViewingUser: (s) =&gt; [new EditingUser(this.user), []],
+      '_': () =&gt; {
+        throw new Error('cannot edit if on ViewUser state.');
+      }
+    })
+  }
+}
+
+class CreateUser {
+  apply(state) {
+    return match(state, {
+      ListingUsers: (s) =&gt; [new CreatingUser({}), []],
+      '_': () =&gt; {
+         throw new Error('cannot create user if on ListingUser state.');
+      }
+    })
+  }
+}
+
+let list = [{ user: 'me' }];
+let state = new ListingUsers(list);
+
+// start at this state
+state = new ListingUsers(list);
+
+// transitioned to ViewingUser
+state = updateState(state, [new SelectedUser(list[0])]);
+
+// throws because ViewingUser
+// can't handle SelectedUser event
+state = updateState(state, [new SelectedUser(list[0])]);
+</code></pre>
 <p>This is great! We can now test it separate without having
 to setup anything related to the library or framework
 or whatever.</p>

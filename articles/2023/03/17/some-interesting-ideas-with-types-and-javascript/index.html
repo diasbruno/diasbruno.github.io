@@ -1,35 +1,35 @@
-<html><head><title>diasbruno - some interesting ideas with types and javascript</title><meta name="viewport" content="width=device-width"><meta name="author" content="Bruno Dias"><meta name="title" content="diasbruno - some interesting ideas with types and javascript"><meta name="title" property="og:title" content="some interesting ideas with types and javascript"><link rel="stylesheet" type="text/css" href="/css/style.css"><link rel="stylesheet" type="text/css" href="/css/highlight.min.css"><link rel="stylesheet" type="text/css" href="/css/milligram.css"></head><body><main><nav><div><a href="/"><h1>diasbruno</h1></a><div class="nav-links"><a class="nav-links" href="/">articles</a><a class="nav-links" href="/opensource">opensource</a><a class="nav-links" href="https://github.com/diasbruno" target="_blank">github</a></div></div></nav><section class="content"><div class="article-section"><h1>some interesting ideas with types and javascript</h1><div class="content-info"><span>article</span> - publish - <time class="content-datetime" datetime="2023-03-17T21:03:01Z">Mar 17, 2023</time></div><div><p>javascript has a weird type/object system, but we can make some interesting stuff with it...</p>
+<html><head><title>diasbruno - some interesting ideas with types and javascript</title><meta name="viewport" content="width=device-width"><meta name="author" content="Bruno Dias"><meta name="title" content="diasbruno - some interesting ideas with types and javascript"><meta name="title" property="og:title" content="some interesting ideas with types and javascript"><link rel="stylesheet" type="text/css" href="/css/style.css"><link rel="stylesheet" type="text/css" href="/css/highlight.min.css"><link rel="stylesheet" type="text/css" href="/css/milligram.css"></head><body><main><nav><div><a href="/"><h1>diasbruno</h1></a><div class="nav-links"><a class="nav-link" href="/">articles</a><a class="nav-link" href="/opensource">opensource</a><a class="nav-link" href="https://github.com/diasbruno" target="_blank">github</a></div></div></nav><section class="content"><div class="article-section"><h1>some interesting ideas with types and javascript</h1><div class="content-info"><span>article</span> - publish - <time class="content-datetime" datetime="2023-03-17T21:03:01Z">Mar 17, 2023</time></div><div><p>javascript has a weird type/object system, but we can make some interesting stuff with it...</p>
 <h4>pattern match or a nice switch/case</h4>
 <p>We don't need the most precise/robust implementation
 of pattern matching. It can be used on user-defined
 types to help spliting what can be on a class and
 what can be simple functions instead.</p>
-<pre style="background-color:#2b303b;"><code class="language-js"><span style="color:#65737e;">/**
-</span><span style="color:#65737e;"> * Takes an object and a table
-</span><span style="color:#65737e;"> * dispatch according to the constructor
-</span><span style="color:#65737e;"> * of the object.
-</span><span style="color:#65737e;"> * `object` must be something constructed with `new`.
-</span><span style="color:#65737e;"> */
-</span><span style="color:#b48ead;">function </span><span style="color:#8fa1b3;">match</span><span style="color:#c0c5ce;">(object, table) {
-</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">name </span><span style="color:#c0c5ce;">= </span><span style="color:#bf616a;">object</span><span style="color:#c0c5ce;">.</span><span style="color:#bf616a;">constructor</span><span style="color:#c0c5ce;">.name;
-</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">return </span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">table</span><span style="color:#c0c5ce;">[</span><span style="color:#bf616a;">name</span><span style="color:#c0c5ce;">] || </span><span style="color:#bf616a;">table</span><span style="color:#c0c5ce;">[&#39;</span><span style="color:#a3be8c;">_</span><span style="color:#c0c5ce;">&#39;])(</span><span style="color:#bf616a;">object</span><span style="color:#c0c5ce;">);
-</span><span style="color:#c0c5ce;">}
-</span><span style="color:#c0c5ce;">
-</span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">A </span><span style="color:#eff1f5;">{}
-</span><span style="color:#c0c5ce;">
-</span><span style="color:#b48ead;">function </span><span style="color:#8fa1b3;">onA</span><span style="color:#c0c5ce;">(object) {
-</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">return </span><span style="color:#8fa1b3;">match</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">object</span><span style="color:#c0c5ce;">, {
-</span><span style="color:#c0c5ce;">    </span><span style="color:#8fa1b3;">A</span><span style="color:#c0c5ce;">: (a) </span><span style="color:#b48ead;">=&gt; </span><span style="color:#c0c5ce;">console.</span><span style="color:#96b5b4;">log</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">a</span><span style="color:#c0c5ce;">),
-</span><span style="color:#c0c5ce;">    &#39;</span><span style="color:#8fa1b3;">_</span><span style="color:#c0c5ce;">&#39;: () </span><span style="color:#b48ead;">=&gt; </span><span style="color:#c0c5ce;">console.</span><span style="color:#96b5b4;">log</span><span style="color:#c0c5ce;">(&quot;</span><span style="color:#a3be8c;">like default on a switch</span><span style="color:#c0c5ce;">&quot;)
-</span><span style="color:#c0c5ce;">  });
-</span><span style="color:#c0c5ce;">}
-</span><span style="color:#c0c5ce;">
-</span><span style="color:#8fa1b3;">onA</span><span style="color:#c0c5ce;">(new </span><span style="color:#bf616a;">A</span><span style="color:#c0c5ce;">);
-</span><span style="color:#65737e;">// A {}
-</span><span style="color:#c0c5ce;">
-</span><span style="color:#8fa1b3;">onA</span><span style="color:#c0c5ce;">(</span><span style="color:#d08770;">null </span><span style="color:#c0c5ce;">|| </span><span style="color:#d08770;">0 </span><span style="color:#c0c5ce;">|| &#39;</span><span style="color:#a3be8c;">string</span><span style="color:#c0c5ce;">&#39; || </span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">);
-</span><span style="color:#65737e;">// like default on a switch
-</span></code></pre>
+<pre><code class="language-js">/**
+ * Takes an object and a table
+ * dispatch according to the constructor
+ * of the object.
+ * `object` must be something constructed with `new`.
+ */
+function match(object, table) {
+  const name = object.constructor.name;
+  return (table[name] || table['_'])(object);
+}
+
+class A {}
+
+function onA(object) {
+  return match(object, {
+    A: (a) =&gt; console.log(a),
+    '_': () =&gt; console.log(&quot;like default on a switch&quot;)
+  });
+}
+
+onA(new A);
+// A {}
+
+onA(null || 0 || 'string' || 1);
+// like default on a switch
+</code></pre>
 <p>This is a great tool when you need
 to return values depending on the context.</p>
 <p>We can imagine a case where if we have an
@@ -37,61 +37,61 @@ to return values depending on the context.</p>
 case, it should be a number. So, instead of
 having a bigger or many interface(s), we use
 match to return accordingly.</p>
-<pre style="background-color:#2b303b;"><code class="language-js"><span style="color:#b48ead;">function </span><span style="color:#8fa1b3;">A</span><span style="color:#c0c5ce;">(value) {
-</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">if </span><span style="color:#c0c5ce;">(!(</span><span style="color:#bf616a;">this </span><span style="color:#c0c5ce;">instanceof </span><span style="color:#bf616a;">A</span><span style="color:#c0c5ce;">))
-</span><span style="color:#c0c5ce;">    </span><span style="color:#b48ead;">return </span><span style="color:#c0c5ce;">new </span><span style="color:#bf616a;">A</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">value</span><span style="color:#c0c5ce;">);
-</span><span style="color:#c0c5ce;">  </span><span style="color:#bf616a;">this</span><span style="color:#c0c5ce;">.value = </span><span style="color:#bf616a;">value</span><span style="color:#c0c5ce;">;
-</span><span style="color:#c0c5ce;">}
-</span><span style="color:#c0c5ce;">
-</span><span style="color:#65737e;">// Note that in this case
-</span><span style="color:#65737e;">// we are not using the value
-</span><span style="color:#b48ead;">function </span><span style="color:#8fa1b3;">asNumber</span><span style="color:#c0c5ce;">(object) {
-</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">return </span><span style="color:#8fa1b3;">match</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">object</span><span style="color:#c0c5ce;">, {
-</span><span style="color:#c0c5ce;">    </span><span style="color:#8fa1b3;">A</span><span style="color:#c0c5ce;">: () </span><span style="color:#b48ead;">=&gt; </span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">,
-</span><span style="color:#c0c5ce;">    &#39;</span><span style="color:#8fa1b3;">_</span><span style="color:#c0c5ce;">&#39;: () </span><span style="color:#b48ead;">=&gt; </span><span style="color:#d08770;">0
-</span><span style="color:#c0c5ce;">  });
-</span><span style="color:#c0c5ce;">}
-</span><span style="color:#c0c5ce;">
-</span><span style="color:#65737e;">// Note that in this case
-</span><span style="color:#65737e;">// we are expecting that `A`
-</span><span style="color:#65737e;">// holds a string.
-</span><span style="color:#65737e;">// (in fact, it can hold any value -
-</span><span style="color:#65737e;">// if we want)
-</span><span style="color:#b48ead;">function </span><span style="color:#8fa1b3;">asString</span><span style="color:#c0c5ce;">(object) {
-</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">return </span><span style="color:#8fa1b3;">match</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">object</span><span style="color:#c0c5ce;">, {
-</span><span style="color:#c0c5ce;">    </span><span style="color:#8fa1b3;">A</span><span style="color:#c0c5ce;">: (a) </span><span style="color:#b48ead;">=&gt; </span><span style="color:#bf616a;">a</span><span style="color:#c0c5ce;">.value,
-</span><span style="color:#c0c5ce;">    &#39;</span><span style="color:#8fa1b3;">_</span><span style="color:#c0c5ce;">&#39;: () </span><span style="color:#b48ead;">=&gt; </span><span style="color:#c0c5ce;">&#39;&#39;
-</span><span style="color:#c0c5ce;">  });
-</span><span style="color:#c0c5ce;">}
-</span><span style="color:#c0c5ce;">
-</span><span style="color:#b48ead;">function </span><span style="color:#8fa1b3;">stringSize</span><span style="color:#c0c5ce;">(object) {
-</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">return </span><span style="color:#8fa1b3;">match</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">object</span><span style="color:#c0c5ce;">, {
-</span><span style="color:#c0c5ce;">    </span><span style="color:#8fa1b3;">A</span><span style="color:#c0c5ce;">: (a) </span><span style="color:#b48ead;">=&gt; </span><span style="color:#bf616a;">a</span><span style="color:#c0c5ce;">.value.length,
-</span><span style="color:#c0c5ce;">    &#39;</span><span style="color:#8fa1b3;">_</span><span style="color:#c0c5ce;">&#39;: () </span><span style="color:#b48ead;">=&gt; </span><span style="color:#d08770;">0
-</span><span style="color:#c0c5ce;">  });
-</span><span style="color:#c0c5ce;">}
-</span><span style="color:#c0c5ce;">
-</span><span style="color:#8fa1b3;">asNumber</span><span style="color:#c0c5ce;">(new </span><span style="color:#bf616a;">A</span><span style="color:#c0c5ce;">);
-</span><span style="color:#65737e;">// 1
-</span><span style="color:#8fa1b3;">asNumber</span><span style="color:#c0c5ce;">(</span><span style="color:#d08770;">null </span><span style="color:#c0c5ce;">|| </span><span style="color:#d08770;">0 </span><span style="color:#c0c5ce;">|| &#39;</span><span style="color:#a3be8c;">string</span><span style="color:#c0c5ce;">&#39; || </span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">);
-</span><span style="color:#65737e;">// 0
-</span><span style="color:#c0c5ce;">
-</span><span style="color:#8fa1b3;">asString</span><span style="color:#c0c5ce;">(new </span><span style="color:#bf616a;">A</span><span style="color:#c0c5ce;">(&#39;</span><span style="color:#a3be8c;">ok</span><span style="color:#c0c5ce;">&#39;));
-</span><span style="color:#65737e;">// &#39;ok&#39;
-</span><span style="color:#8fa1b3;">asString</span><span style="color:#c0c5ce;">(</span><span style="color:#d08770;">null </span><span style="color:#c0c5ce;">|| </span><span style="color:#d08770;">0 </span><span style="color:#c0c5ce;">|| &#39;</span><span style="color:#a3be8c;">string</span><span style="color:#c0c5ce;">&#39; || </span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">);
-</span><span style="color:#65737e;">// &#39;&#39;
-</span><span style="color:#c0c5ce;">
-</span><span style="color:#8fa1b3;">stringSize</span><span style="color:#c0c5ce;">(new </span><span style="color:#bf616a;">A</span><span style="color:#c0c5ce;">(&#39;</span><span style="color:#a3be8c;">ok</span><span style="color:#c0c5ce;">&#39;));
-</span><span style="color:#65737e;">// 2
-</span><span style="color:#8fa1b3;">stringSize</span><span style="color:#c0c5ce;">(</span><span style="color:#d08770;">null </span><span style="color:#c0c5ce;">|| </span><span style="color:#d08770;">0 </span><span style="color:#c0c5ce;">|| &#39;</span><span style="color:#a3be8c;">string</span><span style="color:#c0c5ce;">&#39; || </span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">);
-</span><span style="color:#65737e;">// 0
-</span></code></pre>
+<pre><code class="language-js">function A(value) {
+  if (!(this instanceof A))
+    return new A(value);
+  this.value = value;
+}
+
+// Note that in this case
+// we are not using the value
+function asNumber(object) {
+  return match(object, {
+    A: () =&gt; 1,
+    '_': () =&gt; 0
+  });
+}
+
+// Note that in this case
+// we are expecting that `A`
+// holds a string.
+// (in fact, it can hold any value -
+// if we want)
+function asString(object) {
+  return match(object, {
+    A: (a) =&gt; a.value,
+    '_': () =&gt; ''
+  });
+}
+
+function stringSize(object) {
+  return match(object, {
+    A: (a) =&gt; a.value.length,
+    '_': () =&gt; 0
+  });
+}
+
+asNumber(new A);
+// 1
+asNumber(null || 0 || 'string' || 1);
+// 0
+
+asString(new A('ok'));
+// 'ok'
+asString(null || 0 || 'string' || 1);
+// ''
+
+stringSize(new A('ok'));
+// 2
+stringSize(null || 0 || 'string' || 1);
+// 0
+</code></pre>
 <h4>moving types as values</h4>
 <p>Imagine a json like:</p>
-<pre style="background-color:#2b303b;"><code class="language-json"><span style="color:#c0c5ce;">{
-</span><span style="color:#c0c5ce;">  &quot;</span><span style="color:#a3be8c;">type</span><span style="color:#c0c5ce;">&quot;: &quot;</span><span style="color:#a3be8c;">empty</span><span style="color:#c0c5ce;">&quot;
-</span><span style="color:#c0c5ce;">}
-</span></code></pre>
+<pre><code class="language-json">{
+  &quot;type&quot;: &quot;empty&quot;
+}
+</code></pre>
 <p>This object has no information. It holds only
 the property that tells which type it is.</p>
 <p>If we use this plain object,
@@ -99,8 +99,8 @@ everywhere on the codebase we are going
 to access the <code>.type</code> property and the behavior
 will be all over the place.</p>
 <p>Instead, we can create a type for it...</p>
-<pre style="background-color:#2b303b;"><code class="language-js"><span style="color:#b48ead;">const </span><span style="color:#bf616a;">Empty </span><span style="color:#c0c5ce;">= new (</span><span style="color:#b48ead;">function </span><span style="color:#8fa1b3;">Empty</span><span style="color:#c0c5ce;">() {});
-</span></code></pre>
+<pre><code class="language-js">const Empty = new (function Empty() {});
+</code></pre>
 <p>Now that we have a proper type,
 we can add behaviors on it.</p>
 <p>NOTE: there is no significant cost for doing this.</p>
@@ -108,18 +108,18 @@ we can add behaviors on it.</p>
 hidden or you will need to do a little bit
 of gynastic to get it (Empty.constructor.prototype...).
 But it's not necessary to use it.</p>
-<pre style="background-color:#2b303b;"><code class="language-js"><span style="color:#ebcb8b;">Empty</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">asString </span><span style="color:#c0c5ce;">= </span><span style="color:#b48ead;">function</span><span style="color:#c0c5ce;">() {
-</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">return </span><span style="color:#c0c5ce;">&#39;&#39;;
-</span><span style="color:#c0c5ce;">};
-</span><span style="color:#c0c5ce;">
-</span><span style="color:#ebcb8b;">Empty</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">asNumber </span><span style="color:#c0c5ce;">= </span><span style="color:#b48ead;">function</span><span style="color:#c0c5ce;">() {
-</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">return </span><span style="color:#d08770;">0</span><span style="color:#c0c5ce;">;
-</span><span style="color:#c0c5ce;">};
-</span><span style="color:#c0c5ce;">
-</span><span style="color:#ebcb8b;">Empty</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">toJSON </span><span style="color:#c0c5ce;">= </span><span style="color:#b48ead;">function</span><span style="color:#c0c5ce;">() {
-</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">return </span><span style="color:#c0c5ce;">{ &quot;</span><span style="color:#a3be8c;">type</span><span style="color:#c0c5ce;">&quot;: &quot;</span><span style="color:#a3be8c;">empty</span><span style="color:#c0c5ce;">&quot; };
-</span><span style="color:#c0c5ce;">};
-</span></code></pre>
+<pre><code class="language-js">Empty.asString = function() {
+  return '';
+};
+
+Empty.asNumber = function() {
+  return 0;
+};
+
+Empty.toJSON = function() {
+  return { &quot;type&quot;: &quot;empty&quot; };
+};
+</code></pre>
 <p>It's has no relation to the singleton pattern.</p>
 <h4>maybe monad</h4>
 <p>If you have heard about functors or monads,
@@ -132,62 +132,62 @@ that has two constructors:</p>
 <p>The nothing constructor has no arguments. So
 we can instantiate once and just pass it around.</p>
 <p>The other constructor is <code>Just</code> and it has a single argument.</p>
-<pre style="background-color:#2b303b;"><code class="language-js"><span style="color:#b48ead;">const </span><span style="color:#bf616a;">Nothing </span><span style="color:#c0c5ce;">= new (</span><span style="color:#b48ead;">function </span><span style="color:#8fa1b3;">Nothing </span><span style="color:#c0c5ce;">{});
-</span><span style="color:#c0c5ce;">
-</span><span style="color:#b48ead;">function </span><span style="color:#8fa1b3;">Just</span><span style="color:#c0c5ce;">(a) {
-</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">if </span><span style="color:#c0c5ce;">(!(</span><span style="color:#bf616a;">this </span><span style="color:#c0c5ce;">instanceof </span><span style="color:#bf616a;">Just</span><span style="color:#c0c5ce;">)) {
-</span><span style="color:#c0c5ce;">    </span><span style="color:#b48ead;">return </span><span style="color:#c0c5ce;">new </span><span style="color:#bf616a;">Just</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">a</span><span style="color:#c0c5ce;">);
-</span><span style="color:#c0c5ce;">  }
-</span><span style="color:#c0c5ce;">  </span><span style="color:#bf616a;">this</span><span style="color:#c0c5ce;">.value = </span><span style="color:#bf616a;">a</span><span style="color:#c0c5ce;">;
-</span><span style="color:#c0c5ce;">}
-</span><span style="color:#c0c5ce;">
-</span><span style="color:#ebcb8b;">Nothing</span><span style="color:#c0c5ce;">.</span><span style="color:#bf616a;">constructor</span><span style="color:#c0c5ce;">.name;
-</span><span style="color:#65737e;">// &#39;Nothing&#39;
-</span><span style="color:#8fa1b3;">Just</span><span style="color:#c0c5ce;">(</span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">).</span><span style="color:#bf616a;">constructor</span><span style="color:#c0c5ce;">.name;
-</span><span style="color:#65737e;">// Just&#39;
-</span></code></pre>
+<pre><code class="language-js">const Nothing = new (function Nothing {});
+
+function Just(a) {
+  if (!(this instanceof Just)) {
+    return new Just(a);
+  }
+  this.value = a;
+}
+
+Nothing.constructor.name;
+// 'Nothing'
+Just(1).constructor.name;
+// Just'
+</code></pre>
 <p>Here is how we can implement <code>functor</code> for our maybe type.</p>
 <p>It's out of scope for this article to explain
 functors, but there are a lot of content out there
 explaining it.</p>
-<pre style="background-color:#2b303b;"><code class="language-js"><span style="color:#b48ead;">const </span><span style="color:#bf616a;">Nothing </span><span style="color:#c0c5ce;">= new (</span><span style="color:#b48ead;">function </span><span style="color:#8fa1b3;">Nothing</span><span style="color:#c0c5ce;">() {});
-</span><span style="color:#c0c5ce;">
-</span><span style="color:#b48ead;">function </span><span style="color:#8fa1b3;">Just</span><span style="color:#c0c5ce;">(a) {
-</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">if </span><span style="color:#c0c5ce;">(!(</span><span style="color:#bf616a;">this </span><span style="color:#c0c5ce;">instanceof </span><span style="color:#bf616a;">Just</span><span style="color:#c0c5ce;">)) {
-</span><span style="color:#c0c5ce;">    </span><span style="color:#b48ead;">return </span><span style="color:#c0c5ce;">new </span><span style="color:#bf616a;">Just</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">a</span><span style="color:#c0c5ce;">);
-</span><span style="color:#c0c5ce;">  }
-</span><span style="color:#c0c5ce;">  </span><span style="color:#bf616a;">this</span><span style="color:#c0c5ce;">.value = </span><span style="color:#bf616a;">a</span><span style="color:#c0c5ce;">;
-</span><span style="color:#c0c5ce;">}
-</span><span style="color:#c0c5ce;">
-</span><span style="color:#ebcb8b;">Nothing</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">map </span><span style="color:#c0c5ce;">= </span><span style="color:#b48ead;">function</span><span style="color:#c0c5ce;">(_) {
-</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">Nothing</span><span style="color:#c0c5ce;">;
-</span><span style="color:#c0c5ce;">};
-</span><span style="color:#c0c5ce;">
-</span><span style="color:#ebcb8b;">Just</span><span style="color:#c0c5ce;">.prototype.</span><span style="color:#8fa1b3;">map </span><span style="color:#c0c5ce;">= </span><span style="color:#b48ead;">function</span><span style="color:#c0c5ce;">(f) {
-</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">return </span><span style="color:#8fa1b3;">Just</span><span style="color:#c0c5ce;">(</span><span style="color:#8fa1b3;">f</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">this</span><span style="color:#c0c5ce;">.value));
-</span><span style="color:#c0c5ce;">};
-</span><span style="color:#c0c5ce;">
-</span><span style="color:#8fa1b3;">Just</span><span style="color:#c0c5ce;">(</span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">).</span><span style="color:#8fa1b3;">map</span><span style="color:#c0c5ce;">(v </span><span style="color:#b48ead;">=&gt; </span><span style="color:#bf616a;">v </span><span style="color:#c0c5ce;">+ </span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">).</span><span style="color:#8fa1b3;">map</span><span style="color:#c0c5ce;">(v </span><span style="color:#b48ead;">=&gt; </span><span style="color:#bf616a;">v </span><span style="color:#c0c5ce;">* </span><span style="color:#d08770;">2</span><span style="color:#c0c5ce;">)
-</span><span style="color:#65737e;">// Just(4)
-</span><span style="color:#bf616a;">Nothing</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">map</span><span style="color:#c0c5ce;">(v </span><span style="color:#b48ead;">=&gt; </span><span style="color:#bf616a;">v </span><span style="color:#c0c5ce;">+ </span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">).</span><span style="color:#8fa1b3;">map</span><span style="color:#c0c5ce;">(v </span><span style="color:#b48ead;">=&gt; </span><span style="color:#bf616a;">v </span><span style="color:#c0c5ce;">* </span><span style="color:#d08770;">2</span><span style="color:#c0c5ce;">)
-</span><span style="color:#65737e;">// Nothing
-</span><span style="color:#c0c5ce;">
-</span><span style="color:#65737e;">// our value needs to be between 0 and 10.
-</span><span style="color:#65737e;">//
-</span><span style="color:#65737e;">// don&#39;t do this!!! this is just an example.
-</span><span style="color:#65737e;">// (unless it makes sense...)
-</span><span style="color:#c0c5ce;">
-</span><span style="color:#b48ead;">function </span><span style="color:#8fa1b3;">valueToMaybe</span><span style="color:#c0c5ce;">(v) {
-</span><span style="color:#c0c5ce;">  </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">v </span><span style="color:#c0c5ce;">&lt; </span><span style="color:#d08770;">0 </span><span style="color:#c0c5ce;">|| </span><span style="color:#bf616a;">v </span><span style="color:#c0c5ce;">&gt; </span><span style="color:#d08770;">10 </span><span style="color:#c0c5ce;">? </span><span style="color:#bf616a;">Nothing </span><span style="color:#c0c5ce;">: </span><span style="color:#8fa1b3;">Just</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">v</span><span style="color:#c0c5ce;">);
-</span><span style="color:#c0c5ce;">}
-</span><span style="color:#c0c5ce;">
-</span><span style="color:#8fa1b3;">valueToMaybe</span><span style="color:#c0c5ce;">(</span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">).</span><span style="color:#8fa1b3;">map</span><span style="color:#c0c5ce;">(v </span><span style="color:#b48ead;">=&gt; </span><span style="color:#bf616a;">v </span><span style="color:#c0c5ce;">+ </span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">).</span><span style="color:#8fa1b3;">map</span><span style="color:#c0c5ce;">(v </span><span style="color:#b48ead;">=&gt; </span><span style="color:#bf616a;">v </span><span style="color:#c0c5ce;">* </span><span style="color:#d08770;">2</span><span style="color:#c0c5ce;">)
-</span><span style="color:#65737e;">// Just(4)
-</span><span style="color:#8fa1b3;">valueToMaybe</span><span style="color:#c0c5ce;">(</span><span style="color:#d08770;">11</span><span style="color:#c0c5ce;">).</span><span style="color:#8fa1b3;">map</span><span style="color:#c0c5ce;">(v </span><span style="color:#b48ead;">=&gt; </span><span style="color:#bf616a;">v </span><span style="color:#c0c5ce;">+ </span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">).</span><span style="color:#8fa1b3;">map</span><span style="color:#c0c5ce;">(v </span><span style="color:#b48ead;">=&gt; </span><span style="color:#bf616a;">v </span><span style="color:#c0c5ce;">* </span><span style="color:#d08770;">2</span><span style="color:#c0c5ce;">)
-</span><span style="color:#65737e;">// Nothing
-</span><span style="color:#c0c5ce;">
-</span><span style="color:#65737e;">// giving a hint
-</span><span style="color:#c0c5ce;">[</span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">].</span><span style="color:#8fa1b3;">map</span><span style="color:#c0c5ce;">(v </span><span style="color:#b48ead;">=&gt; </span><span style="color:#bf616a;">v </span><span style="color:#c0c5ce;">+ </span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">).</span><span style="color:#8fa1b3;">map</span><span style="color:#c0c5ce;">(v </span><span style="color:#b48ead;">=&gt; </span><span style="color:#bf616a;">v </span><span style="color:#c0c5ce;">* </span><span style="color:#d08770;">2</span><span style="color:#c0c5ce;">)
-</span><span style="color:#65737e;">// [4]
-</span></code></pre>
+<pre><code class="language-js">const Nothing = new (function Nothing() {});
+
+function Just(a) {
+  if (!(this instanceof Just)) {
+    return new Just(a);
+  }
+  this.value = a;
+}
+
+Nothing.map = function(_) {
+  return Nothing;
+};
+
+Just.prototype.map = function(f) {
+  return Just(f(this.value));
+};
+
+Just(1).map(v =&gt; v + 1).map(v =&gt; v * 2)
+// Just(4)
+Nothing.map(v =&gt; v + 1).map(v =&gt; v * 2)
+// Nothing
+
+// our value needs to be between 0 and 10.
+//
+// don't do this!!! this is just an example.
+// (unless it makes sense...)
+
+function valueToMaybe(v) {
+  return v &lt; 0 || v &gt; 10 ? Nothing : Just(v);
+}
+
+valueToMaybe(1).map(v =&gt; v + 1).map(v =&gt; v * 2)
+// Just(4)
+valueToMaybe(11).map(v =&gt; v + 1).map(v =&gt; v * 2)
+// Nothing
+
+// giving a hint
+[1].map(v =&gt; v + 1).map(v =&gt; v * 2)
+// [4]
+</code></pre>
 </div></div></section></main><script type="application/javascript" src="/js/highlight.min.js"></script></body></html>

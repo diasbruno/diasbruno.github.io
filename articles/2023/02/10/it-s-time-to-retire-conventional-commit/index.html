@@ -1,4 +1,4 @@
-<html><head><title>diasbruno - It&#39;s time to retire conventional commit</title><meta name="viewport" content="width=device-width"><meta name="author" content="Bruno Dias"><meta name="title" content="diasbruno - It&#39;s time to retire conventional commit"><meta name="title" property="og:title" content="It&#39;s time to retire conventional commit"><link rel="stylesheet" type="text/css" href="/css/style.css"><link rel="stylesheet" type="text/css" href="/css/highlight.min.css"><link rel="stylesheet" type="text/css" href="/css/milligram.css"></head><body><main><nav><div><a href="/"><h1>diasbruno</h1></a><div class="nav-links"><a class="nav-links" href="/">articles</a><a class="nav-links" href="/opensource">opensource</a><a class="nav-links" href="https://github.com/diasbruno" target="_blank">github</a></div></div></nav><section class="content"><div class="article-section"><h1>It&#39;s time to retire conventional commit</h1><div class="content-info"><span>article</span> - publish - <time class="content-datetime" datetime="2023-02-10T14:31:55Z">Feb 10, 2023</time></div><div><p>This commit style is extremely popular.
+<html><head><title>diasbruno - It&#39;s time to retire conventional commit</title><meta name="viewport" content="width=device-width"><meta name="author" content="Bruno Dias"><meta name="title" content="diasbruno - It&#39;s time to retire conventional commit"><meta name="title" property="og:title" content="It&#39;s time to retire conventional commit"><link rel="stylesheet" type="text/css" href="/css/style.css"><link rel="stylesheet" type="text/css" href="/css/highlight.min.css"><link rel="stylesheet" type="text/css" href="/css/milligram.css"></head><body><main><nav><div><a href="/"><h1>diasbruno</h1></a><div class="nav-links"><a class="nav-link" href="/">articles</a><a class="nav-link" href="/opensource">opensource</a><a class="nav-link" href="https://github.com/diasbruno" target="_blank">github</a></div></div></nav><section class="content"><div class="article-section"><h1>It&#39;s time to retire conventional commit</h1><div class="content-info"><span>article</span> - publish - <time class="content-datetime" datetime="2023-02-10T14:31:55Z">Feb 10, 2023</time></div><div><p>This commit style is extremely popular.
 It tries to help to organize
 a project's version control history.</p>
 <p>It probably still have some application
@@ -23,14 +23,14 @@ be easy to automate.</p>
 <p><code>E-1</code> is an epic and <code>T-1</code> e <code>T-2</code> are tasks of this epic.
 If you want to find E-1, you can search for T-1 and T-2,
 or the epic itself if you create the epic branch.</p>
-<pre style="background-color:#2b303b;"><code><span style="color:#c0c5ce;">hash commit
-</span><span style="color:#c0c5ce;">5555 feat: added page for resource
-</span><span style="color:#c0c5ce;">4444 refator: other peoples work
-</span><span style="color:#c0c5ce;">3333 feat: added service for resource
-</span><span style="color:#c0c5ce;">2222 fix: other peoples work
-</span><span style="color:#c0c5ce;">1111 feat: added http stuff for resource
-</span><span style="color:#c0c5ce;">0000 ....
-</span></code></pre>
+<pre><code>hash commit
+5555 feat: added page for resource
+4444 refator: other peoples work
+3333 feat: added service for resource
+2222 fix: other peoples work
+1111 feat: added http stuff for resource
+0000 ....
+</code></pre>
 <p>We know <code>1111</code>, <code>3333</code> and <code>5555</code> are related,
 but it's hard to automate, so we have to do it
 manually.</p>
@@ -46,23 +46,23 @@ to the master/main branch.</p>
 is a simple way an have a lot of benefits when you need
 to query the repository.</p>
 <p>This is not a new thing. This style is out there as well...</p>
-<pre style="background-color:#2b303b;"><code><span style="color:#c0c5ce;">hash commit
-</span><span style="color:#c0c5ce;">5555 T-2 | added page for resource
-</span><span style="color:#c0c5ce;">4444 T-Y | other peoples work
-</span><span style="color:#c0c5ce;">3333 T-1 | added service for resource
-</span><span style="color:#c0c5ce;">2222 T-X | other peoples work
-</span><span style="color:#c0c5ce;">1111 T-1 | added http stuff for resource
-</span><span style="color:#c0c5ce;">0000 ....
-</span></code></pre>
+<pre><code>hash commit
+5555 T-2 | added page for resource
+4444 T-Y | other peoples work
+3333 T-1 | added service for resource
+2222 T-X | other peoples work
+1111 T-1 | added http stuff for resource
+0000 ....
+</code></pre>
 <p>With an external identifier, it help to query the history
 in a very efficient way and it become very shell friendly.</p>
 <p>Here is a command to query an epic <code>E-1</code>:</p>
 <p>git log --oneline --grep=&quot;^T-[12]&quot;</p>
-<pre style="background-color:#2b303b;"><code><span style="color:#c0c5ce;">hash commit
-</span><span style="color:#c0c5ce;">5555 T-2 | added page for resource
-</span><span style="color:#c0c5ce;">3333 T-1 | added service for resource
-</span><span style="color:#c0c5ce;">1111 T-1 | added http stuff for resource
-</span></code></pre>
+<pre><code>hash commit
+5555 T-2 | added page for resource
+3333 T-1 | added service for resource
+1111 T-1 | added http stuff for resource
+</code></pre>
 <p>With query you can easily extract a .diff
 to revert an entire feature without suffering.</p>
 </div></div></section></main><script type="application/javascript" src="/js/highlight.min.js"></script></body></html>

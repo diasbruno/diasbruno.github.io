@@ -1,4 +1,4 @@
-<html><head><title>diasbruno - building pipelines and avoid suffering</title><meta name="viewport" content="width=device-width"><meta name="author" content="Bruno Dias"><meta name="title" content="diasbruno - building pipelines and avoid suffering"><meta name="title" property="og:title" content="making pipelines and avoid suffering"><meta name="image" property="og:image" content="/images/promises.png"><link rel="stylesheet" type="text/css" href="/css/style.css"><link rel="stylesheet" type="text/css" href="/css/highlight.min.css"><link rel="stylesheet" type="text/css" href="/css/milligram.css"></head><body><main><nav><div><a href="/"><h1>diasbruno</h1></a><div class="nav-links"><a class="nav-links" href="/">articles</a><a class="nav-links" href="/opensource">opensource</a><a class="nav-links" href="https://github.com/diasbruno" target="_blank">github</a></div></div></nav><section class="content"><div class="article-section"><h1>building pipelines and avoid suffering</h1><div class="content-info"><span>article</span> - publish - <time class="content-datetime" datetime="2023-12-30T22:34:58Z">Dec 30, 2023</time></div><div><p>Before we start making amazing stuff with pipelines,
+<html><head><title>diasbruno - building pipelines and avoid suffering</title><meta name="viewport" content="width=device-width"><meta name="author" content="Bruno Dias"><meta name="title" content="diasbruno - building pipelines and avoid suffering"><meta name="title" property="og:title" content="building pipelines and avoid suffering"><meta name="image" property="og:image" content="/images/promises.png"><link rel="stylesheet" type="text/css" href="/css/style.css"><link rel="stylesheet" type="text/css" href="/css/highlight.min.css"><link rel="stylesheet" type="text/css" href="/css/milligram.css"></head><body><main><nav><div><a href="/"><h1>diasbruno</h1></a><div class="nav-links"><a class="nav-link" href="/">articles</a><a class="nav-link" href="/opensource">opensource</a><a class="nav-link" href="https://github.com/diasbruno" target="_blank">github</a></div></div></nav><section class="content"><div class="article-section"><h1>building pipelines and avoid suffering</h1><div class="content-info"><span>article</span> - publish - <time class="content-datetime" datetime="2023-12-30T22:34:58Z">Dec 30, 2023</time></div><div><p>Before we start making amazing stuff with pipelines,
 let's recap everything about promises - I mean everything!</p>
 <p><code>Promise</code> is an utility to execute tasks concurrently with
 the main execution.</p>
@@ -15,36 +15,36 @@ it may call a continuation, if defined,
 using <code>Promise.then(f)</code>, in case of <code>resolve</code> gets called
 or <code>Promise.catch(g)</code> for <code>reject</code>.</p>
 <h4>Creating a promise that has no continuations</h4>
-<pre style="background-color:#2b303b;"><code class="language-js"><span style="color:#c0c5ce;">new </span><span style="color:#ebcb8b;">Promise</span><span style="color:#c0c5ce;">(() </span><span style="color:#b48ead;">=&gt; </span><span style="color:#8fa1b3;">patchUser</span><span style="color:#c0c5ce;">({ id: </span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">, updateName: &quot;</span><span style="color:#a3be8c;">new name</span><span style="color:#c0c5ce;">&quot; }))
-</span></code></pre>
+<pre><code class="language-js">new Promise(() =&gt; patchUser({ id: 1, updateName: &quot;new name&quot; }))
+</code></pre>
 <h4>Creating a promise with continuation</h4>
-<pre style="background-color:#2b303b;"><code class="language-js"><span style="color:#c0c5ce;">new </span><span style="color:#ebcb8b;">Promise</span><span style="color:#c0c5ce;">(
-</span><span style="color:#c0c5ce;">  (resolve, reject) </span><span style="color:#b48ead;">=&gt;
-</span><span style="color:#c0c5ce;">    (</span><span style="color:#8fa1b3;">Boolean</span><span style="color:#c0c5ce;">(</span><span style="color:#ebcb8b;">Math</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">ceil</span><span style="color:#c0c5ce;">(</span><span style="color:#ebcb8b;">Math</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">random</span><span style="color:#c0c5ce;">() - </span><span style="color:#d08770;">0.5</span><span style="color:#c0c5ce;">))
-</span><span style="color:#c0c5ce;">        ? </span><span style="color:#bf616a;">resolve
-</span><span style="color:#c0c5ce;">        : </span><span style="color:#bf616a;">reject</span><span style="color:#c0c5ce;">)()
-</span><span style="color:#c0c5ce;">).</span><span style="color:#8fa1b3;">then</span><span style="color:#c0c5ce;">(
-</span><span style="color:#c0c5ce;">  () </span><span style="color:#b48ead;">=&gt; </span><span style="color:#c0c5ce;">console.</span><span style="color:#96b5b4;">log</span><span style="color:#c0c5ce;">(&quot;</span><span style="color:#a3be8c;">resolved</span><span style="color:#c0c5ce;">&quot;)
-</span><span style="color:#c0c5ce;">).</span><span style="color:#8fa1b3;">catch</span><span style="color:#c0c5ce;">(
-</span><span style="color:#c0c5ce;">  () </span><span style="color:#b48ead;">=&gt; </span><span style="color:#c0c5ce;">console.</span><span style="color:#96b5b4;">log</span><span style="color:#c0c5ce;">(&quot;</span><span style="color:#a3be8c;">rejected</span><span style="color:#c0c5ce;">&quot;)
-</span><span style="color:#c0c5ce;">)
-</span></code></pre>
+<pre><code class="language-js">new Promise(
+  (resolve, reject) =&gt;
+	(Boolean(Math.ceil(Math.random() - 0.5))
+		? resolve
+		: reject)()
+).then(
+  () =&gt; console.log(&quot;resolved&quot;)
+).catch(
+  () =&gt; console.log(&quot;rejected&quot;)
+)
+</code></pre>
 <h3>Lifting a value into promise</h3>
 <p>As the promise constructor argument function
 receives 2 callbacks, they are also available
 to initialize a promise.</p>
-<pre style="background-color:#2b303b;"><code class="language-js"><span style="color:#ebcb8b;">Promise</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">resolve</span><span style="color:#c0c5ce;">(
-</span><span style="color:#c0c5ce;">  </span><span style="color:#d08770;">1
-</span><span style="color:#c0c5ce;">).</span><span style="color:#8fa1b3;">then</span><span style="color:#c0c5ce;">(
-</span><span style="color:#c0c5ce;">  (value) </span><span style="color:#b48ead;">=&gt; </span><span style="color:#8fa1b3;">assert</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">value </span><span style="color:#c0c5ce;">=== </span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">)
-</span><span style="color:#c0c5ce;">)
-</span><span style="color:#c0c5ce;">
-</span><span style="color:#ebcb8b;">Promise</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">reject</span><span style="color:#c0c5ce;">(
-</span><span style="color:#c0c5ce;">  { error: &quot;</span><span style="color:#a3be8c;">some error</span><span style="color:#c0c5ce;">&quot; }
-</span><span style="color:#c0c5ce;">).</span><span style="color:#8fa1b3;">catch</span><span style="color:#c0c5ce;">(
-</span><span style="color:#c0c5ce;">  (err) </span><span style="color:#b48ead;">=&gt; </span><span style="color:#8fa1b3;">assert</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">error </span><span style="color:#c0c5ce;">== &quot;</span><span style="color:#a3be8c;">some error</span><span style="color:#c0c5ce;">&quot;)
-</span><span style="color:#c0c5ce;">)
-</span></code></pre>
+<pre><code class="language-js">Promise.resolve(
+  1
+).then(
+  (value) =&gt; assert(value === 1)
+)
+
+Promise.reject(
+  { error: &quot;some error&quot; }
+).catch(
+  (err) =&gt; assert(error == &quot;some error&quot;)
+)
+</code></pre>
 <h2>2 - Continuations</h2>
 <p>You may think you know which path the execution will take,
 but you need to pay attention to every continuation.</p>
@@ -54,18 +54,18 @@ was fulfilled and the result is <code>resolve</code>,
 the continuation is triggered calling the function <code>f</code>
 with the result passed to resolve. If the promise calls
 <code>reject</code>, than the continuation is not triggered.</p>
-<pre style="background-color:#2b303b;"><code class="language-js"><span style="color:#ebcb8b;">Promise</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">resolve</span><span style="color:#c0c5ce;">(
-</span><span style="color:#c0c5ce;">  </span><span style="color:#d08770;">1
-</span><span style="color:#c0c5ce;">).</span><span style="color:#8fa1b3;">then</span><span style="color:#c0c5ce;">(
-</span><span style="color:#c0c5ce;">  (value) </span><span style="color:#b48ead;">=&gt; </span><span style="color:#8fa1b3;">assert</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">value </span><span style="color:#c0c5ce;">=== </span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">)
-</span><span style="color:#c0c5ce;">)
-</span><span style="color:#c0c5ce;">
-</span><span style="color:#ebcb8b;">Promise</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">reject</span><span style="color:#c0c5ce;">(
-</span><span style="color:#c0c5ce;">  { error: &quot;</span><span style="color:#a3be8c;">some error</span><span style="color:#c0c5ce;">&quot; }
-</span><span style="color:#c0c5ce;">).</span><span style="color:#8fa1b3;">then</span><span style="color:#c0c5ce;">(
-</span><span style="color:#c0c5ce;">  () </span><span style="color:#b48ead;">=&gt; </span><span style="color:#d08770;">null </span><span style="color:#65737e;">/* function will not be called */
-</span><span style="color:#c0c5ce;">)
-</span></code></pre>
+<pre><code class="language-js">Promise.resolve(
+  1
+).then(
+  (value) =&gt; assert(value === 1)
+)
+
+Promise.reject(
+  { error: &quot;some error&quot; }
+).then(
+  () =&gt; null /* function will not be called */
+)
+</code></pre>
 <h4>Return from <code>.then(f)</code></h4>
 <p>You can return 3 values from <code>.then(f)</code>:</p>
 <ul>
@@ -75,14 +75,14 @@ with the result passed to resolve. If the promise calls
 it is the same as calling <code>resolve(object)</code>.
 This will trigger the next &quot;then&quot; continuation,
 if defined.</p>
-<pre style="background-color:#2b303b;"><code class="language-js"><span style="color:#ebcb8b;">Promise</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">resolve</span><span style="color:#c0c5ce;">(
-</span><span style="color:#c0c5ce;">  </span><span style="color:#d08770;">1
-</span><span style="color:#c0c5ce;">).</span><span style="color:#8fa1b3;">then</span><span style="color:#c0c5ce;">(
-</span><span style="color:#c0c5ce;">  (value) </span><span style="color:#b48ead;">=&gt; </span><span style="color:#bf616a;">value </span><span style="color:#c0c5ce;">+ </span><span style="color:#d08770;">1
-</span><span style="color:#c0c5ce;">).</span><span style="color:#8fa1b3;">then</span><span style="color:#c0c5ce;">(
-</span><span style="color:#c0c5ce;">  (value) </span><span style="color:#b48ead;">=&gt; </span><span style="color:#8fa1b3;">assert</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">value </span><span style="color:#c0c5ce;">=== </span><span style="color:#d08770;">2</span><span style="color:#c0c5ce;">)
-</span><span style="color:#c0c5ce;">)
-</span></code></pre>
+<pre><code class="language-js">Promise.resolve(
+  1
+).then(
+  (value) =&gt; value + 1
+).then(
+  (value) =&gt; assert(value === 2)
+)
+</code></pre>
 <ul>
 <li><code>Promise.resolve(object)</code></li>
 </ul>
@@ -90,41 +90,41 @@ if defined.</p>
 in the case of returning &quot;resolved&quot; promise
 from a &quot;then&quot; continuation, it has the same effect
 as return a normal object.</p>
-<pre style="background-color:#2b303b;"><code class="language-js"><span style="color:#ebcb8b;">Promise</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">resolve</span><span style="color:#c0c5ce;">(
-</span><span style="color:#c0c5ce;">  </span><span style="color:#d08770;">1
-</span><span style="color:#c0c5ce;">).</span><span style="color:#8fa1b3;">then</span><span style="color:#c0c5ce;">(
-</span><span style="color:#c0c5ce;">  (value) </span><span style="color:#b48ead;">=&gt; </span><span style="color:#ebcb8b;">Promise</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">resolve</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">value </span><span style="color:#c0c5ce;">+ </span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">)
-</span><span style="color:#c0c5ce;">).</span><span style="color:#8fa1b3;">then</span><span style="color:#c0c5ce;">(
-</span><span style="color:#c0c5ce;">  (value) </span><span style="color:#b48ead;">=&gt; </span><span style="color:#8fa1b3;">assert</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">value </span><span style="color:#c0c5ce;">=== </span><span style="color:#d08770;">2</span><span style="color:#c0c5ce;">)
-</span><span style="color:#c0c5ce;">)
-</span></code></pre>
+<pre><code class="language-js">Promise.resolve(
+  1
+).then(
+  (value) =&gt; Promise.resolve(value + 1)
+).then(
+  (value) =&gt; assert(value === 2)
+)
+</code></pre>
 <ul>
 <li><code>Promise.reject(object)</code></li>
 </ul>
 <p>As you can return a promise,
 it can also be a &quot;rejected&quot; one.</p>
 <p>This will trigger a &quot;catch&quot; continuation.</p>
-<pre style="background-color:#2b303b;"><code class="language-js"><span style="color:#ebcb8b;">Promise</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">resolve</span><span style="color:#c0c5ce;">(
-</span><span style="color:#c0c5ce;">  </span><span style="color:#d08770;">1
-</span><span style="color:#c0c5ce;">).</span><span style="color:#8fa1b3;">then</span><span style="color:#c0c5ce;">(
-</span><span style="color:#c0c5ce;">  (value) </span><span style="color:#b48ead;">=&gt; </span><span style="color:#ebcb8b;">Promise</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">reject</span><span style="color:#c0c5ce;">({ error: &quot;</span><span style="color:#a3be8c;">some error</span><span style="color:#c0c5ce;">&quot; })
-</span><span style="color:#c0c5ce;">).</span><span style="color:#8fa1b3;">catch</span><span style="color:#c0c5ce;">(
-</span><span style="color:#c0c5ce;">  ({ error }) </span><span style="color:#b48ead;">=&gt; </span><span style="color:#8fa1b3;">assert</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">error </span><span style="color:#c0c5ce;">== &quot;</span><span style="color:#a3be8c;">some error</span><span style="color:#c0c5ce;">&quot;)
-</span><span style="color:#c0c5ce;">)
-</span></code></pre>
+<pre><code class="language-js">Promise.resolve(
+  1
+).then(
+  (value) =&gt; Promise.reject({ error: &quot;some error&quot; })
+).catch(
+  ({ error }) =&gt; assert(error == &quot;some error&quot;)
+)
+</code></pre>
 <h3><code>Promise.catch(g)</code></h3>
 <p>Adding a <code>.catch(g)</code> continuation, whenever
 a promise is fulfilled and &quot;rejected&quot;,
 the function <code>g</code> will be called with the object
 of <code>reject(object)</code>.</p>
-<pre style="background-color:#2b303b;"><code class="language-js"><span style="color:#ebcb8b;">Promise</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">reject</span><span style="color:#c0c5ce;">(
-</span><span style="color:#c0c5ce;">  { error: &quot;</span><span style="color:#a3be8c;">some error</span><span style="color:#c0c5ce;">&quot; }
-</span><span style="color:#c0c5ce;">).</span><span style="color:#8fa1b3;">then</span><span style="color:#c0c5ce;">(
-</span><span style="color:#c0c5ce;">  () </span><span style="color:#b48ead;">=&gt; </span><span style="color:#d08770;">null </span><span style="color:#65737e;">/* function will not be called */
-</span><span style="color:#c0c5ce;">).</span><span style="color:#8fa1b3;">catch</span><span style="color:#c0c5ce;">(
-</span><span style="color:#c0c5ce;">  ({ error }) </span><span style="color:#b48ead;">=&gt; </span><span style="color:#8fa1b3;">assert</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">error </span><span style="color:#c0c5ce;">== &quot;</span><span style="color:#a3be8c;">some error</span><span style="color:#c0c5ce;">&quot;)
-</span><span style="color:#c0c5ce;">)
-</span></code></pre>
+<pre><code class="language-js">Promise.reject(
+  { error: &quot;some error&quot; }
+).then(
+  () =&gt; null /* function will not be called */
+).catch(
+  ({ error }) =&gt; assert(error == &quot;some error&quot;)
+)
+</code></pre>
 <h4>Return from <code>.catch(g)</code></h4>
 <h5>Return resolved promises or normal objects</h5>
 <p>Return from catch is a little different,
@@ -137,50 +137,50 @@ to do with it.</p>
 <p>By returning a &quot;resolved&quot; promise from a catch
 continuation, the next continuation to be &quot;resolved&quot;
 and the <code>.then(f)</code> will be triggered.</p>
-<pre style="background-color:#2b303b;"><code class="language-js"><span style="color:#ebcb8b;">Promise</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">reject</span><span style="color:#c0c5ce;">(
-</span><span style="color:#c0c5ce;">  { error: &quot;</span><span style="color:#a3be8c;">some error</span><span style="color:#c0c5ce;">&quot; }
-</span><span style="color:#c0c5ce;">).</span><span style="color:#8fa1b3;">catch</span><span style="color:#c0c5ce;">(
-</span><span style="color:#c0c5ce;">  () </span><span style="color:#b48ead;">=&gt; </span><span style="color:#ebcb8b;">Promise</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">resolve</span><span style="color:#c0c5ce;">(&quot;</span><span style="color:#a3be8c;">ok</span><span style="color:#c0c5ce;">&quot;)
-</span><span style="color:#c0c5ce;">).</span><span style="color:#8fa1b3;">catch</span><span style="color:#c0c5ce;">(
-</span><span style="color:#c0c5ce;">  () </span><span style="color:#b48ead;">=&gt; </span><span style="color:#d08770;">null </span><span style="color:#65737e;">/* function will not be called */
-</span><span style="color:#c0c5ce;">).</span><span style="color:#8fa1b3;">then</span><span style="color:#c0c5ce;">(
-</span><span style="color:#c0c5ce;">  (value) </span><span style="color:#b48ead;">=&gt; </span><span style="color:#8fa1b3;">assert</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">value </span><span style="color:#c0c5ce;">== &quot;</span><span style="color:#a3be8c;">ok</span><span style="color:#c0c5ce;">&quot;)
-</span><span style="color:#c0c5ce;">)
-</span></code></pre>
+<pre><code class="language-js">Promise.reject(
+  { error: &quot;some error&quot; }
+).catch(
+  () =&gt; Promise.resolve(&quot;ok&quot;)
+).catch(
+  () =&gt; null /* function will not be called */
+).then(
+  (value) =&gt; assert(value == &quot;ok&quot;)
+)
+</code></pre>
 <ul>
 <li>Any object</li>
 </ul>
 <p>Returning a normal value from a &quot;catch&quot;
 continuation has the same behavior
 as returning a <code>Promise.resolve(object)</code>.</p>
-<pre style="background-color:#2b303b;"><code class="language-js"><span style="color:#ebcb8b;">Promise</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">reject</span><span style="color:#c0c5ce;">(
-</span><span style="color:#c0c5ce;">  { error: &quot;</span><span style="color:#a3be8c;">some error</span><span style="color:#c0c5ce;">&quot; }
-</span><span style="color:#c0c5ce;">).</span><span style="color:#8fa1b3;">catch</span><span style="color:#c0c5ce;">(
-</span><span style="color:#c0c5ce;">  () </span><span style="color:#b48ead;">=&gt; </span><span style="color:#c0c5ce;">&quot;</span><span style="color:#a3be8c;">ok</span><span style="color:#c0c5ce;">&quot;
-</span><span style="color:#c0c5ce;">).</span><span style="color:#8fa1b3;">catch</span><span style="color:#c0c5ce;">(
-</span><span style="color:#c0c5ce;">  () </span><span style="color:#b48ead;">=&gt; </span><span style="color:#d08770;">null </span><span style="color:#65737e;">/* function will not be called */
-</span><span style="color:#c0c5ce;">).</span><span style="color:#8fa1b3;">then</span><span style="color:#c0c5ce;">(
-</span><span style="color:#c0c5ce;">  (value) </span><span style="color:#b48ead;">=&gt; </span><span style="color:#8fa1b3;">assert</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">value </span><span style="color:#c0c5ce;">== &quot;</span><span style="color:#a3be8c;">ok</span><span style="color:#c0c5ce;">&quot;)
-</span><span style="color:#c0c5ce;">)
-</span></code></pre>
+<pre><code class="language-js">Promise.reject(
+  { error: &quot;some error&quot; }
+).catch(
+  () =&gt; &quot;ok&quot;
+).catch(
+  () =&gt; null /* function will not be called */
+).then(
+  (value) =&gt; assert(value == &quot;ok&quot;)
+)
+</code></pre>
 <h4>Use cases for return resolved promises or normal objects</h4>
 <p>In some pipelines, there are cases there it may be possible
 to recover and continue the pipeline.</p>
 <p>Example (default values):</p>
-<pre style="background-color:#2b303b;"><code class="language-js"><span style="color:#ebcb8b;">Promise</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">resolve</span><span style="color:#c0c5ce;">(
-</span><span style="color:#c0c5ce;">    </span><span style="color:#65737e;">/* user recovered from localStorage */
-</span><span style="color:#c0c5ce;">  </span><span style="color:#bf616a;">user
-</span><span style="color:#c0c5ce;">).</span><span style="color:#8fa1b3;">then</span><span style="color:#c0c5ce;">(
-</span><span style="color:#c0c5ce;">    </span><span style="color:#65737e;">/* we are going to kick out this user,
-</span><span style="color:#65737e;">       so we are going to reject here */
-</span><span style="color:#c0c5ce;">  (user) </span><span style="color:#b48ead;">=&gt; </span><span style="color:#8fa1b3;">validateUserSession</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">user</span><span style="color:#c0c5ce;">)
-</span><span style="color:#c0c5ce;">).</span><span style="color:#8fa1b3;">catch</span><span style="color:#c0c5ce;">(
-</span><span style="color:#c0c5ce;">    </span><span style="color:#65737e;">/* we can return a object that simulates
-</span><span style="color:#65737e;">       a user but with almost no privileges
-</span><span style="color:#65737e;">       (better then use null) */
-</span><span style="color:#c0c5ce;">  () </span><span style="color:#b48ead;">=&gt; </span><span style="color:#8fa1b3;">GuestUser</span><span style="color:#c0c5ce;">()
-</span><span style="color:#c0c5ce;">).</span><span style="color:#8fa1b3;">then</span><span style="color:#c0c5ce;">(
-</span><span style="color:#c0c5ce;">  (user) </span><span style="color:#b48ead;">=&gt; </span><span style="color:#8fa1b3;">assert</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">user</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">isAuthenticated</span><span style="color:#c0c5ce;">() === </span><span style="color:#d08770;">false</span><span style="color:#c0c5ce;">)
-</span><span style="color:#c0c5ce;">)
-</span></code></pre>
+<pre><code class="language-js">Promise.resolve(
+	/* user recovered from localStorage */
+  user
+).then(
+	/* we are going to kick out this user,
+	   so we are going to reject here */
+  (user) =&gt; validateUserSession(user)
+).catch(
+	/* we can return a object that simulates
+	   a user but with almost no privileges
+	   (better then use null) */
+  () =&gt; GuestUser()
+).then(
+  (user) =&gt; assert(user.isAuthenticated() === false)
+)
+</code></pre>
 </div></div></section></main><script type="application/javascript" src="/js/highlight.min.js"></script></body></html>
