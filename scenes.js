@@ -170,7 +170,7 @@ function HomePage() {
       const svg = document.querySelector('svg#svg1');
       const logoSvg = two.interpret(svg);
       two.add(logoSvg);
-      two.scene.scale = 4;
+      two.scene.scale = 3;
       two.scene.position.set(two.width * 0.5, two.height * 0.5);
 
       logoSvg.ending = 0;
