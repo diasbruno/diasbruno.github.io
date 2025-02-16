@@ -1,0 +1,264 @@
+<html><head><title>diasbruno - Faça estados inválidos serem irrepresentáveis</title><meta name="viewport" content="width=device-width"><meta name="author" content="Bruno Dias"><meta name="title" content="diasbruno - Faça estados inválidos serem irrepresentáveis"><meta name="title" property="og:title" content="faca-estados-invalidos-serem-irrepresentaveis"><meta name="image" property="og:image" content="/images/processes-outcome.png"><link rel="stylesheet" type="text/css" href="/css/style.css"><link rel="stylesheet" type="text/css" href="/css/highlight.min.css"><link rel="stylesheet" type="text/css" href="/css/milligram.css"></head><body><main><nav><div><a href="/"><h1>diasbruno</h1></a><div class="nav-links"><a class="nav-links" href="/">articles</a><a class="nav-links" href="/opensource">opensource</a><a class="nav-links" href="https://github.com/diasbruno" target="_blank">github</a></div></div></nav><section class="content"><div class="article-section"><h1>Faça estados inválidos serem irrepresentáveis</h1><div class="content-info"><span>article</span> - publish - <time class="content-datetime" datetime="2024-09-26T12:00:00Z">Sep 26, 2024</time></div><div><h2>Intro</h2>
+
+<p>Números. Infinitos itens. Porém, por si só, números não tem sentido (algebra?).
+Para que façam sentido, definimos unidades à o que se referem. Nisso, temos coisas contáveis
+que são infinitas, mas também, coisas que são finitas.</p>
+
+<p>Imagine um toca CD de carro do inicio dos anos 2000. Alguns modelos possuem apenas 1 slot, e
+outros, até 10 slots (talvez mais, mas ai é muito chique).</p>
+
+<p>Descrever essa capacidade (slots) como um number ou Int é um convite para introduzir bugs.
+Todos os métodos e variáveis que serão declaradas assim, podem ter valores arbitrários em
+todos os lugares do sistema, ou, todos os lugares que utilizam deverão ter checks de pre e
+postcondition para saber se o valor está dentro dos constraints específicos a aquele item.</p>
+
+<p>Um aplicação tem vários estados. Se fizéssemos a união de todos os estados possíveis em uma
+única função, seria praticamente impossível compreender quantos estados a aplicação poderia
+tomar em um determinado momento.</p>
+
+<p>A quantidade de variáveis seria muito grande para se quer acompanhar mentalmente o que está
+acontecendo.</p>
+
+<p>A maioria dos estados não precisam estar disponíveis o tempo todo. Essas variáveis precisariam
+de manutenção do momento em que ela é inicializada, até quando deveria ser descartada - que
+causa problemas de “stale data” (que pode causar um estado inválido).</p>
+
+<p>Dificilmente, você vai ver um code base que se preocupa com essas coisas (e sempre aparece
+um bug). Alguns casos podem ser resolvidos com tipos pequenos ou &ldquo;tipos enumerados”,
+outros, talvez esteja você olhando o problema de uma única perspectiva.</p>
+
+<h2>Dados primitivos e constraints</h2>
+
+<p><em>Number, Int, s64, u64, string, char</em> são primitivos das linguagens. Alguns possuem <em>bounds</em>
+(limites como <em>signed char</em> que vai de <em>-128 até 127</em> ou unsigned char que vai de <em>0 até 255</em>),
+outros o limite é “mais aberto”.</p>
+
+<p>Números tem limites acordo com o tamanho de storage disponível, mas os infinitos tipos de
+dados temos varias constraints que são subsets (sub-conjuntos) desses outros conjuntos.
+Exemplos: E-mail (string com constraint no formato e tamanho - leia a RFC e vai ver que existe
+um tamanho mínimo - curiosidade), idade (que a constraint varia de acordo com o contexto - se
+falarmos de idade de uma pessoa, o valor está em entre <em>0 - idade da última pessoa que bateu
+o record de longevidade</em>, mas pode ser a idade de uma cidade, que já é outro range aberto,
+mas pelo menos <em>0 - infinito</em>).</p>
+
+<p>Uma das soluções é a cada utilização dessa informação adicionar <em>pre-condition</em> (se os valores
+estão validos para a execução) e <em>post-condition</em> (se depois da operação o valor continua valido).</p>
+
+<p>Existem linguagens como Eiffel que possui a keyword <em>require</em> e <em>ensure</em> - que se referem ao
+pattern de precondition e postcondition, ou, um pattern comum de algumas linguagens de
+adicionar <em>assert</em> para verificar que uma determinada propriedade não viola a pre-condition.</p>
+
+<h2>Opções</h2>
+
+<h3>Types</h3>
+
+<p>Tipos são um bom começo. Precisamos dar contexto aos tipos de dados primitivos para
+podermos efetuar operações com mais segurança.
+Podemos definir o tipo &ldquo;número de cartão de credito&rdquo; como</p>
+
+<p>```haskell
+data CreditCardNumber = CreditCardNumber String &ndash; the number
+                                         Bool   &ndash; valid or not</p>
+
+<p>validCeditCardNumber _ = False</p>
+
+<p>class From a b where
+  from :: a -> b</p>
+
+<p>instance From String CreditCardNumber where
+  from a = CreditCardNumber a (validCeditCardNumber a)</p>
+
+<p>(from &ldquo;1111 1111 1111 1111&rdquo;) :: CreditCardNumber
+&ndash; CreditCardNumber &ldquo;1111 1111 1111 1111&rdquo; False
+```</p>
+
+<p>Agora temos um contexto. Nem todas as strings vão ser permitidas - no que se refere a validade
+do número.
+Ainda sim, existem vários outros tipos para diferentes contextos.</p>
+
+<p>```haskell
+data ValidCreditCardNumber = ValidCreditCardNumber String &ndash; the number</p>
+
+<p>validCeditCardNumber _ = False</p>
+
+<p>class From a b where
+  from :: a -> b</p>
+
+<p>instance From String CreditCardNumber where
+  from a =
+    if not (validCeditCardNumber a) then
+      error &ldquo;Invalid credit card number.&rdquo;
+    else
+      ValidCreditCardNumber a</p>
+
+<p>(from &ldquo;1111 1111 1111 1111&rdquo;) :: ValidCreditCardNumber
+&ndash; *** Exception: Invalid credit card number.
+CallStack (from HasCallStack):
+  error, called at <interactive>:1:1 in interactive
+```</p>
+
+<p>Agora somente números validos passaram pelo programa, exceto que você instancie por conta
+própria (sem utilizar o <code>from</code>). Ai o problema é seu…</p>
+
+<p>Essa é representação visual. De todos o elementos, somente um elemento do conjunto das
+strings possíveis tem um correspondente, porque só números validos podem ser usados. O ideal
+é termos funções totais o máximo possível.</p>
+
+<p><a href="/images/figure-1.png"><img src="/images/figure-1.png" alt="" /></a></p>
+
+<p>Sair de valores infinitos e desconhecidos para um único elemento deixa tudo mais fácil.</p>
+
+<p><a href="/images/figure-2.png"><img src="/images/figure-2.png" title="state machine" alt="" /></a></p>
+
+<p>A leitura fica mais precisa: “Com um <em>numeração valida</em>, execute a ação <em>f</em>”. Não existe chamar a
+função <em>f</em>, vamos imaginar que <code>f</code> é a função <em>comprar algo</em>, com um número de cartão invalido.
+Toda a informação necessária está embutida no tipo.</p>
+
+<p>Ainda podemos ter casos com validação e “continuação” com erros, mas terá outro exemplo.</p>
+
+<h3>Null object pattern</h3>
+
+<p>Esse pattern é mais adequado para casos onde temos objetos complexos.</p>
+
+<p>Algumas linguagens permitem declaramos variáveis não incializadas, que recebem o valor null ou undefined.</p>
+
+<p>Ser deixarmos essa variável não inicializada e passarmos para o restante das funções, elas vão ter que verificar
+(pre-condition) se existe um valor ou não.</p>
+
+<p>Uma das principais utilizações:</p>
+
+<p>Evitar que dispare exceções do tipo “null pointer exception”
+Disparar um erro quando o valor deveria existir, mas o objeto nulo continuou (erros previsíveis)
+Objeto cujas as operações não alteram o valor do resultado</p>
+
+<p>```kotlin
+open class BaseCreditCard {
+  open fun buyStuff() {}
+}</p>
+
+<p>class NullCreditCard: BaseCreditCard {
+  open fun buyStuff() {
+    thow Error(&ldquo;Bailing out! No credit card available.&rdquo;)
+  }
+}</p>
+
+<p>class CreditCard: BaseCreditCard()</p>
+
+<p>fun findCreditCard(number: String): BaseCreditCard {
+  return NullCreditCard();
+}</p>
+
+<p>fun main() {
+  var card: BaseCreditCard = findCreditCard(&ldquo;1111 1111 1111 1111&rdquo;);
+  card.buyStuff();
+}
+```</p>
+
+<p>Esse é um modo de garantir que sempre haverá um objeto concreto, e, ajuda a encontrar edge cases em testes.</p>
+
+<h3>Maybe/Option/Either/Result Functors</h3>
+
+<p>Maybe ou option, dependendo da linguagem que você está usando, pode servir para casos onde o resultado de uma validação não é importante - somente proibir que valores inválidos sejam utilizados.</p>
+
+<p>```rust
+struct ValidCreditCardNumber {
+  string_number: String
+}</p>
+
+<p>fn valid(_value: &amp;str) -> bool { return true; }</p>
+
+<p>impl From&lt;&amp;str> for ValidCreditCardNumber {
+  fn from(value: &amp;str) -> Self {
+    return Self { string_number: value.to_string() };
+  }
+}</p>
+
+<p>trait SafeFrom<T> {
+  fn from_safe(value: T) -> Option<Self> where Self: Sized;
+}</p>
+
+<p>impl SafeFrom&lt;&amp;str> for ValidCreditCardNumber {
+  fn from_safe(value: &amp;str) -> Option<ValidCreditCardNumber> {
+    if valid(value) { return Some(ValidCreditCardNumber:: from(value)); }
+    return None;
+  }
+}</p>
+
+<p>fn main() {
+  let pipe = ValidCreditCardNumber::from_safe(&ldquo;111111111111111111&rdquo;)
+    .map(|x| x)
+    .map(|x| x);
+  match pipe {
+    Some (x) => printin!(&ldquo;{}&rdquo;, x.string_number),
+    None => println!(&ldquo;meh&rdquo;)
+  }
+}
+```</p>
+
+<p>Nas figurinhas&hellip;</p>
+
+<p><a href="/images/figure-3.png"><img src="/images/figure-3.png" title="state machine" alt="" /></a></p>
+
+<h4>Existência do Objeto já é o seu valor (unificação)</h4>
+
+<p>Este é mais uma simplificação. Objetos - classes quando possível -, são a definição de algo.</p>
+
+<p>Um dos exemplos mais notórios são GUIs.</p>
+
+<p>Quando navegamos por páginas usamos strings para marcar onde estamos.</p>
+
+<p>```typescript
+export type Pages = &ldquo;PAGE_A&rdquo; | &ldquo;PAGE_B&rdquo; | &ldquo;PAGE_C&rdquo;</p>
+
+<p>export function getPageComponent (page: Pages) {
+  switch (page) {
+    case &ldquo;PAGE_A&rdquo;: return PageA;
+    case &ldquo;PAGE_B&rdquo;: return PageB;
+    case &ldquo;PAGE_C&rdquo;: return PageC;
+  }
+}
+```</p>
+
+<p>Podemos remover essas strings e utilizar as próprias classes/objetos para formar uma máquina de estado.</p>
+
+<p>```typescript
+export type Pages =
+  | PageA
+  | PageB
+  | PageC</p>
+
+<p>previousPage(PageA);
+nextPage(PageC);
+```</p>
+
+<h4>Identidade de monoids</h4>
+
+<p>Monoids possuem um elemento que não influenciam no resultado de uma operação. O elemento identidade.</p>
+
+<p>1 + 0 = 0 + 1 = 1</p>
+
+<p>Ou</p>
+
+<p>“" + “a" = &ldquo;a&rdquo; + “" = “a”</p>
+
+<p>Ou</p>
+
+<p>Balde.Empty + Balde(Litro(x)) =
+Balde(Litro(0) + Litro(x)) =
+Balde(Litro(0 + x))</p>
+
+<p>🤷‍♂️</p>
+
+<h3>Conclusão</h3>
+
+<p>Existem várias opções para não deixa informações invalidas causarem problemas no projeto. Cada uma vai ser utilizada de acordo com o contexto da ação que precisa ser feita, e, também de acordo com o tipo de linguagem.</p>
+
+<p>Esse conceito também é responsável por melhora a linguagem do domínio.</p>
+
+<h3>Referências</h3>
+
+<p><a href="https://www.awwsmm.com/blog/make-invalid-states-unrepresentable">https://www.awwsmm.com/blog/make-invalid-states-unrepresentable</a>
+<a href="https://fsharpforfunandprofit.com/posts/designing-with-types-making-illegal-states-unrepresentable/">https://fsharpforfunandprofit.com/posts/designing-with-types-making-illegal-states-unrepresentable/</a>
+<a href="https://geeklaunch.io/blog/make-invalid-states-unrepresentable/">https://geeklaunch.io/blog/make-invalid-states-unrepresentable/</a>
+<a href="https://hugotunius.se/2020/05/16/making-invalid-state-unrepresentable.html">https://hugotunius.se/2020/05/16/making-invalid-state-unrepresentable.html</a></p>
+</div></div></section></main><script type="application/javascript" src="/js/highlight.min.js"></script></body></html>

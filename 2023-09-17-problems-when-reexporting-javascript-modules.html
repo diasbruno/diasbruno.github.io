@@ -1,0 +1,101 @@
+<p>we all get excited when we see an interesting trick.</p>
+<p>some are &quot;one-liners&quot;, or an exotic optimization...</p>
+<p>but everytime there is something that looks convenient,
+it will probably collect your soul later...</p>
+<p>some people don't like when their files starts with a
+huge list of imports. I can agree that is not that aesthetic.</p>
+<p>to avoid huge lists of imports, we can use a file to reexport
+all the modules into a single entry.</p>
+<pre><code class="language-js">import {
+    a,
+    b,
+    c,
+    d,
+    e,
+    f,
+    g,
+    h,
+    i,
+    j,
+    k,
+    l,
+    m,
+    n,
+    o,
+    p,
+    q,
+    r,
+    s,
+    t,
+    u,
+    v,
+    x,
+    z }
+    from &quot;@/components&quot;;
+</code></pre>
+<p>well...that doesn't look good either.</p>
+<p>here is a list of problems you may found when reexporting
+modules:</p>
+<ul>
+<li>circular dependencies</li>
+<li>loading more resource than necessary</li>
+<li>import modules that instantiate objects on top-level</li>
+<li>test pollution and unnecessary mocking</li>
+</ul>
+<h3>circular dependencies</h3>
+<p>If you have a file that exports everything,
+you better use it!</p>
+<pre><code class="language-js">// Component A
+
+import { B, C } from &quot;@/components&quot;;
+</code></pre>
+<pre><code class="language-js">// Component C
+import { A } from &quot;@/components&quot;;
+</code></pre>
+<pre><code class="language-js">// Components (syntax of this file is not important...)
+
+/* correct import order */
+export { default as C } from &quot;./ComponentC&quot;;
+export { default as B } from &quot;./ComponentB&quot;;
+export { default as A } from &quot;./ComponentA&quot;;
+
+/* incorrect import order */
+export { default as A } from &quot;./ComponentA&quot;;
+export { default as B } from &quot;./ComponentB&quot;;
+export { default as C } from &quot;./ComponentC&quot;;
+</code></pre>
+<p>depending on the order of the imports,
+you may not see the problem...</p>
+<p>but when it's wrong, you will probably spend hours trying
+to remember what is going on.</p>
+<p>some will say that a simple solution to fix this is that
+&quot;components should not use the file that reexports everything&quot;,
+or basically getting back from where we started.</p>
+<p>this is the first rule we need to make the entire team to follow
+just to have a single file.</p>
+<h3>loading more resource than necessary</h3>
+<p>getting the tools to properly do a &quot;tree-shake&quot;
+or to better bundle the application is the last thing
+I want to spend time.</p>
+<p>this makes it harder for the compiler to decide what to do.
+so we are starting to introduce problems to create tools
+(we don't need), just to have a file to group modules.</p>
+<h3>import modules that instantiate objects on top-level</h3>
+<p>once you import a module, if it evaluates an expressions on the top-level,
+this work can be unncessary an slow down specially tests.</p>
+<p>it is almost impossible to mock or to avoid running the code,
+or, you will end up writing a lot of unnecessary code
+to &quot;skip this code when testing&quot;.</p>
+<h3>test pollution and unnecessary mocking</h3>
+<p>as you may have modules that instantiates objects on the top-level,
+they are kinda unpredictable or you may know, and now, you have
+to create a general mocking file that every test must import.</p>
+<p>this creates all sorts of problems:</p>
+<ul>
+<li>people assuming the mock has &quot;correct&quot; data</li>
+<li>incomplete use cases testing because &quot;it just works&quot;</li>
+</ul>
+<p>so, just because of this trick, we are risking to introduce
+a lot of unnecessary code and all kinds of problems...</p>
+<p>this doesn't look like a good idea...</p>
+<p><a href="https://codesandbox.io/s/javascript-reexporting-problems-vzmw5h">codesandbox with some problems</a></p>

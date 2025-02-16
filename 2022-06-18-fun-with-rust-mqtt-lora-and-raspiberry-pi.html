@@ -1,0 +1,26 @@
+<p>Recently, I was called to give a hand on a small project for fun.
+It was about tracking groups of people using GPS.</p>
+<p>The project was nice and all, problem was trying to get the correct,
+and simplier, tools for the project.</p>
+<p>We found a company that helped us with the hardware stuff
+and they provide us with some sensors (Dragino LGT-92)
+and a gateway (Dragino LIG-16). They talk to each other using
+radio.</p>
+<p>The LIG-16 is a gateway that provides a lot of stuff
+and we used its MQTT client to communicate with our broker
+(since there was no connection at the location where it was used).</p>
+<p>The first idea we tried was to have everything inside a iPhone,
+but unfortunately we did not found an easy MQTT broker to use internally
+with the app.</p>
+<p>Than, we accepted we need to add an extra device to handle the application.
+So, we added a Raspiberry PI 4 where we could run the MQTT broker and
+provide a REST api to be consumed on a offline map on the phone.</p>
+<p>This is the application we build:</p>
+<p><a href="/images/gps-diagram.png"> <img src="/images/gps-diagram.png" alt="application diagram" title="application diagram" /> </a></p>
+<p>I wrote a rust application that with <a href="https://github.com/bytebeamio/rumqtt">rumqtt</a> that provided
+the borker and client for the MQTT and <a href="https://github.com/seanmonstar/warp">warp</a> for the web server,
+and <a href="https://github.com/launchbadge/sqlx">sqlx</a> for the database (no need to orm or anything like,
+all queries were simple).</p>
+<p>&lt;&lt; Add images &gt;&gt;</p>
+<p>To help with some message decoding I wrote a small library
+<a href="https://github.com/diasbruno/rust_dragino_lgt92_tools">rust_dragino_lgt92_tools</a></p>

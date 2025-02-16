@@ -18,24 +18,6 @@
     opacity: 1
 }
 
-*, *::after, *::before {
-    box-sizing: border-box;
-}
-
-html {
-    font-size: 14px;
-    font-weight: 300;
-}
-
-body {
-    max-width: 66%;
-    margin: 0 auto;
-    padding: 80px 60px;
-    font-family: monospace;
-    background-color: #2E3440;
-    color: #D8DEE9 !important;
-}
-
 h1, h2, h3, h4, h5, h6 {
     font-weight: bold;
     margin-bottom: 1.1em;
@@ -64,9 +46,32 @@ code, kbd, pre, samp, #ws, #message {
 }
 
 p code {
-    background-color: #5E81AC !important;
+    background-color: var(--red-muted) !important;
     margin: 0;
-    padding: 0;
+    padding: 3px 6px;
+    border-radius: 4px;
+}
+
+.hljs {
+  background-color: inherit !important;
+  color: var(--background) !important;
+}
+
+.hljs-variable,
+.hljs-title,
+.hljs-keyword,
+.hljs-built_in,
+.hljs-attr,
+.hljs-number,
+.hljs-function,
+.hljs-string,
+.hljs-comment,
+.hljs-literal {
+  color: var(--background) !important;
+}
+
+.hljs-comment {
+  color: rgb(127, 127, 127) !important;
 }
 
 pre {
@@ -74,12 +79,11 @@ pre {
     overflow: auto;
     display: block;
     padding: 16px 20px;
-    /*margin: 0 0 10px;*/
     word-break: break-all;
     word-wrap: break-word;
     margin-bottom: 30px;
-    background-color: #3B4252 !important;
     border-radius: 6px;
+    background-color: var(--foreground);
 }
 
 pre code {
@@ -144,55 +148,12 @@ main {
 
 .opensource-section,
 .article-section {
-    padding: 0 50px;
-}
 
-nav {
-    float: none;
-    margin: 10px 0 10px 0;
-}
-
-nav h1 {
-    color: #BF616A;
-    padding: 0 50px;
-}
-
-a {
-    color: #D8DEE9 !important;
-}
-
-a:hover {
-    color: #BF616A !important;
-}
-
-.nav-links {
-    display: flex;
-    padding: 0px 50px;
-    background-color: #BF616A;
-}
-
-.nav-link {
-    padding: 10px 10px;
-    margin-right: 10px;
-}
-
-.nav-link:hover {
-    background-color: #E5E9F0 !important;
-
-}
-
-.content {
-    margin-top: 60px;
-}
-
-.content-info {
-    margin-top: 20px;
-    margin-bottom: 50px;
 }
 
 .article-item {
     margin-bottom: 30px;
-    padding: 0 50px;
+
 }
 
 .article-item a {
@@ -223,14 +184,14 @@ a:hover {
 
 @media (max-width: 720px) {
     body {
-	padding: 40px 30px;
+        padding: 40px 30px;
     }
 
     main {
-	width: 100%;
+        width: 100%;
     }
 
     p {
-	margin-bottom: 1.1em;
+        margin-bottom: 1.1em;
     }
 }

@@ -1,1 +1,147 @@
-<html><head><title>diasbruno</title><meta name="viewport" content="width=device-width"><meta name="author" content="Bruno Dias"><meta name="title" content="diasbruno"><link rel="stylesheet" type="text/css" href="/css/style.css"><link rel="stylesheet" type="text/css" href="/css/highlight.min.css"><link rel="stylesheet" type="text/css" href="/css/milligram.css"></head><body><main><nav><div><a href="/"><h1>diasbruno</h1></a><div class="nav-links"><a class="nav-link" href="/">articles</a><a class="nav-link" href="/opensource">opensource</a><a class="nav-link" href="https://github.com/diasbruno" target="_blank">github</a></div></div></nav><section class="content"><div class="article-item"><a href="/articles/2023/12/30/building-pipelines-and-avoid-suffering"><h1>building pipelines and avoid suffering</h1></a><div><time class="content-datetime" datetime="2023-12-30T22:34:58Z">Dec 30, 2023</time></div></div><div class="article-item"><a href="/articles/2023/09/17/problems-when-reexporting-javascript-modules"><h1>problems when reexporting javascript modules</h1></a><div><time class="content-datetime" datetime="2023-09-17T22:29:09Z">Sep 17, 2023</time></div></div><div class="article-item"><a href="/articles/2023/05/04/working-with-sets-and-some-ideas"><h1>working with Sets and some ideas</h1></a><div><time class="content-datetime" datetime="2023-05-04T23:19:52Z">May 04, 2023</time></div></div><div class="article-item"><a href="/articles/2023/03/23/zippers"><h1>zippers</h1></a><div><time class="content-datetime" datetime="2023-03-23T12:47:32Z">Mar 23, 2023</time></div></div><div class="article-item"><a href="/articles/2023/03/19/even-more-ideas-with-types-and-javascript-equality-ordering-and-enumeration"><h1>even more ideas with types and javascript (equality, ordering and enumeration)</h1></a><div><time class="content-datetime" datetime="2023-03-19T15:35:28Z">Mar 19, 2023</time></div></div><div class="article-item"><a href="/articles/2023/03/17/some-interesting-ideas-with-types-and-javascript"><h1>some interesting ideas with types and javascript</h1></a><div><time class="content-datetime" datetime="2023-03-17T21:03:01Z">Mar 17, 2023</time></div></div><div class="article-item"><a href="/articles/2023/03/12/forget-about-state-think-about-events-commands"><h1>forget about state; think about events/commands</h1></a><div><time class="content-datetime" datetime="2023-03-12T19:58:55Z">Mar 12, 2023</time></div></div><div class="article-item"><a href="/articles/2023/02/10/it-s-time-to-retire-conventional-commit"><h1>It&#39;s time to retire conventional commit</h1></a><div><time class="content-datetime" datetime="2023-02-10T14:31:55Z">Feb 10, 2023</time></div></div><div class="article-item"><a href="/articles/2022/06/18/fun-with-rust-mqtt-lora-and-raspiberry-pi"><h1>Fun with Rust, MQTT, LoRa and Raspiberry Pi</h1></a><div><time class="content-datetime" datetime="2022-06-18T19:46:35Z">Jun 18, 2022</time></div></div><div class="article-item"><a href="/articles/2022/05/28/property-based-testing-for-the-win"><h1>Property-based testing for the win!</h1></a><div><time class="content-datetime" datetime="2022-05-28T22:30:52Z">May 28, 2022</time></div></div><div class="article-item"><a href="/articles/2022/03/30/processes-and-pipes-in-oop"><h1>Processes and pipes in OOP</h1></a><div><time class="content-datetime" datetime="2022-03-30T15:00:00Z">Mar 30, 2022</time></div></div><div class="article-item"><a href="/articles/2021/12/03/modeling-algorithms-with-types"><h1>Modeling algorithms with types</h1></a><div><time class="content-datetime" datetime="2021-12-03T15:00:00Z">Dec 03, 2021</time></div></div><div class="article-item"><a href="/articles/2021/06/08/i-love-comby"><h1>I love Comby!</h1></a><div><time class="content-datetime" datetime="2021-06-08T15:00:00Z">Jun 08, 2021</time></div></div><div class="article-item"><a href="/articles/2021/03/23/retrying-promises"><h1>Retrying promises</h1></a><div><time class="content-datetime" datetime="2021-03-23T15:00:00Z">Mar 23, 2021</time></div></div><div class="article-item"><a href="/articles/2021/03/05/transpiling-code-from-other-languages"><h1>Transpiling code from other languages</h1></a><div><time class="content-datetime" datetime="2021-03-05T15:00:00Z">Mar 05, 2021</time></div></div><div class="article-item"><a href="/articles/2020/04/29/patterns-writing-a-step-component"><h1>Patterns: Writing a step component</h1></a><div><time class="content-datetime" datetime="2020-04-29T15:00:00Z">Apr 29, 2020</time></div></div><div class="article-item"><a href="/articles/2020/03/21/i-love-makefiles"><h1>I love makefiles</h1></a><div><time class="content-datetime" datetime="2020-03-21T15:00:00Z">Mar 21, 2020</time></div></div><div class="article-item"><a href="/articles/2020/03/20/metaprogramming-in-javascript"><h1>Metaprogramming in javascript</h1></a><div><time class="content-datetime" datetime="2020-03-20T15:00:00Z">Mar 20, 2020</time></div></div></section></main><script type="application/javascript" src="/js/highlight.min.js"></script></body></html>
+<html>
+  <head>
+    <title>demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style type="text/css">
+      :root {
+        --background: rgb(32, 32, 32);
+        --foreground: rgb(215, 215, 215);
+
+        --blue-muted: rgb(120, 160, 180);
+        --pink-muted: rgb(180, 140, 150);
+        --green-muted: rgb(130, 170, 140);
+        --yellow-muted: rgb(190, 170, 110);
+        --purple-muted: rgb(150, 130, 170);
+        --orange-muted: rgb(190, 140, 100);
+        --red-muted: rgb(170, 90, 90);
+
+        --blue-saturated: rgb(100, 180, 220);
+        --pink-saturated: rgb(230, 120, 150);
+        --green-saturated: rgb(90, 200, 140);
+        --yellow-saturated: rgb(250, 200, 90);
+        --purple-saturated: rgb(170, 120, 230);
+        --orange-saturated: rgb(240, 140, 90);
+        --red-saturated: rgb(220, 70, 70);
+      }
+
+      *,
+      *:after,
+      *:before {
+        box-sizing: inherit;
+      }
+
+      html {
+        box-sizing: border-box;
+        font-size: 62.5%;
+      }
+
+      body {
+        background-color: var(--background);
+        color: var(--foreground);
+        font-family: Helvetica;
+        font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+        font-size: 1.6em;
+        font-weight: 300;
+        letter-spacing: .01em;
+        line-height: 1.6;
+      }
+
+      img {
+        max-width: 100%;
+      }
+
+      a {
+        font-size: 2.4rem;
+        color: var(--red-muted);
+        text-decoration: none;
+      }
+
+      a:focus, a:hover {
+        color: var(--foreground);
+      }
+
+      a.blue, .blue { color: var(--blue-muted); }
+      a.blue:hover { color: var(--blue-saturated); }
+      .bblue { background-color: var(--blue-saturated); }
+      a.pink, .pink { color: var(--pink-muted); }
+      a.pink:hover { color: var(--pink-saturated); }
+      .bpink { background-color: var(--pink-saturated); }
+      a.green, .green { color: var(--green-muted); }
+      a.green:hover { color: var(--green-saturated); }
+      .bgreen { background-color: var(--green-saturated); }
+      a.yellow, .yellow { color: var(--yellow-muted); }
+      a.yellow:hover { color: var(--yellow-saturated); }
+      .byellow { background-color: var(--yellow-saturated); }
+      a.purple, .purple { color: var(--purple-muted); }
+      a.purple:hover { color: var(--purple-saturated); }
+      .bpurple { background-color: var(--purple-saturated); }
+      a.orange, .orange { color: var(--orange-muted); }
+      a.orange:hover { color: var(--orange-saturated); }
+      .borange { background-color: var(--orange-saturated); }
+      a.red, .red { color: var(--red-muted); }
+      a.red:hover { color: var(--red-saturated); }
+      .bred { background-color: var(--red-saturated); }
+
+      nav a {
+        display: block;
+        margin-bottom: 1rem;
+        transition: color 0.3s ease-in;
+      }
+
+      .posts {
+        margin-top: 200px;
+        perspective-origin: 0 0;
+        transform-style: preserve-3d;
+        transform: perspective(2000px);
+        height: 100vh;
+      }
+
+      .post {
+        background-color: rgb(32, 32, 32);
+        width: 300px;
+        position: absolute;
+        transform: translate3d(500px, 0, 150px) rotateY(31deg);
+      }
+
+      .post:hover {
+        transform: translate3d(0, 0, 0) rotateY(0deg);
+      }
+
+      h2.post_title {
+        margin: 0;
+        padding: 1.6rem;
+      }
+    </style>
+    <link rel="stylesheet" type="text/css" href="/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="/css/highlight.min.css" />
+  </head>
+  <body>
+    <svg
+      width="200"
+      height="400"
+      viewBox="0 0 200 400"
+      version="1.1"
+      id="svg1"
+      xmlns="http://www.w3.org/2000/svg"
+      xmlns:svg="http://www.w3.org/2000/svg"
+      style="display: none">
+      <defs
+        id="defs1" />
+      <g
+        id="layer1">
+        <path
+          style="fill:#323232;stroke:#323232;stroke-width:0.4;stroke-linecap:round;stroke-opacity:1"
+          d="m 65.644299,214.92938 c 0.607509,-1.39008 12.511839,-32.82215 12.511839,-32.82215 0,0 -7.455686,16.45392 -8.141266,19.02484 -0.685578,2.57093 2.399532,-10.1123 8.826846,-7.11289 6.427314,2.99942 -2.313834,17.91078 -10.626492,11.48347 -8.312661,-6.42731 19.539032,-6.34162 19.539032,-6.34162"
+          id="path1" />
+        <path
+          style="fill:#323232;stroke:#323232;stroke-width:0.4;stroke-linecap:round;stroke-opacity:1"
+          d="m 67.962518,199.83598 c -0.03003,0.42817 -0.257093,3.17081 -0.257093,3.17081 0,0 -0.01698,-3.6159 12.078964,0.18203 9.738258,3.05765 9.769517,-21.42438 3.942085,-21.16729 -5.827429,0.25709 -6.684404,35.56447 -6.684404,35.56447"
+          id="path2" />
+      </g>
+    </svg>
+    <script type="module">
+      import './scenes.js';
+    </script>
+    <script type="application/javascript" src="/js/highlight.min.js"></script>
+  </body>
+</html>
