@@ -540,21 +540,6 @@ function PostPage(post) {
 let scene;
 let pageStack = [HomePage()];
 
-function createPost($target, { title, image }) {
-  const $post = create("div");
-  $post.className = "post";
-
-  const $title = create("h2", "post_title");
-  const $image = create("img");
-
-  $title.innerHTML = title;
-  $image.src = image;
-  $post.appendChild($image);
-  $post.appendChild($title);
-
-  $target.appendChild($post);
-  return $post;
-}
 
 function centerToScreen(target) {
   target.style.left = screenWidth(0.5) - styleValue(target, width, 0.5);
