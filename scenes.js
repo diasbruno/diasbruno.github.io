@@ -463,7 +463,7 @@ function PostPage(post) {
           width: 0
         });
 
-        const $text = scene.create("div", "", {
+        const $text = scene.create("div", "article-content", {
           opacity: 0
         });
         $text.innerHTML = text;
