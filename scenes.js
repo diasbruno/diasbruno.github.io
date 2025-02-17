@@ -39,7 +39,7 @@ let virtualPoint = new Two.Vector(
 );
 
 const frame = document.body;
-const logo = screenWidth(0.2);
+const logo = 150;
 
 const pagesCache = {};
 let posts = [];
@@ -96,6 +96,7 @@ function createNavigationLink(scene, name, navigate) {
     fontSize: "1.6rem"
   });
   const $category = scene.create("h5");
+  $categoryLink.href = "#";
   $category.innerHTML = name;
   $categoryLink.onclick = navigate;
   appendTo($categoryLink, $category);
@@ -135,7 +136,7 @@ function HomePage() {
   return {
     start() {
       scene = Layer();
-      const rect = new Two.Vector(200, 100);
+      const rect = new Two.Vector(200, 180);
 
       const container = scene.create("div", "", {
         position: "relative",
@@ -245,7 +246,7 @@ function HomePage() {
         const $line = scene.create("div", "", {
           position : "absolute",
           left: `${rect.x}px`,
-          width : "2px",
+          width : "1px",
           height : "0",
           backgroundColor : "#fff"
         });
@@ -256,7 +257,7 @@ function HomePage() {
         const group = new Group();
 
         const tween = new Tween({ top: 0, height: 0 }, group)
-              .to({ top: 70, height: 140 }, 350)
+              .to({ top: rect.y * 0.5, height: rect.y }, 350)
               .easing(Easing.Quadratic.InOut)
               .onUpdate(({ top, height }) => {
                 $line.style.top = `${rect.y - top}px`;
@@ -327,13 +328,14 @@ function BlogPage() {
       function createPostListItem(post) {
         const $postListItemView = scene.create("div");
         const $titleView = scene.create("div", "article-item");
-        const $titleLink = scene.create("a");
+        const $titleLink = scene.create("a", "red");
+        $titleLink.href = "#";
         $titleLink.onclick = function(event) {
           event.preventDefault();
           pageStack.push(PostPage(post));
           Transition1In();
         };
-        const $title = scene.create("h2");
+        const $title = scene.create("h2", "article-title");
         $title.innerHTML = post.title;
 
         const $time = scene.create("time", "content-datetime");
@@ -454,7 +456,7 @@ function PostPage(post) {
 
         appendTo(container, $header);
 
-        const $title = scene.create("h1", "red", {
+        const $title = scene.create("h1", "article-title red", {
           backgroundColor: "var(--red-muted)",
           color: "var(--background)",
           padding: "2rem",
