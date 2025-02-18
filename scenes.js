@@ -361,6 +361,8 @@ function HomePage() {
         animationStack["Scene1"] = tween;
       }
 
+      document.title = "diasbruno";
+
       two.play();
       Scene1();
     }
@@ -471,9 +473,11 @@ function BlogPage() {
 
         group.onComplete(() => {
           delete animationStack["Scene1"];
-          Scene2()
+          Scene2();
         });
       }
+
+      document.title = "diasbruno - blog";
 
       Scene1();
     }
@@ -585,7 +589,11 @@ function PostPage(params) {
           )
         ])
         .then(
-          ([metadata, content]) => (post = metadata, text = content)
+          ([metadata, content]) => {
+            post = metadata;
+            text = content
+            document.title = `diasbruno - ${post.title}`;
+          }
         ).finally(
           posts => (scene.remove($loading), Scene2())
         );
