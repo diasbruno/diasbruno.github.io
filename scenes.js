@@ -1,6 +1,54 @@
 import Two from './two.js';
 import { Tween, Easing, Group } from "./tween.js";
 import { parseISO, format } from './datefn.js';
+import { createHashHistory } from './history.js';
+import { wildcardRoute, route, router } from "./router.js";
+
+let history = createHashHistory();
+
+function noop() {}
+
+const routes = [
+  route(
+    "/",
+    function () {
+      pageStack.push(HomePage());
+    },
+    function () {
+      pageStack.shift();
+      pageStack[0].start();
+    },
+    Transition1In
+  ),
+  route(
+    "/blog/:y/:m/:d/:article",
+    function (params) {
+      pageStack.push(PostPage(params));
+    },
+    function () {
+      debugger;
+      pageStack.shift();
+      pageStack[0].start();
+    },
+    Transition1In
+  ),
+  route(
+    "/blog",
+    function () {
+      pageStack.push(BlogPage());
+    },
+    function () {
+      pageStack.shift();
+      pageStack[0].start();
+    },
+    Transition1In
+  )
+];
+
+const appRouter = router(
+  wildcardRoute(noop, noop, noop),
+  ...routes
+);
 
 const resize = 'resize';
 const width = 'width';
@@ -44,6 +92,14 @@ const logo = 150;
 const pagesCache = {};
 let posts = [];
 const animationStack = {};
+
+let scene;
+let pageStack = [];
+
+function centerToScreen(target) {
+  target.style.left = screenWidth(0.5) - styleValue(target, width, 0.5);
+  target.style.top = screenHeight(0.5) - styleValue(target, height, 0.5);
+}
 
 const applyStyles = (target, styles) => {
   for (let [name, value] of Object.entries(styles)) {
@@ -185,7 +241,7 @@ function HomePage() {
           position: "absolute",
           left: "50%",
           top: `calc(${rect.y}px - 70px)`,
-          width:  "200px",
+          width: "200px",
           height: "140px",
           overflow: "hidden"
         });
@@ -199,8 +255,7 @@ function HomePage() {
         $blog.innerHTML = "BLOG";
         $blog.onclick = function (event) {
           event.preventDefault();
-          pageStack.push(BlogPage());
-          Transition1In();
+          history.push("/blog");
         };
         const $github = scene.create("a", "yellow", sty);
         $github.href = "http://github.com/diasbruno";
@@ -216,19 +271,19 @@ function HomePage() {
         const group = new Group();
         new Tween({ left: -200 }, group).
           easing(Easing.Bounce.In).
-          to({left: 40 }, 400).
+          to({ left: 40 }, 400).
           onUpdate((p) => {
             $blog.style.left = `${p.left}px`;
           }).start();
         new Tween({ left: -200 }, group).
           easing(Easing.Bounce.In).
-          to({left: 40 }, 500).
+          to({ left: 40 }, 500).
           delay(100).onUpdate((p) => {
             $github.style.left = `${p.left}px`;
           }).start();
         new Tween({ left: -200 }, group).
           easing(Easing.Bounce.In).
-          to({left: 40 }, 600).
+          to({ left: 40 }, 600).
           delay(200).onUpdate((p) => {
             $linkedin.style.left = `${p.left}px`;
           }).start();
@@ -244,11 +299,11 @@ function HomePage() {
 
       function Scene2() {
         const $line = scene.create("div", "", {
-          position : "absolute",
+          position: "absolute",
           left: `${rect.x}px`,
-          width : "1px",
-          height : "0",
-          backgroundColor : "#fff"
+          width: "1px",
+          height: "0",
+          backgroundColor: "#fff"
         });
         container.appendChild($line);
 
@@ -257,18 +312,18 @@ function HomePage() {
         const group = new Group();
 
         const tween = new Tween({ top: 0, height: 0 }, group)
-              .to({ top: rect.y * 0.5, height: rect.y }, 350)
-              .easing(Easing.Quadratic.InOut)
-              .onUpdate(({ top, height }) => {
-                $line.style.top = `${rect.y - top}px`;
-                $line.style.height = `${height}px`;
-              });
+          .to({ top: rect.y * 0.5, height: rect.y }, 350)
+          .easing(Easing.Quadratic.InOut)
+          .onUpdate(({ top, height }) => {
+            $line.style.top = `${rect.y - top}px`;
+            $line.style.height = `${height}px`;
+          });
         const tween2 = new Tween({ left }, group)
-              .to({ left: rect.x - logo }, 200)
-              .easing(Easing.Quadratic.In)
-              .onUpdate(({ left } ) => {
-                two.renderer.domElement.style.left = `${left}px`;
-              })
+          .to({ left: rect.x - logo }, 200)
+          .easing(Easing.Quadratic.In)
+          .onUpdate(({ left }) => {
+            two.renderer.domElement.style.left = `${left}px`;
+          })
         tween.start();
         tween2.start();
         group.onComplete(() => {
@@ -281,10 +336,10 @@ function HomePage() {
       function Scene1() {
         applyStyles(
           frame, {
-            position: "relative",
-            height: "100vh",
-            margin: "0"
-          }
+          position: "relative",
+          height: "100vh",
+          margin: "0"
+        }
         );
 
         applyStyles(two.renderer.domElement, {
@@ -294,16 +349,16 @@ function HomePage() {
         });
 
         const tween = new Tween({ frame: 0 }, false)
-              .to({ frame: 1 }, 2000)
-              .easing(Easing.Quadratic.InOut)
-              .onUpdate((self) => {
-                logoSvg.ending = self.frame;
-              })
-              .onComplete(() => {
-                delete animationStack["Scene1"];
-                Scene2();
-              })
-              .start();
+          .to({ frame: 1 }, 2000)
+          .easing(Easing.Quadratic.InOut)
+          .onUpdate((self) => {
+            logoSvg.ending = self.frame;
+          })
+          .onComplete(() => {
+            delete animationStack["Scene1"];
+            Scene2();
+          })
+          .start();
         animationStack["Scene1"] = tween;
       }
 
@@ -329,11 +384,12 @@ function BlogPage() {
         const $postListItemView = scene.create("div");
         const $titleView = scene.create("div", "article-item");
         const $titleLink = scene.create("a", "red");
-        $titleLink.href = "#";
-        $titleLink.onclick = function(event) {
+        const date = parseISO(post.date);
+        const postURL = `/blog/${format(date, "yyyy/MM/dd")}/${post.slug}`;
+        $titleLink.href = `/#${postURL}`;
+        $titleLink.onclick = function (event) {
           event.preventDefault();
-          pageStack.push(PostPage(post));
-          Transition1In();
+          history.push(postURL);
         };
         const $title = scene.create("h2", "article-title");
         $title.innerHTML = post.title;
@@ -381,8 +437,7 @@ function BlogPage() {
         const $header = PageNavigation(scene, [
           ["&larr; HOME", function (event) {
             event.preventDefault();
-            pageStack.push(HomePage());
-            Transition1In();
+            history.push("/");
           }]
         ]);
 
@@ -410,7 +465,7 @@ function BlogPage() {
           delay(300).
           easing(Easing.Quadratic.InOut).
           onUpdate((p) => {
-            applyStyles($title, { opacity: `${p.opacity}%`});
+            applyStyles($title, { opacity: `${p.opacity}%` });
           }).start();
 
         animationStack["Scene1"] = group;
@@ -426,10 +481,12 @@ function BlogPage() {
   };
 }
 
-function PostPage(post) {
+function PostPage(params) {
   return {
     start() {
       scene = Layer();
+      let post;
+      let { y, m, d, article } = params;
 
       const container = scene.create("div", "", {
         width: "70%",
@@ -444,13 +501,11 @@ function PostPage(post) {
         const $header = PageNavigation(scene, [
           ["&larr; HOME", function (event) {
             event.preventDefault();
-            pageStack.push(HomePage());
-            Transition1In();
+            history.push("/");
           }],
           ["BLOG", function (event) {
             event.preventDefault();
-            pageStack.push(BlogPage());
-            Transition1In();
+            history.push("/blog");
           }]
         ]);
 
@@ -488,7 +543,7 @@ function PostPage(post) {
           delay(300).
           easing(Easing.Quadratic.InOut).
           onUpdate((p) => {
-            applyStyles($title, { width: `${p.width}%`});
+            applyStyles($title, { width: `${p.width}%` });
           }).start();
 
         new Tween({ opacity: 0 }, group).
@@ -520,13 +575,18 @@ function PostPage(post) {
 
         frame.appendChild($loading);
 
-        const date = parseISO(post.date);
-        const contentURL = `/${format(date, "yyyy-MM-dd")}-${post.slug}.html`;
+        const baseURL = `/${y}-${m}-${d}-${article}`;
 
-        fetch(contentURL).then(
-          response => response.text()
-        ).then(
-          content => (text = content)
+        Promise.all([
+          fetch(`${baseURL}.json`).then(
+            response => response.json()
+          ),
+          fetch(`${baseURL}.html`).then(
+            response => response.text()
+          )
+        ])
+        .then(
+          ([metadata, content]) => (post = metadata, text = content)
         ).finally(
           posts => (scene.remove($loading), Scene2())
         );
@@ -537,14 +597,6 @@ function PostPage(post) {
   };
 }
 
-let scene;
-let pageStack = [HomePage()];
-
-
-function centerToScreen(target) {
-  target.style.left = screenWidth(0.5) - styleValue(target, width, 0.5);
-  target.style.top = screenHeight(0.5) - styleValue(target, height, 0.5);
-}
 
 function Transition1Out() {
   const $elements = [
@@ -569,8 +621,7 @@ function Transition1Out() {
   group.onComplete(function () {
     delete animationStack["Transition1Out"];
     scene.removeAll();
-    pageStack.shift();
-    pageStack[0].start();
+    appRouter(currentURI());
   });
 }
 
@@ -622,12 +673,17 @@ function d() {
   requestAnimationFrame(d);
 }
 
-function resizeHandler() {
-  two.scene.position.set(two.width * 0.5, two.height * 0.5);
-  two.scene.scale = 4;
+function currentURI() {
+  return location.hash.replace('#', '')
 }
 
 (function main() {
+  history.listen(
+    ({ location }) => appRouter(location.pathname)
+  );
+
+  appRouter(currentURI());
   pageStack[0].start();
+
   requestAnimationFrame(d);
 })();
