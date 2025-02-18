@@ -644,8 +644,8 @@ function Transition1In() {
     return layer.create("div", color, {
       position: "fixed",
       top: 0,
-      left: `${index * each}px`,
-      width: `${each}px`,
+      left: `${index * (each * 100 / screenWidth())}%`,
+      width: `${each * 100 / screenWidth()}%`,
       height: "0"
     });
   }
