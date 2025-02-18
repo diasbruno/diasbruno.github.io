@@ -58,6 +58,7 @@ p code {
   color: var(--background) !important;
 }
 
+.hljs-type,
 .hljs-variable,
 .hljs-title,
 .hljs-keyword,
@@ -70,6 +71,13 @@ p code {
 .hljs-literal {
   color: var(--background) !important;
 }
+
+.hljs-type,
+.hljs-title.class_ {
+  color: var(--red-muted) !important;
+  font-weight: bold;
+}
+
 
 .hljs-comment {
   color: rgb(127, 127, 127) !important;
