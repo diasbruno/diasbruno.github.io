@@ -26,7 +26,6 @@ const routes = [
       pageStack.push(PostPage(params));
     },
     function () {
-      debugger;
       pageStack.shift();
       pageStack[0].start();
     },
