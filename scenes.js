@@ -3,6 +3,7 @@ import { Tween, Easing, Group } from "./tween.js";
 import { parseISO, format } from './datefn.js';
 import { createHashHistory } from './history.js';
 import { wildcardRoute, route, router } from "./router.js";
+import './js/haskell.js';
 
 let history = createHashHistory();
 
@@ -561,7 +562,7 @@ function PostPage(params) {
 
         group.onComplete(() => {
           delete animationStack["Scene2"];
-          hljs.initHighlighting();
+          hljs.highlightAll();
         });
       }
 
@@ -592,7 +593,7 @@ function PostPage(params) {
           ([metadata, content]) => {
             post = metadata;
             text = content
-            document.title = `diasbruno - ${post.title}`;
+            document.title = `diasbruno - blog - ${post.title}`;
           }
         ).finally(
           posts => (scene.remove($loading), Scene2())
