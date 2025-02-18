@@ -4,6 +4,8 @@ import { parseISO, format } from './datefn.js';
 import { createHashHistory } from './history.js';
 import { wildcardRoute, route, router } from "./router.js";
 import './js/haskell.js';
+import './js/python.js';
+import './js/typescript.js';
 
 let history = createHashHistory();
 

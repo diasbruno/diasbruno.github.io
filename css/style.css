@@ -73,7 +73,8 @@ p code {
 }
 
 .hljs-type,
-.hljs-title.class_ {
+.hljs-title.class_,
+.hljs-variable.constant_ {
   color: var(--red-muted) !important;
   font-weight: bold;
 }
