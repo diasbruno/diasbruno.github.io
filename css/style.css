@@ -72,6 +72,11 @@ p code {
   color: var(--background) !important;
 }
 
+.hljs-keyword,
+.hljs-title.function_ {
+  font-weight: 300 !important;
+}
+
 .hljs-type,
 .hljs-title.class_,
 .hljs-variable.constant_ {
