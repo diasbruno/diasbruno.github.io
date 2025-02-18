@@ -262,7 +262,7 @@ function HomePage() {
         $github.target = "_blank";
         $github.innerHTML = "GITHUB";
         const $linkedin = scene.create("a", "blue", sty);
-        $linkedin.href = "/blog";
+        $linkedin.href = "https://www.linkedin.com/in/brunodiash/";
         $linkedin.innerHTML = "LINKEDIN";
         $linkedin.target = "_blank";
 
