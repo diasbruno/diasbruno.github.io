@@ -1,119 +1,9 @@
+<!DOCTYPE html>
 <html>
   <head>
     <title>diasbruno</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <style type="text/css">
-      :root {
-        --background: rgb(32, 32, 32);
-        --foreground: rgb(215, 215, 215);
-
-        --blue-muted: rgb(120, 160, 180);
-        --pink-muted: rgb(180, 140, 150);
-        --green-muted: rgb(130, 170, 140);
-        --yellow-muted: rgb(190, 170, 110);
-        --purple-muted: rgb(150, 130, 170);
-        --orange-muted: rgb(190, 140, 100);
-        --red-muted: rgb(170, 90, 90);
-
-        --blue-saturated: rgb(100, 180, 220);
-        --pink-saturated: rgb(230, 120, 150);
-        --green-saturated: rgb(90, 200, 140);
-        --yellow-saturated: rgb(250, 200, 90);
-        --purple-saturated: rgb(170, 120, 230);
-        --orange-saturated: rgb(240, 140, 90);
-        --red-saturated: rgb(220, 70, 70);
-      }
-
-      *,
-      *:after,
-      *:before {
-        box-sizing: inherit;
-      }
-
-      html {
-        box-sizing: border-box;
-        font-size: 62.5%;
-      }
-
-      body {
-        background-color: var(--background);
-        color: var(--foreground);
-        font-family: Helvetica;
-        font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
-        font-size: 1.6em;
-        font-weight: 300;
-        letter-spacing: .01em;
-        line-height: 1.6;
-      }
-
-      img {
-        max-width: 100%;
-      }
-
-      a {
-        font-size: 2.4rem;
-        color: var(--red-muted);
-        text-decoration: none;
-      }
-
-      a:focus, a:hover {
-        color: var(--foreground);
-      }
-
-      a.blue, .blue { color: var(--blue-muted); }
-      a.blue:hover { color: var(--blue-saturated); }
-      .bblue { background-color: var(--blue-saturated); }
-      a.pink, .pink { color: var(--pink-muted); }
-      a.pink:hover { color: var(--pink-saturated); }
-      .bpink { background-color: var(--pink-saturated); }
-      a.green, .green { color: var(--green-muted); }
-      a.green:hover { color: var(--green-saturated); }
-      .bgreen { background-color: var(--green-saturated); }
-      a.yellow, .yellow { color: var(--yellow-muted); }
-      a.yellow:hover { color: var(--yellow-saturated); }
-      .byellow { background-color: var(--yellow-saturated); }
-      a.purple, .purple { color: var(--purple-muted); }
-      a.purple:hover { color: var(--purple-saturated); }
-      .bpurple { background-color: var(--purple-saturated); }
-      a.orange, .orange { color: var(--orange-muted); }
-      a.orange:hover { color: var(--orange-saturated); }
-      .borange { background-color: var(--orange-saturated); }
-      a.red, .red { color: var(--red-muted); }
-      a.red:hover { color: var(--red-saturated); }
-      .bred { background-color: var(--red-saturated); }
-
-      nav a {
-        display: block;
-        margin-bottom: 1rem;
-        transition: color 0.3s ease-in;
-      }
-
-      .posts {
-        margin-top: 200px;
-        perspective-origin: 0 0;
-        transform-style: preserve-3d;
-        transform: perspective(2000px);
-        height: 100vh;
-      }
-
-      .post {
-        background-color: rgb(32, 32, 32);
-        width: 300px;
-        position: absolute;
-        transform: translate3d(500px, 0, 150px) rotateY(31deg);
-      }
-
-      .post:hover {
-        transform: translate3d(0, 0, 0) rotateY(0deg);
-      }
-
-      h2.post_title {
-        margin: 0;
-        padding: 1.6rem;
-      }
-    </style>
     <link rel="stylesheet" type="text/css" href="/css/style.css" />
-    <link rel="stylesheet" type="text/css" href="/css/highlight.min.css" />
   </head>
   <body>
     <svg
@@ -142,6 +32,5 @@
     <script type="module">
       import './scenes.js';
     </script>
-    <script type="application/javascript" src="/js/highlight.min.js"></script>
   </body>
 </html>

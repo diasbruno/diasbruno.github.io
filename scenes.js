@@ -1,11 +1,12 @@
+// This is not optimized for you to see and have fun!
+// Unlicense
+
 import Two from './two.js';
 import { Tween, Easing, Group } from "./tween.js";
 import { parseISO, format } from './datefn.js';
 import { createHashHistory } from './history.js';
 import { wildcardRoute, route, router } from "./router.js";
-import './js/haskell.js';
-import './js/python.js';
-import './js/typescript.js';
+
 
 let history = createHashHistory();
 
@@ -91,7 +92,7 @@ let virtualPoint = new Two.Vector(
 const frame = document.body;
 const logo = 150;
 
-const pagesCache = {};
+let pagesCache = {};
 let posts = [];
 const animationStack = {};
 
@@ -194,7 +195,7 @@ function HomePage() {
   return {
     start() {
       scene = Layer();
-      const rect = new Two.Vector(200, 180);
+      const rect = new Two.Vector(200, 280);
 
       const container = scene.create("div", "", {
         position: "relative",
@@ -242,9 +243,9 @@ function HomePage() {
         const $menu = scene.create("nav", "", {
           position: "absolute",
           left: "50%",
-          top: `calc(${rect.y}px - 70px)`,
+          top: `calc(${rect.y}px - 90px)`,
           width: "200px",
-          height: "140px",
+          height: "200px",
           overflow: "hidden"
         });
         const sty = {
@@ -255,20 +256,31 @@ function HomePage() {
         const $blog = scene.create("a", "red", sty);
         $blog.href = "/blog";
         $blog.innerHTML = "BLOG";
+        $blog.tabIndex = 1;
         $blog.onclick = function (event) {
           event.preventDefault();
           history.push("/blog");
         };
+
+        const $substack = scene.create("a", "orange", sty);
+        $substack.href = "https://www.substack.com/@diasbruno";
+        $substack.innerHTML = "SUBSTACK";
+
         const $github = scene.create("a", "yellow", sty);
         $github.href = "http://github.com/diasbruno";
-        $github.target = "_blank";
         $github.innerHTML = "GITHUB";
+
         const $linkedin = scene.create("a", "blue", sty);
         $linkedin.href = "https://www.linkedin.com/in/brunodiash/";
         $linkedin.innerHTML = "LINKEDIN";
-        $linkedin.target = "_blank";
 
-        appendManyTo($menu, [$blog, $github, $linkedin]);
+        [$substack, $github, $linkedin].forEach(
+          (menuItem, index) => (
+            menuItem.tabIndex = index + 1,
+            menuItem.target = "_blank"
+          ));
+
+        appendManyTo($menu, [$blog, $substack, $github, $linkedin]);
 
         const group = new Group();
         new Tween({ left: -200 }, group).
@@ -281,12 +293,18 @@ function HomePage() {
           easing(Easing.Bounce.In).
           to({ left: 40 }, 500).
           delay(100).onUpdate((p) => {
-            $github.style.left = `${p.left}px`;
+            $substack.style.left = `${p.left}px`;
           }).start();
         new Tween({ left: -200 }, group).
           easing(Easing.Bounce.In).
           to({ left: 40 }, 600).
           delay(200).onUpdate((p) => {
+            $github.style.left = `${p.left}px`;
+          }).start();
+        new Tween({ left: -200 }, group).
+          easing(Easing.Bounce.In).
+          to({ left: 40 }, 700).
+          delay(300).onUpdate((p) => {
             $linkedin.style.left = `${p.left}px`;
           }).start();
 
@@ -379,7 +397,8 @@ function BlogPage() {
 
       const container = scene.create("div", "", {
         width: "70%",
-        margin: "0 auto"
+        margin: "0 auto",
+        padding: "0 0 100px 0"
       });
 
       frame.appendChild(container);
@@ -387,19 +406,18 @@ function BlogPage() {
       function createPostListItem(post) {
         const $postListItemView = scene.create("div");
         const $titleView = scene.create("div", "article-item");
+
         const $titleLink = scene.create("a", "red");
-        const date = parseISO(post.date);
-        const postURL = `/blog/${format(date, "yyyy/MM/dd")}/${post.slug}`;
-        $titleLink.href = `/#${postURL}`;
-        $titleLink.onclick = function (event) {
-          event.preventDefault();
-          history.push(postURL);
-        };
+        $titleLink.href = post.link;
+        $titleLink.target = "_blank";
+
         const $title = scene.create("h2", "article-title");
+        $title.style.marginBottom = "1rem";
+        $title.style.lineHeight = "4.6rem";
         $title.innerHTML = post.title;
 
         const $time = scene.create("time", "content-datetime");
-        $time.innerHTML = post.date;
+        $time.innerHTML = format(post.date, "MM/dd/yyyy");
 
         appendTo($titleLink, $title);
         appendTo($titleView, $titleLink);
@@ -428,8 +446,12 @@ function BlogPage() {
 
         frame.appendChild($loading);
 
-        fetch("/posts-1.json").then(
-          response => response.json()
+        Promise.resolve().then(
+          () => (pagesCache = {})
+        ).then(
+          () => fetch("/posts-1.json").then(
+            response => response.json()
+          )
         ).then(
           data => (pagesCache[data.page] = data, posts = posts.concat(data.content), posts)
         ).then(
@@ -564,7 +586,6 @@ function PostPage(params) {
 
         group.onComplete(() => {
           delete animationStack["Scene2"];
-          hljs.highlightAll();
         });
       }
 
