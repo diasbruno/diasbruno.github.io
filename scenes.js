@@ -92,7 +92,25 @@ import { wildcardRoute, route, router } from "./router.js";
   const frame = document.body;
   const logo = 150;
 
-  let pagesCache = {};
+  const Nothing = (new function Nothing() {});
+  class Just {
+    constructor(value) {
+      this.value = value;
+    }
+    map(f) { return new Just(f(this.value)); }
+    orElse(f) { return this; }
+  }
+
+  Nothing.map = function(f) { return this; }
+  Nothing.orElse = function(f) { return f(); }
+
+
+  function cata(target, table) {
+    const name = target.constructor.name;
+    return table[name](target);
+  }
+
+  let pagesCache = Nothing;
   let posts = [];
   const animationStack = {};
 
@@ -427,10 +445,19 @@ import { wildcardRoute, route, router } from "./router.js";
         }
 
         function Scene3() {
-          posts.forEach(post => {
-            const $postListItem = createPostListItem(post);
-            appendTo(container, $postListItem);
-          })
+          cata(pagesCache, {
+            Nothing: () => {
+              const $noPosts = scene.create("h2", "content-datetime");
+              $noPosts.innerHTML = "No posts yet.";
+              appendTo(container, $noPosts);
+            },
+            Just: ({ value: data }) => {
+              data.content.forEach(post => {
+                const $postListItem = createPostListItem(post);
+                appendTo(container, $postListItem);
+              });
+            }
+          });
         }
 
         function Scene2() {
@@ -446,17 +473,23 @@ import { wildcardRoute, route, router } from "./router.js";
 
           frame.appendChild($loading);
 
-          Promise.resolve().then(
-            () => (pagesCache = {})
-          ).then(
-            () => fetch("/posts-1.json").then(
-              response => response.json()
+          pagesCache.map(
+            (data) => Promise.resolve(data)
+          ).orElse(
+            () => new Just(
+              fetch("/posts-1.json").then(
+                response => response.json()
+              )
             )
-          ).then(
-            data => (pagesCache[data.page] = data, posts = data.content, posts)
-          ).then(
-            posts => (scene.remove($loading), Scene3())
-          );
+          ).map(function (p) {
+            p.then(
+              (data) => (
+                pagesCache = new Just(data),
+                scene.remove($loading),
+                Scene3()
+              )
+            )
+          });
         }
 
         function Scene1() {
