@@ -453,7 +453,7 @@ import { wildcardRoute, route, router } from "./router.js";
               response => response.json()
             )
           ).then(
-            data => (pagesCache[data.page] = data, posts = posts.concat(data.content), posts)
+            data => (pagesCache[data.page] = data, posts = data.content, posts)
           ).then(
             posts => (scene.remove($loading), Scene3())
           );
