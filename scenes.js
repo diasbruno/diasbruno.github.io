@@ -135,6 +135,22 @@ import { wildcardRoute, route, router } from "./router.js";
     return $element;
   };
 
+  function Accessibility() {
+    let count = -1;
+    return {
+      manage(element) {
+        element.tabIndex = ++count;
+      },
+      unmanage(element) {
+        Boolean(element.getAttribute("tabIndex")) && (
+          --count, element.removeAttribute("tabIndex")
+        );
+      }
+    }
+  }
+
+  const accessibility = Accessibility();
+
   function Layer() {
     let elements = {};
     let count = 0;
@@ -143,13 +159,14 @@ import { wildcardRoute, route, router } from "./router.js";
       return `layer-element-${count}`;
     }
     return {
-      create(tag, className = "", styles = {}) {
+      create(tag, className = "", styles = {}, accessible = false) {
         const layerElementId = layerId();
         const $element = create(
           tag,
           `${layerElementId} ${className}`,
           styles
         );
+        accessible && accessibility.manage($element);
         $element.dataset["layerElement"] = count.toString();
         elements[layerElementId] = $element;
         return $element;
@@ -163,6 +180,7 @@ import { wildcardRoute, route, router } from "./router.js";
       remove($element) {
         const count = $element.dataset["layerElement"];
         delete elements[`layer-element-${count}`];
+        accessibility.unmanage($element)
         $element.parentNode.removeChild($element);
       }
     };
@@ -171,7 +189,7 @@ import { wildcardRoute, route, router } from "./router.js";
   function createNavigationLink(scene, name, navigate) {
     const $categoryLink = scene.create("a", "red", {
       fontSize: "1.6rem"
-    });
+    }, true);
     const $category = scene.create("h5");
     $categoryLink.href = "#";
     $category.innerHTML = name;
@@ -421,25 +439,25 @@ import { wildcardRoute, route, router } from "./router.js";
 
         frame.appendChild(container);
 
-        function createPostListItem(post) {
-          const $postListItemView = scene.create("div");
-          const $titleView = scene.create("div", "article-item");
-
-          const $titleLink = scene.create("a", "red");
-          $titleLink.href = post.link;
-          $titleLink.target = "_blank";
+        function createPostListItem(post, index) {
+          const $postListItemView = scene.create("a", "red article-item", {}, true);
+          $postListItemView.href = post.link;
+          $postListItemView.target = "_blank";
+          $postListItemView.style.marginBottom = "3.6rem";
+          $postListItemView.style.display = "block";
 
           const $title = scene.create("h2", "article-title");
-          $title.style.marginBottom = "1rem";
           $title.style.lineHeight = "4.6rem";
           $title.innerHTML = post.title;
+          $title.style.margin = "0";
 
           const $time = scene.create("time", "content-datetime");
+          $time.style.color = "var(--foreground)";
+          $time.style.fontSize = "1.8rem";
           $time.innerHTML = format(post.date, "MM/dd/yyyy");
 
-          appendTo($titleLink, $title);
-          appendTo($titleView, $titleLink);
-          appendManyTo($postListItemView, [$titleView, $time]);
+
+          appendManyTo($postListItemView, [$title, $time]);
 
           return $postListItemView;
         }
@@ -452,8 +470,8 @@ import { wildcardRoute, route, router } from "./router.js";
               appendTo(container, $noPosts);
             },
             Just: ({ value: data }) => {
-              data.content.forEach(post => {
-                const $postListItem = createPostListItem(post);
+              data.content.forEach((post, index) => {
+                const $postListItem = createPostListItem(post, index);
                 appendTo(container, $postListItem);
               });
             }
@@ -504,7 +522,8 @@ import { wildcardRoute, route, router } from "./router.js";
 
           const $title = scene.create("h1", "red", {
             fontSize: "4.2rem",
-            opacity: 0
+            opacity: 0,
+            marginBottom: "6rem"
           });
           $title.innerHTML = "BLOG";
 
